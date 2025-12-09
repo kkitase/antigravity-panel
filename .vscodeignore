@@ -1,0 +1,41 @@
+# Source files (bundled into dist/)
+src/**
+out/**
+*.ts
+*.map
+
+# Test files
+test/**
+
+# Build and development files
+.vscode/**
+.vscode-test/**
+.github/**
+scripts/**
+local_bak/**
+docs/**
+
+# Configuration files
+tsconfig.json
+tsconfig.test.json
+.eslintrc.json
+.eslintignore
+eslint.config.mjs
+.gitignore
+.gitattributes
+esbuild.js
+
+# All node_modules (dependencies are bundled into dist/)
+node_modules/**
+
+# Documentation (keep only essential ones in English)
+README_zh.md
+CHANGELOG_zh.md
+
+# Misc
+.DS_Store
+*.vsix
+*.log
+.editorconfig
+.npmrc
+

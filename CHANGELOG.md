@@ -2,6 +2,17 @@
 
 All notable changes to the "Antigravity Panel" extension will be documented in this file.
 
+## [1.0.2] - 2025-12-10
+
+### Changed
+- **Package Optimization**: Dramatically reduced extension package size from 2.58 MB to 378 KB (85% reduction) by properly configuring `.vscodeignore` to exclude unnecessary files.
+- **Performance**: Improved extension loading speed by excluding `node_modules`, `out/`, and source files from the published package. All dependencies are now bundled into `dist/` files.
+- **File Count**: Reduced packaged files from 1,636 to just 22 essential files (98.7% reduction).
+
+### Internal
+- **Build Configuration**: Enhanced `.vscodeignore` to follow VS Code official best practices for bundled extensions.
+- **Documentation**: Removed Chinese documentation files (README_zh.md, CHANGELOG_zh.md) from published package to reduce size.
+
 ## [1.0.1] - 2025-12-10
 
 ### Fixed
