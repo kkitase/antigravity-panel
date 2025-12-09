@@ -58,8 +58,6 @@ export class StatusBarManager implements vscode.Disposable {
       }
 
       if (hasQuotaData) {
-        // Icon based on category
-        const icon = activeCategory === 'gemini' ? '$(sparkle)' : '$(hubot)';
         parts.push(`${displayPct}%`);
 
         // Warning color

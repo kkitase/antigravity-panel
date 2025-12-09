@@ -10,7 +10,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import { QuotaSnapshot, ModelQuotaInfo } from "../core/quota_manager";
+import { QuotaSnapshot } from "../core/quota_manager";
 import { CacheInfo, BrainTask } from "../core/cache_manager";
 import { ConfigManager } from "../core/config_manager";
 import { QuotaStrategyManager } from "../core/quota_strategy_manager";
@@ -74,17 +74,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
     },
     toggleTask: (msg) => {
       if (msg.taskId) {
-        this._expandedTasks.has(msg.taskId)
-          ? this._expandedTasks.delete(msg.taskId)
-          : this._expandedTasks.add(msg.taskId);
+        if (this._expandedTasks.has(msg.taskId)) {
+          this._expandedTasks.delete(msg.taskId);
+        } else {
+          this._expandedTasks.add(msg.taskId);
+        }
       }
       this._postStateUpdate();
     },
     toggleContext: (msg) => {
       if (msg.contextId) {
-        this._expandedContexts.has(msg.contextId)
-          ? this._expandedContexts.delete(msg.contextId)
-          : this._expandedContexts.add(msg.contextId);
+        if (this._expandedContexts.has(msg.contextId)) {
+          this._expandedContexts.delete(msg.contextId);
+        } else {
+          this._expandedContexts.add(msg.contextId);
+        }
       }
       this._postStateUpdate();
     },

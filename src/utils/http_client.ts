@@ -55,7 +55,7 @@ function setCachedProtocol(hostname: string, port: number, protocol: Protocol): 
  * 发送 HTTP/HTTPS 请求（支持自动降级）
  */
 export async function httpRequest<T>(options: HttpRequestOptions): Promise<HttpResponse<T>> {
-  const { hostname, port, path, method, headers, body, timeout = 5000, allowFallback = true } = options;
+  const { hostname, port, allowFallback = true } = options;
   
   // 检查缓存的协议
   const cachedProtocol = getCachedProtocol(hostname, port);
@@ -78,7 +78,7 @@ export async function httpRequest<T>(options: HttpRequestOptions): Promise<HttpR
         setCachedProtocol(hostname, port, "http");
         debugLog(`HTTP fallback succeeded for ${hostname}:${port}`);
         return result;
-      } catch (httpError) {
+      } catch {
         // HTTP 也失败，抛出原始 HTTPS 错误
         throw httpsError;
       }

@@ -414,6 +414,7 @@ export class WebviewHtmlBuilder {
 
   private generateNonce(): string {
     const array = new Uint8Array(32);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('crypto').randomFillSync(array);
     return Buffer.from(array).toString('base64');
   }

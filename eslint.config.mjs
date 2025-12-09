@@ -19,7 +19,7 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ["dist/**", "node_modules/**", "scripts/**", "esbuild.js"],
+    ignores: ["dist/**", "node_modules/**", "scripts/**", "esbuild.js", "src/test/**"],
   }
 );
 

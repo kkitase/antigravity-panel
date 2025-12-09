@@ -206,7 +206,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         // 2. Match quota pools to UI groups (gemini or other)
         const poolUsageMap = new Map<'gemini' | 'other', number>();
 
-        for (const [poolKey, poolModels] of quotaPoolsMap) {
+        for (const [, poolModels] of quotaPoolsMap) {
           const poolRemaining = poolModels[0].remainingPercentage;
 
           // Check which UI group the models in the pool belong to

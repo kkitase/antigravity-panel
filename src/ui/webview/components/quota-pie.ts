@@ -2,8 +2,8 @@
  * QuotaPie - 配额饼图组件 (Light DOM)
  */
 
-import { LitElement, html, PropertyValues } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import type { QuotaDisplayItem } from '../types.js';
 
 @customElement('quota-pie')

@@ -20,7 +20,6 @@ export class UsageChart extends LitElement {
     }
 
     const { buckets, maxUsage, interval, prediction } = this.data;
-    const maxHeight = 36;
 
     // 左侧：Timeline 信息
     const timelineText = `Timeline: ${this.data.displayMinutes} min · Step: ${interval} sec`;
@@ -43,8 +42,8 @@ export class UsageChart extends LitElement {
           ${buckets.map(bucket => {
             const maxHeight = 36;
             let currentHeight = 0;
-            let gradientStops: string[] = [];
-            let tooltipParts: string[] = [];
+            const gradientStops: string[] = [];
+            const tooltipParts: string[] = [];
 
             if (bucket.items && bucket.items.length > 0) {
               // 计算每段高度并生成渐变
