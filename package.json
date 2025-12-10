@@ -3,7 +3,7 @@
   "displayName": "%extension.displayName%",
   "description": "%extension.description%",
   "version": "1.0.2",
-  "publisher": "n2ns",
+  "publisher": "bugstan",
   "license": "MIT",
   "repository": {
     "type": "git",

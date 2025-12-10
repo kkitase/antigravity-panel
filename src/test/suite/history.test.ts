@@ -55,7 +55,7 @@ suite('QuotaHistoryManager Test Suite', () => {
         assert.strictEqual(newManager.getRecentHistory(60)[0].usage['gemini'], 50);
     });
 
-    test('should clean up old history (>24h)', async () => {
+    test('should clean up old history (>7 days)', async () => {
         // Mock Date.now
         const realNow = Date.now;
         const now = 1700000000000;
@@ -63,16 +63,16 @@ suite('QuotaHistoryManager Test Suite', () => {
 
         // 记录一个点
         await manager.record({ gemini: 10, other: 10 });
-        
-        // 前进 25 小时
-        global.Date.now = () => now + 25 * 60 * 60 * 1000;
-        
+
+        // 前进 8 天
+        global.Date.now = () => now + 8 * 24 * 60 * 60 * 1000;
+
         // 记录新点，此时旧点应该被清除
         await manager.record({ gemini: 20, other: 20 });
-        
+
         assert.strictEqual(manager.count, 1); // 应该只有 1 个点（新的）
         assert.strictEqual(manager.getRecentHistory(60)[0].usage['gemini'], 20);
-        
+
         // 恢复 Date.now
         global.Date.now = realNow;
     });

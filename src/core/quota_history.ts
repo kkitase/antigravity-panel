@@ -31,7 +31,7 @@ export interface UsageBucket {
 }
 
 const STORAGE_KEY = "gagp.quotaHistory_v2"; // Upgraded key to avoid old data conflicts
-const MAX_HISTORY_HOURS = 24;
+const MAX_HISTORY_HOURS = 24 * 7; // 7 days
 
 export class QuotaHistoryManager {
   private history: QuotaHistoryPoint[] = [];

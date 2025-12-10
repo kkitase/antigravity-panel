@@ -13,8 +13,8 @@ English | [中文文档](README_zh.md)
 
 ## ✨ Why Antigravity Panel?
 
-- 🎯 **Never run out of quota** - Real-time monitoring with visual warnings
-- 📊 **Understand your usage** - Interactive charts showing 24-hour trends
+- 🎯 **Track your quota** - Real-time monitoring with visual warnings
+- 📊 **Understand your usage** - Interactive charts showing usage trends
 - 🧹 **Keep things clean** - Manage AI conversation caches with one click
 - 🎨 **Beautiful UI** - Native theme integration
 - 🌍 **Speaks your language** - Available in 11 languages
@@ -41,7 +41,7 @@ English | [中文文档](README_zh.md)
 - Interactive bar charts showing usage over time (10-120 minutes)
 - 24-hour history tracking with persistent storage
 - Color-coded visualization by model family
-- Predict when you'll run out of quota
+- Track quota consumption trends
 
 ### 🗂️ Powerful Cache Management
 
