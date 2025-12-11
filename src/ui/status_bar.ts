@@ -3,9 +3,10 @@
  */
 
 import * as vscode from "vscode";
-import { QuotaSnapshot, ModelQuotaInfo } from "../core/quota_manager";
 import { CacheInfo } from "../core/cache_manager";
+import { StatusBarData } from "../core/quota_view_model";
 import { formatBytes } from "../utils/format";
+import { GagpConfig } from "../utils/types";
 
 export class StatusBarManager implements vscode.Disposable {
   private item: vscode.StatusBarItem;
@@ -30,52 +31,78 @@ export class StatusBarManager implements vscode.Disposable {
     this.item.show();
   }
 
-  update(
-    quota: QuotaSnapshot | null,
+  /**
+   * Format quota display based on style setting
+   */
+  private formatQuotaDisplay(
+    statusData: StatusBarData,
+    style: GagpConfig['statusBarStyle']
+  ): string {
+    switch (style) {
+      case 'resetTime':
+        return statusData.resetTime;
+      case 'used':
+        return `${100 - statusData.percentage}%`;
+      case 'remaining':
+        return `${statusData.percentage}%`;
+      case 'percentage':
+      default:
+        return `${statusData.percentage}%`;
+    }
+  }
+
+  /**
+   * Get background color based on quota percentage and thresholds
+   */
+  private getBackgroundColor(
+    percentage: number,
+    warningThreshold: number,
+    criticalThreshold: number
+  ): vscode.ThemeColor | undefined {
+    if (percentage <= criticalThreshold) {
+      return new vscode.ThemeColor('statusBarItem.errorBackground');
+    } else if (percentage <= warningThreshold) {
+      return new vscode.ThemeColor('statusBarItem.warningBackground');
+    }
+    return undefined; // Normal state, use default background
+  }
+
+  /**
+   * Update StatusBar from ViewModel data (unified data source)
+   */
+  updateFromViewModel(
+    statusData: StatusBarData,
     cache: CacheInfo | null,
     showQuota: boolean,
     showCache: boolean,
-    activeCategory: 'gemini' | 'other' = 'gemini',
-    cachedPercentage?: number,
-    quotaWarningThreshold?: number,
-    quotaCriticalThreshold?: number
+    statusBarStyle: GagpConfig['statusBarStyle'] = 'percentage',
+    warningThreshold: number = 30,
+    criticalThreshold: number = 10
   ): void {
     const parts: string[] = [];
     const tooltipParts: string[] = [];
 
     if (showQuota) {
-      let displayPct = 0;
-      let hasQuotaData = false;
+      const displayText = this.formatQuotaDisplay(statusData, statusBarStyle);
+      parts.push(displayText);
 
-      if (quota) {
-        // UI only calculates MIN for display simplicity, which is fast.
-        const stats = this.getCategoryStats(quota.models, activeCategory);
-        displayPct = Math.round(stats.min);
-        hasQuotaData = true;
-      } else if (cachedPercentage !== undefined) {
-        displayPct = cachedPercentage;
-        hasQuotaData = true;
-      }
+      // Tooltip always shows full details
+      tooltipParts.push(
+        `Active: ${statusData.label}`,
+        `Remaining: ${statusData.percentage}%`,
+        `Used: ${100 - statusData.percentage}%`,
+        `Reset: ${statusData.resetTime}`
+      );
 
-      if (hasQuotaData) {
-        parts.push(`${displayPct}%`);
-
-        // Warning color
-        if (quotaCriticalThreshold !== undefined && displayPct < quotaCriticalThreshold) {
-            this.item.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");
-        } else if (quotaWarningThreshold !== undefined && displayPct < quotaWarningThreshold) {
-            this.item.backgroundColor = new vscode.ThemeColor("statusBarItem.warningBackground");
-        } else {
-            this.item.backgroundColor = undefined;
-        }
-
-        // Tooltip details
-        // Tooltip details
-        tooltipParts.push(
-          `Active: ${activeCategory === 'gemini' ? 'Gemini' : 'Claude'}`,
-          `Quota:  ${displayPct}%`
-        );
-      }
+      // Set background color based on thresholds
+      this.item.backgroundColor = this.getBackgroundColor(
+        statusData.percentage,
+        warningThreshold,
+        criticalThreshold
+      );
+    } else {
+      // No quota shown, reset background
+      this.item.backgroundColor = undefined;
     }
 
     if (showCache && cache) {
@@ -91,19 +118,6 @@ export class StatusBarManager implements vscode.Disposable {
 
     this.item.tooltip = tooltipParts.join("\n");
     this.item.show();
-  }
-
-  private getCategoryStats(models: ModelQuotaInfo[], category: 'gemini' | 'other') {
-    const filtered = models.filter((m) => 
-      category === 'gemini' 
-        ? m.label.toLowerCase().includes("gemini")
-        : !m.label.toLowerCase().includes("gemini")
-    );
-
-    if (filtered.length === 0) return { min: 0 };
-
-    const min = filtered.reduce((m, item) => Math.min(m, item.remainingPercentage), 100);
-    return { min };
   }
 
   dispose(): void {

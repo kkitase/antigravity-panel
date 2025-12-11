@@ -141,26 +141,39 @@ export interface CacheInfo {
  * Extension configuration
  */
 export interface GagpConfig {
-  /** Whether to show cache size */
-  showCacheSize: boolean;
-  /** Whether to show quota */
-  showQuota: boolean;
+  // ===== Status Bar Settings =====
+  /** Whether to show quota in status bar */
+  statusBarShowQuota: boolean;
+  /** Whether to show cache size in status bar */
+  statusBarShowCache: boolean;
+  /** Status bar quota display style */
+  statusBarStyle: "percentage" | "resetTime" | "used" | "remaining";
+  /** Status bar warning threshold (%) */
+  statusBarThresholdWarning: number;
+  /** Status bar critical threshold (%) */
+  statusBarThresholdCritical: number;
+
+  // ===== Quota Settings =====
   /** Polling interval (seconds), minimum value 60 */
   pollingInterval: number;
-  /** Cache warning threshold (MB) */
-  cacheWarningThreshold: number;
-  /** Quota warning threshold (%) */
-  quotaWarningThreshold: number;
-  /** Quota critical threshold (%) */
-  quotaCriticalThreshold: number;
-  /** Whether to auto-clean cache */
-  autoCleanCache: boolean;
-  /** Quota display style */
-  quotaDisplayStyle: "percentage" | "resetTime" | "used" | "remaining";
   /** Quota visualization mode */
   visualizationMode: "groups" | "models";
+  /** Whether to show GPT quota (GPT shares quota with Claude) */
+  showGptQuota: boolean;
   /** History chart display time range (minutes), default 60 */
   historyDisplayMinutes: number;
+
+  // ===== Cache Settings =====
+  /** Cache check interval (seconds), minimum 30 */
+  cacheCheckInterval: number;
+  /** Cache warning threshold (MB) */
+  cacheWarningThreshold: number;
+  /** Hide empty folders in tree views */
+  cacheHideEmptyFolders: boolean;
+  /** Whether to auto-clean cache */
+  autoCleanCache: boolean;
+
+  // ===== Debug Settings =====
   /** Whether to enable debug mode */
   debugMode: boolean;
 }

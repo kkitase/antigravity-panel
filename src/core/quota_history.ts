@@ -30,6 +30,28 @@ export interface UsageBucket {
   items: BucketItem[]; // Supports multi-segment stacking
 }
 
+/** Cached task info for tree cache-first startup */
+export interface CachedTaskInfo {
+  id: string;
+  title: string;
+  size: string;          // Formatted size string
+  lastModified: number;
+}
+
+/** Cached context info for tree cache-first startup */
+export interface CachedContextInfo {
+  id: string;
+  name: string;
+  size: string;          // Formatted size string
+}
+
+/** Cached tree state */
+export interface CachedTreeState {
+  brainTasks: CachedTaskInfo[];
+  codeContexts: CachedContextInfo[];
+  lastUpdated: number;
+}
+
 const STORAGE_KEY = "gagp.quotaHistory_v2"; // Upgraded key to avoid old data conflicts
 const MAX_HISTORY_HOURS = 24 * 7; // 7 days
 
@@ -81,6 +103,15 @@ export class QuotaHistoryManager {
     await this.globalState.update("gagp.lastWorkspaceSize", workspace);
   }
 
+  // Cache warning time (to avoid repeated warnings)
+  getLastCacheWarningTime(): number {
+    return this.globalState.get<number>("gagp.lastCacheWarningTime") ?? 0;
+  }
+
+  async setLastCacheWarningTime(time: number): Promise<void> {
+    await this.globalState.update("gagp.lastCacheWarningTime", time);
+  }
+
   // Prediction data cache
   getLastPrediction(): { usageRate: number; runway: string; groupId: string } {
     return {
@@ -94,6 +125,43 @@ export class QuotaHistoryManager {
     await this.globalState.update("gagp.lastUsageRate", usageRate);
     await this.globalState.update("gagp.lastRunway", runway);
     await this.globalState.update("gagp.lastPredictionGroup", groupId);
+  }
+
+  // QuotaViewState cache (for cache-first startup)
+  getLastViewState<T>(): T | null {
+    return this.globalState.get<T>("gagp.lastViewState") ?? null;
+  }
+
+  async setLastViewState<T>(state: T): Promise<void> {
+    await this.globalState.update("gagp.lastViewState", state);
+  }
+
+  // Tree state cache (for cache-first startup of Brain/Code Tracker trees)
+  getLastTreeState(): CachedTreeState | null {
+    return this.globalState.get<CachedTreeState>("gagp.lastTreeState") ?? null;
+  }
+
+  async setLastTreeState(state: CachedTreeState): Promise<void> {
+    await this.globalState.update("gagp.lastTreeState", state);
+  }
+
+  // Snapshot cache (for models mode cache-first startup)
+  getLastSnapshot<T>(): T | null {
+    const cached = this.globalState.get<{ data: T; timestamp: number }>("gagp.lastSnapshot");
+    if (!cached) return null;
+
+    // Apply 7-day expiry
+    const cutoff = Date.now() - MAX_HISTORY_HOURS * 60 * 60 * 1000;
+    if (cached.timestamp < cutoff) return null;
+
+    return cached.data;
+  }
+
+  async setLastSnapshot<T>(snapshot: T): Promise<void> {
+    await this.globalState.update("gagp.lastSnapshot", {
+      data: snapshot,
+      timestamp: Date.now()
+    });
   }
 
   // ==================== Core Logic ====================

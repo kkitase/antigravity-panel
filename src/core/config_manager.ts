@@ -25,17 +25,23 @@ export class ConfigManager implements vscode.Disposable {
     const pollingInterval = Math.max(rawPollingInterval, MIN_POLLING_INTERVAL);
 
     return {
-      showCacheSize: config.get<boolean>("showCacheSize", true),
-      showQuota: config.get<boolean>("showQuota", true),
+      // Status Bar Settings
+      statusBarShowQuota: config.get<boolean>("statusBarShowQuota", true),
+      statusBarShowCache: config.get<boolean>("statusBarShowCache", true),
+      statusBarStyle: config.get<"percentage" | "resetTime" | "used" | "remaining">("statusBarStyle", "percentage"),
+      statusBarThresholdWarning: config.get<number>("statusBarThresholdWarning", 30),
+      statusBarThresholdCritical: config.get<number>("statusBarThresholdCritical", 10),
+      // Quota Settings
       pollingInterval,
-      cacheWarningThreshold: config.get<number>("cacheWarningThreshold", 500),
-      quotaWarningThreshold: config.get<number>("quotaWarningThreshold", 30),
-      quotaCriticalThreshold: config.get<number>("quotaCriticalThreshold", 10),
-      autoCleanCache: config.get<boolean>("autoCleanCache", false),
-      quotaDisplayStyle: config.get<"percentage" | "resetTime" | "used" | "remaining">("quotaDisplayStyle", "percentage"),
       visualizationMode: config.get<"groups" | "models">("visualizationMode", "groups"),
-      // History chart configuration
+      showGptQuota: config.get<boolean>("showGptQuota", false),
       historyDisplayMinutes: config.get<number>("historyDisplayMinutes", 60),
+      // Cache Settings
+      cacheCheckInterval: Math.max(config.get<number>("cacheCheckInterval", 120), 30),
+      cacheWarningThreshold: config.get<number>("cacheWarningThreshold", 500),
+      cacheHideEmptyFolders: config.get<boolean>("cacheHideEmptyFolders", false),
+      autoCleanCache: config.get<boolean>("autoCleanCache", false),
+      // Debug Settings
       debugMode: config.get<boolean>("debugMode", false),
     };
   }

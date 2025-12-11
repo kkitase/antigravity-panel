@@ -1,7 +1,7 @@
 # TODO List
 
-> Last Updated: 2025-12-10
-> Project Version: v0.2.1
+> Last Updated: 2025-12-11
+> Project Version: v1.1.0
 
 ---
 
@@ -9,23 +9,24 @@
 
 ### Test Coverage Improvement
 
-- [ ] **Add unit tests for remaining modules** (Current: 113 tests, ~50% coverage, Target: 80%)
-  - [ ] `HttpClient` - HTTPS→HTTP fallback, protocol cache
+- [ ] **Add unit tests for remaining modules** (Current: 135 tests, 13/34 files covered, Target: 80%)
+  - [ ] `HttpClient` - HTTPS→HTTP fallback, protocol cache (basic tests only)
+  - [ ] `ConfigManager` - Configuration reading/defaults
   - [ ] `StatusBarManager` - Status bar updates
-  - [ ] Webview Components - Lit component unit tests (using @web/test-runner)
+  - [ ] `HtmlBuilder` - Webview HTML generation
   - [ ] `SidebarProvider` - Webview message handling (integration tests)
+  - [ ] Webview Components - Lit component unit tests (using @web/test-runner)
 
 ### Release Preparation
 
-- [ ] **Publish to VS Code Marketplace**
+- [x] **Publish to VS Code Marketplace** ✅
   - [x] Configure GitHub Actions auto-publish workflow ✅
   - [x] Support publishing to VS Code Marketplace ✅
   - [x] Support publishing to Open VSX Registry ✅
   - [x] Auto-create GitHub Release ✅
-  - [ ] Configure GitHub Secrets (VSCE_PAT, OVSX_PAT)
+  - [x] Configure GitHub Secrets (VSCE_PAT, OVSX_PAT) ✅
   - [x] Enhance README with feature screenshots and usage guide ✅
   - [ ] Prepare Marketplace display images (at least 3)
-  - [ ] Create first release tag (v0.2.1)
 
 ---
 
@@ -33,8 +34,13 @@
 
 ### New Features
 
+- [x] **Cache Warning Notifications** ✅ (v1.1.0)
+  - [x] Show VS Code notification when cache exceeds `gagp.cacheWarningThreshold` ✅
+  - [x] 24-hour cooldown to prevent spam ✅
+  - [x] Configurable check interval (`gagp.cacheCheckInterval`) ✅
+
 - [ ] **Quota Warning Notifications**
-  - Show VS Code notification when quota drops below `gagp.quotaWarningThreshold`
+  - Show VS Code notification when quota drops below threshold
   - Support different severity levels (warning/critical)
   - Configurable notification enable/disable
 
@@ -45,10 +51,10 @@
 
 ### Code Quality
 
-- [ ] **Add ESLint Rule Checking**
-  - Run `npm run lint` to check code standards
-  - Fix all ESLint warnings and errors
-  - Configure pre-commit hook for automatic checking
+- [x] **Add ESLint Rule Checking** ✅
+  - [x] Run `npm run lint` to check code standards ✅
+  - [x] Fix all ESLint warnings and errors ✅
+  - [ ] Configure pre-commit hook for automatic checking
 
 ---
 

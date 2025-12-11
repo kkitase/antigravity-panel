@@ -67,32 +67,55 @@ suite('CacheManager Test Suite', () => {
         assert.strictEqual(info.brainTasks[0].label, 'My Feature');
     });
 
-    test('should clean cache', async () => {
-        // Create some data
-        await fs.promises.writeFile(path.join(conversationsDir, '1.json'), 'data');
-        const taskDir = path.join(brainDir, 'task-1');
-        await fs.promises.mkdir(taskDir);
-        await fs.promises.writeFile(path.join(taskDir, 'file'), 'data');
+    test('should clean cache keeping newest 5 brain tasks and their conversations', async () => {
+        // Create 7 brain task directories with corresponding conversation files
+        for (let i = 1; i <= 7; i++) {
+            const taskDir = path.join(brainDir, `task-${i}`);
+            await fs.promises.mkdir(taskDir);
+            await fs.promises.writeFile(path.join(taskDir, 'file'), `data-${i}`);
+            // Create corresponding conversation file
+            await fs.promises.writeFile(path.join(conversationsDir, `task-${i}.pb`), `conv-${i}`);
+            // Small delay to ensure different creation times
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
 
         // Verify data exists
         let info = await cacheManager.getCacheInfo();
-        assert.ok(info.totalSize > 0);
+        assert.strictEqual(info.brainCount, 7);
+        assert.strictEqual(info.conversationsCount, 7);
 
-        // Clean
-        await cacheManager.clean();
+        // Clean - should keep newest 5 brain tasks and their conversations
+        const deletedCount = await cacheManager.clean();
 
-        // Verify empty
+        // Verify results
         info = await cacheManager.getCacheInfo();
-        assert.strictEqual(info.totalSize, 0);
-        assert.strictEqual(info.brainCount, 0);
-        assert.strictEqual(info.conversationsCount, 0);
-        
-        // Verify directories still exist (optional, but clean usually keeps the root dirs or they are recreated)
-        // cleanDirectory implementation: removes children, not the dir itself unless 'rm' is on parent.
-        // Implementation check:
-        // for (const entry of entries) { await fs.promises.rm(fullPath, ...); }
-        // So root dirs should stay.
+        assert.strictEqual(deletedCount, 2); // 7 - 5 = 2 deleted
+        assert.strictEqual(info.brainCount, 5); // Newest 5 kept
+        assert.strictEqual(info.conversationsCount, 5); // Corresponding 5 conversations kept
+
+        // Verify directories still exist
         assert.strictEqual(fs.existsSync(brainDir), true);
         assert.strictEqual(fs.existsSync(conversationsDir), true);
+    });
+
+    test('should keep all brain tasks when less than 5', async () => {
+        // Create 3 brain task directories
+        for (let i = 1; i <= 3; i++) {
+            const taskDir = path.join(brainDir, `task-${i}`);
+            await fs.promises.mkdir(taskDir);
+            await fs.promises.writeFile(path.join(taskDir, 'file'), `data-${i}`);
+        }
+
+        // Verify data exists
+        let info = await cacheManager.getCacheInfo();
+        assert.strictEqual(info.brainCount, 3);
+
+        // Clean - should keep all 3 since < 5
+        const deletedCount = await cacheManager.clean();
+
+        // Verify results
+        info = await cacheManager.getCacheInfo();
+        assert.strictEqual(deletedCount, 0); // Nothing deleted
+        assert.strictEqual(info.brainCount, 3); // All kept
     });
 });

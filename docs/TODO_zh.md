@@ -1,7 +1,7 @@
 # 待办事项清单
 
-> 最后更新: 2025-12-10
-> 项目版本: v0.2.1
+> 最后更新: 2025-12-11
+> 项目版本: v1.1.0
 
 ---
 
@@ -9,23 +9,24 @@
 
 ### 测试覆盖率提升
 
-- [ ] **补充核心模块单元测试**（当前：113 个测试，~50% 覆盖率，目标：80%）
-  - [ ] `HttpClient` - HTTPS→HTTP 降级、协议缓存
+- [ ] **补充核心模块单元测试**（当前：135 个测试，13/34 文件已覆盖，目标：80%）
+  - [ ] `HttpClient` - HTTPS→HTTP 降级、协议缓存（仅有基础测试）
+  - [ ] `ConfigManager` - 配置读取/默认值
   - [ ] `StatusBarManager` - 状态栏更新
-  - [ ] Webview 组件 - Lit 组件单元测试（使用 @web/test-runner）
+  - [ ] `HtmlBuilder` - Webview HTML 生成
   - [ ] `SidebarProvider` - Webview 消息处理（集成测试）
+  - [ ] Webview 组件 - Lit 组件单元测试（使用 @web/test-runner）
 
 ### 发布准备
 
-- [ ] **发布到 VS Code Marketplace**
+- [x] **发布到 VS Code Marketplace** ✅
   - [x] 配置 GitHub Actions 自动发布工作流 ✅
   - [x] 支持发布到 VS Code Marketplace ✅
   - [x] 支持发布到 Open VSX Registry ✅
   - [x] 自动创建 GitHub Release ✅
-  - [ ] 配置 GitHub Secrets（VSCE_PAT、OVSX_PAT）
+  - [x] 配置 GitHub Secrets（VSCE_PAT、OVSX_PAT）✅
   - [x] 完善 README 中的功能截图和使用说明 ✅
   - [ ] 准备 Marketplace 展示图片（至少 3 张）
-  - [ ] 创建首个发布标签（v0.2.1）
 
 ---
 
@@ -33,8 +34,13 @@
 
 ### 新功能
 
+- [x] **缓存预警通知** ✅ (v1.1.0)
+  - [x] 当缓存超过 `gagp.cacheWarningThreshold` 时显示 VS Code 通知 ✅
+  - [x] 24 小时冷却防止重复通知 ✅
+  - [x] 可配置检查间隔（`gagp.cacheCheckInterval`）✅
+
 - [ ] **配额预警通知**
-  - 当配额低于 `gagp.quotaWarningThreshold` 时显示 VS Code 通知
+  - 当配额低于阈值时显示 VS Code 通知
   - 支持不同严重级别（警告/严重）
   - 可配置是否启用通知
 
@@ -45,10 +51,10 @@
 
 ### 代码质量
 
-- [ ] **添加 ESLint 规则检查**
-  - 运行 `npm run lint` 检查代码规范
-  - 修复所有 ESLint 警告和错误
-  - 配置 pre-commit hook 自动检查
+- [x] **添加 ESLint 规则检查** ✅
+  - [x] 运行 `npm run lint` 检查代码规范 ✅
+  - [x] 修复所有 ESLint 警告和错误 ✅
+  - [ ] 配置 pre-commit hook 自动检查
 
 ---
 

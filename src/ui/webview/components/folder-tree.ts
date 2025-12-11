@@ -10,7 +10,7 @@ import './folder-node.js';
 
 @customElement('folder-tree')
 export class FolderTree extends LitElement {
-  @property({ type: String })
+  @property({ type: String, reflect: true })
   title = '';
 
   @property({ type: String })

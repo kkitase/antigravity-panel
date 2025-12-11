@@ -1,8 +1,30 @@
 # Changelog
 
-## [1.0.3] - 2025-12-10
+## [1.1.0] - 2025-12-11
+
+### Added
+- **Independent Cache Polling**: Cache size check now runs independently with configurable interval (`gagp.cacheCheckInterval`)
+- **Cache Warning Notifications**: Automatic warning when cache exceeds threshold, with 24-hour cooldown
+- **Hide Empty Folders Option**: New setting (`gagp.cacheHideEmptyFolders`) to hide empty folders in Brain and Code Tracker trees
+
+### Improved
+- **Smart Cache Cleaning**: Keeps newest 5 brain tasks and their conversations to prevent interrupting active work
+- **Clean Cache Dialog**: Added "Open Folder" button for manual cleanup option
+- **Delete Confirmation**: Code Tracker directory deletion now shows confirmation dialog
 
 ### Fixed
+- **Code Tracker Delete Button**: Fixed delete button not working due to Lit property reflection issue
+- **Tree Refresh After Delete**: Fixed directory tree not refreshing after file/folder deletion
+
+## [1.0.3] - 2025-12-10
+
+### Added
+- **MVVM Architecture**: Introduced QuotaViewModel as unified data aggregation layer
+- **Active Group Auto-Detection**: Automatically detects active model group based on quota consumption changes (>0.1% threshold)
+- **Cache-First Startup**: UI renders immediately from cache, then refreshes asynchronously
+
+### Fixed
+- **Status Bar Active Group**: Fixed incorrect active group display (was showing wrong group due to simple string matching)
 - Fixed icon display issues in the extension sidebar and toolbar
 
 ## [1.0.2] - 2025-12-10

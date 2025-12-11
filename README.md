@@ -138,6 +138,9 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `gagp` to c
 | Setting | Default | Description |
 |---------|---------|-------------|
 | **Show Cache Size** | `✓` | Display cache size in status bar |
+| **Check Interval** | `120s` | How often to check cache size (30-600s) |
+| **Warning Threshold** | `500 MB` | Show warning when cache exceeds this size |
+| **Hide Empty Folders** | `✗` | Hide empty folders in Brain and Code Tracker trees |
 
 ## 🔒 Privacy
 

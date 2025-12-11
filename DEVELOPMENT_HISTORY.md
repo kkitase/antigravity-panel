@@ -2,13 +2,25 @@
 
 This file contains detailed technical changes for developers. For user-facing changes, see CHANGELOG.md.
 
-## [1.0.3] - 2025-12-10
+## [1.1.0] - 2025-12-10
+
+### Added
+- **QuotaViewModel**: New unified data aggregation layer implementing MVVM architecture (`src/core/quota_view_model.ts`)
+- **Active Group Detection**: Algorithm to auto-detect active model group based on quota consumption changes (>0.1% threshold)
+- **Cache-First Startup**: All UI components render from cache immediately, then async refresh
+- **ViewModel Unit Tests**: 12 new test cases for QuotaViewModel (`src/test/suite/quota_view_model.test.ts`)
+- **Server Integration Tests**: 13 test cases for real server testing (`src/test/suite/integration/server.test.ts`)
 
 ### Fixed
+- **Status Bar Active Group**: Fixed incorrect active group display - was using simple `label.includes("gemini")` instead of proper `QuotaStrategyManager.getGroupForModel()`
 - **Icon Display**: Fixed codicons not displaying in packaged extension by adding exceptions in `.vscodeignore` to include required font files (`codicon.css` and `codicon.ttf`).
 - **Marketplace Publishing**: Resolved icon rendering issues in file tree and toolbar buttons when extension is installed from VSIX or Marketplace.
 
 ### Changed
+- **StatusBar**: Added `updateFromViewModel()` method, removed deprecated `getCategoryStats()`
+- **SidebarProvider**: Added `updateFromViewModel()` method for cache-first rendering
+- **QuotaHistory**: Added `getLastViewState()`/`setLastViewState()` for ViewModel caching
+- **Extension**: Refactored data flow to use ViewModel as single source of truth
 - **Package Configuration**: Updated `.vscodeignore` to properly include `@vscode/codicons` font files while excluding all other `node_modules`.
 
 ## [1.0.2] - 2025-12-10

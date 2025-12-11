@@ -165,16 +165,43 @@ export class CacheManager {
   }
 
   /**
-   * Clean all cache directories (brain + conversations)
+   * Clean brain directory and corresponding conversations, keeping the newest N
+   * @param keepCount Number of newest tasks to keep (default: 5)
    */
-  public async clean(): Promise<void> {
-    const brainDir = this.baseBrainDir;
-    const conversationsDir = this.baseConversationsDir;
+  private async cleanBrainDirectory(keepCount: number = 5): Promise<number> {
+    try {
+      const tasks = await this.getBrainTasks(this.baseBrainDir);
 
-    await Promise.all([
-      this.cleanDirectory(brainDir),
-      this.cleanDirectory(conversationsDir),
-    ]);
+      // Tasks are already sorted by createdAt descending (newest first)
+      const tasksToDelete = tasks.slice(keepCount);
+
+      for (const task of tasksToDelete) {
+        // Delete brain directory
+        await fs.promises.rm(task.path, { recursive: true, force: true });
+        // Delete corresponding conversation file ({taskId}.pb)
+        const conversationFile = path.join(this.baseConversationsDir, `${task.id}.pb`);
+        await fs.promises.rm(conversationFile, { force: true }).catch(() => {});
+      }
+
+      return tasksToDelete.length;
+    } catch {
+      return 0;
+    }
+  }
+
+  /**
+   * Clean cache: keeps newest 5 brain tasks and their corresponding conversations
+   * @returns Number of deleted tasks
+   */
+  public async clean(): Promise<number> {
+    return this.cleanBrainDirectory(5);
+  }
+
+  /**
+   * Get the brain directory path
+   */
+  public getBrainDirPath(): string {
+    return this.baseBrainDir;
   }
 
 }

@@ -11,11 +11,11 @@ import { CacheManager } from "./core/cache_manager";
 import { ConfigManager } from "./core/config_manager";
 import { Scheduler } from "./core/scheduler";
 import { QuotaHistoryManager } from "./core/quota_history";
+import { QuotaViewModel } from "./core/quota_view_model";
 import { StatusBarManager } from "./ui/status_bar";
 import { SidebarProvider } from "./ui/sidebar_provider";
 import { getBrainDir, getConversationsDir, getCodeTrackerActiveDir } from "./utils/paths";
 import { formatBytes } from "./utils/format";
-import { QuotaStrategyManager } from "./core/quota_strategy_manager";
 import { initLogger, setDebugMode, infoLog, errorLog } from "./utils/logger";
 
 // Service instances
@@ -25,6 +25,7 @@ let cacheManager: CacheManager;
 let configManager: ConfigManager;
 let scheduler: Scheduler;
 let quotaHistoryManager: QuotaHistoryManager;
+let quotaViewModel: QuotaViewModel;
 let sidebarProvider: SidebarProvider;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -38,8 +39,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   cacheManager = new CacheManager();
   quotaHistoryManager = new QuotaHistoryManager(context.globalState);
+  quotaViewModel = new QuotaViewModel(quotaHistoryManager, configManager);
   statusBar = new StatusBarManager();
-  statusBar.showLoading();
 
   // Initialize scheduler
   scheduler = new Scheduler({
@@ -88,29 +89,36 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   // Subscribe to business events: delete context
   sidebarProvider.onDeleteContext(async (contextId: string) => {
-    try {
-      const contextPath = `${getCodeTrackerActiveDir()}/${contextId}`;
-      
-      // Close all files from this context if they're open in any editor
-      const tabs = vscode.window.tabGroups.all
-        .flatMap(group => group.tabs)
-        .filter(tab => {
-          const tabInput = tab.input;
-          if (tabInput instanceof vscode.TabInputText) {
-            const rel = path.relative(contextPath, tabInput.uri.fsPath);
-            return !rel.startsWith('..') && !path.isAbsolute(rel);
-          }
-          return false;
-        });
-      
-      for (const tab of tabs) {
-        await vscode.window.tabGroups.close(tab);
-      }
+    const confirm = await vscode.window.showWarningMessage(
+      "Delete this code context cache?",
+      { modal: true },
+      "Delete"
+    );
+    if (confirm === "Delete") {
+      try {
+        const contextPath = `${getCodeTrackerActiveDir()}/${contextId}`;
 
-      await fs.promises.rm(contextPath, { recursive: true, force: true });
-      await refreshData();
-    } catch (e) {
-      vscode.window.showErrorMessage(`Failed to delete context: ${e}`);
+        // Close all files from this context if they're open in any editor
+        const tabs = vscode.window.tabGroups.all
+          .flatMap(group => group.tabs)
+          .filter(tab => {
+            const tabInput = tab.input;
+            if (tabInput instanceof vscode.TabInputText) {
+              const rel = path.relative(contextPath, tabInput.uri.fsPath);
+              return !rel.startsWith('..') && !path.isAbsolute(rel);
+            }
+            return false;
+          });
+
+        for (const tab of tabs) {
+          await vscode.window.tabGroups.close(tab);
+        }
+
+        await fs.promises.rm(contextPath, { recursive: true, force: true });
+        await refreshData();
+      } catch (e) {
+        vscode.window.showErrorMessage(`Failed to delete context: ${e}`);
+      }
     }
   });
 
@@ -129,15 +137,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       vscode.window.showInformationMessage(`Cache size: ${formatBytes(cache.totalSize)}`);
     }),
     vscode.commands.registerCommand("gagp.cleanCache", async () => {
-      const confirm = await vscode.window.showWarningMessage(
-        "Are you sure you want to clean all cache? This cannot be undone.",
+      const cache = await cacheManager.getCacheInfo();
+      const action = await vscode.window.showWarningMessage(
+        `Clean cache? ${cache.brainCount} brain tasks, ${cache.conversationsCount} conversations. Newest 5 brain tasks will be kept.`,
         { modal: true },
-        "Yes, Clean All"
+        "Open Folder",
+        "Yes, Clean"
       );
-      if (confirm === "Yes, Clean All") {
-        await cacheManager.clean();
+      if (action === "Open Folder") {
+        const brainDir = cacheManager.getBrainDirPath();
+        await vscode.commands.executeCommand("revealFileInOS", vscode.Uri.file(brainDir));
+      } else if (action === "Yes, Clean") {
+        const deletedCount = await cacheManager.clean();
         await refreshData();
-        vscode.window.showInformationMessage("Cache cleaned successfully.");
+        vscode.window.showInformationMessage(
+          `Cache cleaned: ${deletedCount} brain tasks removed, conversations cleared. Newest 5 brain tasks kept.`
+        );
       }
     }),
     vscode.commands.registerCommand("gagp.refreshQuota", async () => {
@@ -172,42 +187,44 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     errorLog("Failed to detect Antigravity server", e);
   }
 
-  // Immediately render locally cached data (solves "disappears after restart" issue)
-  const initialConfig = configManager.getConfig();
-  const cachedBuckets = quotaHistoryManager.calculateUsageBuckets(
-    initialConfig.historyDisplayMinutes,
-    initialConfig.pollingInterval / 60
-  );
-  if (cachedBuckets.length > 0) {
-    const maxUsage = quotaHistoryManager.getMaxUsage(cachedBuckets);
-    const strategyManager = new QuotaStrategyManager();
-    const coloredBuckets = cachedBuckets.map(b => ({
-      ...b,
-      items: b.items.map(item => ({
-        ...item,
-        color: strategyManager.getGroups().find(g => g.id === item.groupId)?.themeColor || '#888'
-      }))
-    }));
+  // Cache-first startup: immediately render cached data
+  const cachedState = quotaViewModel.restoreFromCache();
+  const cachedTreeState = quotaHistoryManager.getLastTreeState();
 
-    // Get cached prediction data
-    const cachedPrediction = quotaHistoryManager.getLastPrediction();
-    const activeGroup = strategyManager.getGroups().find(g => g.id === cachedPrediction.groupId);
+  if (cachedState && cachedState.groups.some(g => g.hasData)) {
+    // StatusBar: show cached quota immediately
+    const config = configManager.getConfig();
+    const statusData = quotaViewModel.getStatusBarData();
+    statusBar.updateFromViewModel(
+      statusData,
+      null,
+      config.statusBarShowQuota,
+      config.statusBarShowCache,
+      config.statusBarStyle,
+      config.statusBarThresholdWarning,
+      config.statusBarThresholdCritical
+    );
 
-    cacheManager.getCacheInfo().then(cache => {
-      sidebarProvider.update(null, cache, {
-        buckets: coloredBuckets,
-        maxUsage,
-        displayMinutes: initialConfig.historyDisplayMinutes,
-        interval: initialConfig.pollingInterval,
-        prediction: cachedPrediction.usageRate > 0 ? {
-          groupId: cachedPrediction.groupId,
-          groupLabel: activeGroup?.label || cachedPrediction.groupId,
-          usageRate: cachedPrediction.usageRate,
-          runway: cachedPrediction.runway,
-          remaining: quotaHistoryManager.getLastDisplayPercentage()
-        } : undefined
-      });
+    // Sidebar: show cached quota and tree data immediately
+    sidebarProvider.updateFromCacheFirst(
+      quotaViewModel.getSidebarQuotas(),
+      quotaViewModel.getChartData(),
+      cachedTreeState
+    );
+
+    // Then async refresh with real cache info
+    cacheManager.getCacheInfo().then(async cache => {
+      sidebarProvider.updateFromViewModel(
+        quotaViewModel.getSidebarQuotas(),
+        cache,
+        quotaViewModel.getChartData()
+      );
+      // Update tree cache for next startup
+      await updateTreeCache(cache);
     });
+  } else {
+    // No cache, show loading
+    statusBar.showLoading();
   }
 
   // Register polling task
@@ -219,12 +236,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     immediate: true,
   });
 
+  // Register cache check task (independent from quota polling)
+  scheduler.register({
+    name: "cacheCheck",
+    interval: config.cacheCheckInterval * 1000,
+    execute: checkCacheThreshold,
+    immediate: false, // First check after interval, not immediately
+  });
+
   // Start polling
   scheduler.start("refresh");
+  scheduler.start("cacheCheck");
 
   // Listen for configuration changes
   configManager.onConfigChange((newConfig) => {
     scheduler.updateInterval("refresh", newConfig.pollingInterval * 1000);
+    scheduler.updateInterval("cacheCheck", newConfig.cacheCheckInterval * 1000);
     setDebugMode(newConfig.debugMode);
   });
 
@@ -233,129 +260,61 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 async function processQuotaUpdate(snapshot: QuotaSnapshot): Promise<void> {
   const config = configManager.getConfig();
-  const strategyManager = new QuotaStrategyManager();
-  
-  // 1. Dynamically infer quota pools from server data
-  const models = snapshot.models || [];
-  const quotaPoolsMap = new Map<string, typeof models>();
-  for (const model of models) {
-    const poolKey = model.remainingPercentage.toFixed(1);
-    if (!quotaPoolsMap.has(poolKey)) {
-      quotaPoolsMap.set(poolKey, []);
-    }
-    quotaPoolsMap.get(poolKey)!.push(model);
-  }
 
-  // 2. Match quota pools to UI groups
-  const poolUsageMap = new Map<'gemini' | 'other', number>();
-  for (const [, poolModels] of quotaPoolsMap) {
-    const poolRemaining = poolModels[0].remainingPercentage;
-    let geminiCount = 0;
-    let otherCount = 0;
-    for (const model of poolModels) {
-      const group = strategyManager.getGroupForModel(model.modelId, model.label);
-      if (group.id === 'gemini') geminiCount++;
-      else otherCount++;
-    }
-    const uiGroup: 'gemini' | 'other' = geminiCount > otherCount ? 'gemini' : 'other';
-    if (poolUsageMap.has(uiGroup)) {
-      poolUsageMap.set(uiGroup, Math.min(poolUsageMap.get(uiGroup)!, poolRemaining));
-    } else {
-      poolUsageMap.set(uiGroup, poolRemaining);
-    }
-  }
+  // Use ViewModel to aggregate and detect active group
+  await quotaViewModel.updateFromSnapshot(snapshot);
 
-  const geminiAvg = poolUsageMap.get('gemini') ?? 0;
-  const otherAvg = poolUsageMap.get('other') ?? 0;
-
-  // 3. Determine active state
-  
-  // Note: We use persisted lastActiveCategory
-  const activeCategory = quotaHistoryManager.getLastActiveCategory();
-  
-  const displayPct = activeCategory === 'gemini' ? geminiAvg : otherAvg;
-  quotaHistoryManager.setLastDisplayPercentage(Math.round(displayPct));
-
+  // Get cache info
   const cache = await cacheManager.getCacheInfo();
-  
-  statusBar.update(snapshot, cache, config.showQuota, config.showCacheSize, activeCategory, undefined, config.quotaWarningThreshold, config.quotaCriticalThreshold);
-
   quotaHistoryManager.setLastCacheSize(cache.totalSize);
   quotaHistoryManager.setLastCacheDetails(cache.brainSize, cache.conversationsSize);
 
-  // 4. Record history
-  const quotaPoolRecord = { gemini: geminiAvg, other: otherAvg };
-  await quotaHistoryManager.record(quotaPoolRecord);
-
-  // 5. Calculate chart data
-  const buckets = quotaHistoryManager.calculateUsageBuckets(
-    config.historyDisplayMinutes,
-    config.pollingInterval / 60
+  // Update StatusBar from ViewModel
+  const statusData = quotaViewModel.getStatusBarData();
+  statusBar.updateFromViewModel(
+    statusData,
+    cache,
+    config.statusBarShowQuota,
+    config.statusBarShowCache,
+    config.statusBarStyle,
+    config.statusBarThresholdWarning,
+    config.statusBarThresholdCritical
   );
 
-  // 6. Inject colors
-  const poolColorMap: Record<string, string> = {
-    gemini: '#69F0AE',
-    other: '#FFAB40'
-  };
+  // Update Sidebar from ViewModel
+  sidebarProvider.updateFromViewModel(
+    quotaViewModel.getSidebarQuotas(),
+    cache,
+    quotaViewModel.getChartData()
+  );
 
-  const coloredBuckets = buckets.map(b => ({
-    ...b,
-    items: b.items.map(item => ({
-      ...item,
-      color: poolColorMap[item.groupId] || '#888'
-    }))
+  // Update tree cache for next startup
+  await updateTreeCache(cache);
+}
+
+/** Update tree cache for cache-first startup */
+async function updateTreeCache(cache: import("./utils/types").CacheInfo): Promise<void> {
+  const brainTasks = cache.brainTasks.map(task => ({
+    id: task.id,
+    title: task.title,
+    size: formatBytes(task.size || 0),
+    lastModified: task.lastModified
   }));
 
-  const maxUsage = quotaHistoryManager.getMaxUsage(buckets);
+  // Get code contexts from sidebar if available
+  const codeContexts: import("./core/quota_history").CachedContextInfo[] = [];
 
-  // 7. Calculate predictive analysis
-  const activeGroupId = activeCategory;
-  const currentRemaining = activeCategory === 'gemini' ? geminiAvg : otherAvg;
-
-  let totalUsage = 0;
-  for (const bucket of buckets) {
-    for (const item of bucket.items) {
-      if (item.groupId === activeGroupId) {
-        totalUsage += item.usage;
-      }
-    }
-  }
-
-  const displayHours = config.historyDisplayMinutes / 60;
-  const usageRate = displayHours > 0 ? totalUsage / displayHours : 0;
-  
-  let runway = 'Stable';
-  if (usageRate > 0 && currentRemaining > 0) {
-    const hoursUntilEmpty = currentRemaining / usageRate;
-    if (hoursUntilEmpty > 168) runway = '>7d';
-    else if (hoursUntilEmpty > 24) runway = `~${Math.round(hoursUntilEmpty / 24)}d`;
-    else if (hoursUntilEmpty > 1) runway = `~${Math.round(hoursUntilEmpty)}h`;
-    else runway = `~${Math.round(hoursUntilEmpty * 60)}m`;
-  }
-
-  quotaHistoryManager.setLastPrediction(usageRate, runway, activeGroupId);
-  const activeGroup = strategyManager.getGroups().find(g => g.id === activeGroupId);
-
-  sidebarProvider.update(snapshot, cache, {
-    buckets: coloredBuckets,
-    maxUsage,
-    displayMinutes: config.historyDisplayMinutes,
-    interval: config.pollingInterval,
-    prediction: {
-      groupId: activeGroupId,
-      groupLabel: activeGroup?.label || activeGroupId,
-      usageRate,
-      runway,
-      remaining: currentRemaining
-    }
+  await quotaHistoryManager.setLastTreeState({
+    brainTasks,
+    codeContexts,
+    lastUpdated: Date.now()
   });
 }
 
 async function refreshData(): Promise<void> {
   const config = configManager.getConfig();
 
-  if (quotaManager && config.showQuota) {
+  if (quotaManager && config.statusBarShowQuota) {
     try {
       const quota = await quotaManager.fetchQuota();
       if (quota) {
@@ -368,34 +327,54 @@ async function refreshData(): Promise<void> {
     }
   }
 
-  // Fallback: Quota fetch failed or disabled
+  // Fallback: Quota fetch failed or disabled - use cached ViewModel state
   const cache = await cacheManager.getCacheInfo();
-  const activeCategory = quotaHistoryManager.getLastActiveCategory();
 
-  statusBar.update(null, cache, config.showQuota, config.showCacheSize, activeCategory, undefined, config.quotaWarningThreshold, config.quotaCriticalThreshold);
-  
-  const buckets = quotaHistoryManager.calculateUsageBuckets(
-    config.historyDisplayMinutes,
-    config.pollingInterval / 60
+  const statusData = quotaViewModel.getStatusBarData();
+  statusBar.updateFromViewModel(
+    statusData,
+    cache,
+    config.statusBarShowQuota,
+    config.statusBarShowCache,
+    config.statusBarStyle,
+    config.statusBarThresholdWarning,
+    config.statusBarThresholdCritical
   );
 
-  const strategyManager = new QuotaStrategyManager();
-  const coloredBuckets = buckets.map(b => ({
-    ...b,
-    items: b.items.map(item => ({
-      ...item,
-      color: strategyManager.getGroups().find(g => g.id === item.groupId)?.themeColor || '#888'
-    }))
-  }));
+  sidebarProvider.updateFromViewModel(
+    quotaViewModel.getSidebarQuotas(),
+    cache,
+    quotaViewModel.getChartData()
+  );
+}
 
-  const maxUsage = quotaHistoryManager.getMaxUsage(buckets);
-  
-  sidebarProvider.update(null, cache, {
-    buckets: coloredBuckets,
-    maxUsage,
-    displayMinutes: config.historyDisplayMinutes,
-    interval: config.pollingInterval
-  });
+/** Check cache threshold and show warning if exceeded */
+async function checkCacheThreshold(): Promise<void> {
+  const config = configManager.getConfig();
+  const cache = await cacheManager.getCacheInfo();
+  const cacheMB = cache.totalSize / (1024 * 1024);
+
+  if (cacheMB > config.cacheWarningThreshold) {
+    // Check if we already warned within 24 hours
+    const lastWarned = quotaHistoryManager.getLastCacheWarningTime();
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (!lastWarned || now - lastWarned > oneDay) {
+      const action = await vscode.window.showWarningMessage(
+        `Cache size (${formatBytes(cache.totalSize)}) exceeds threshold (${config.cacheWarningThreshold}MB). Consider cleaning.`,
+        "Clean Now",
+        "Remind Later"
+      );
+
+      if (action === "Clean Now") {
+        await vscode.commands.executeCommand("gagp.cleanCache");
+      }
+
+      // Record warning time (even if user dismissed or clicked "Remind Later")
+      await quotaHistoryManager.setLastCacheWarningTime(now);
+    }
+  }
 }
 
 export function deactivate(): void {

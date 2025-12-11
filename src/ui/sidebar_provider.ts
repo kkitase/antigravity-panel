@@ -39,6 +39,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
   public static readonly viewType = "gagp.sidebar";
   private _view?: vscode.WebviewView;
   private _quota: QuotaSnapshot | null = null;
+  private _quotas: QuotaDisplayItem[] = [];  // From ViewModel
   private _cache: CacheInfo | null = null;
   private _usageChartData: UsageChartData | null = null;
   private _contexts: Array<{ id: string; name: string; size: number }> = [];
@@ -169,7 +170,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         }
 
         await fs.promises.unlink(filePath);
-        vscode.commands.executeCommand("gagp.refreshQuota");
+        await vscode.commands.executeCommand("gagp.refreshQuota");
       } catch (e) {
         vscode.window.showErrorMessage(`Failed to delete file: ${e}`);
       }
@@ -205,17 +206,82 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
     if (usageChartData) {
       this._usageChartData = usageChartData;
     }
-    
+
     if (cache.brainTasks) {
       await this._preloadTasksData(cache.brainTasks);
     }
-    
+
     this._tasksLoading = false;
     this._postStateUpdate();
 
     if (this._contextsLoading) {
       await this._loadContexts();
     }
+  }
+
+  /**
+   * Update from ViewModel (unified data source)
+   * Used for cache-first startup and normal updates
+   */
+  async updateFromViewModel(
+    quotas: QuotaDisplayItem[],
+    cache: CacheInfo,
+    chartData: UsageChartData
+  ): Promise<void> {
+    this._quotas = quotas;
+    this._cache = cache;
+    this._usageChartData = chartData;
+
+    if (cache.brainTasks) {
+      await this._preloadTasksData(cache.brainTasks);
+    }
+
+    this._tasksLoading = false;
+    this._postStateUpdate();
+
+    // Always reload contexts to reflect file system changes
+    await this._loadContexts();
+  }
+
+  /**
+   * Update from cache first (for instant startup rendering)
+   * Uses cached tree state to render immediately without waiting for file system
+   */
+  updateFromCacheFirst(
+    quotas: QuotaDisplayItem[],
+    chartData: UsageChartData,
+    cachedTreeState: import("../core/quota_history").CachedTreeState | null
+  ): void {
+    this._quotas = quotas;
+    this._usageChartData = chartData;
+
+    // Apply cached tree data for instant rendering
+    if (cachedTreeState) {
+      // Pre-populate task size cache from cached data
+      for (const task of cachedTreeState.brainTasks) {
+        this._taskSizeCache.set(task.id, task.size);
+      }
+
+      // Create a minimal cache object for rendering
+      this._cache = {
+        brainSize: 0,
+        conversationsSize: 0,
+        totalSize: 0,
+        brainCount: cachedTreeState.brainTasks.length,
+        conversationsCount: 0,
+        brainTasks: cachedTreeState.brainTasks.map(t => ({
+          id: t.id,
+          title: t.title,
+          lastModified: t.lastModified,
+          size: 0  // Will be updated when real cache info arrives
+        }))
+      };
+
+      // Mark as not loading since we have cached data
+      this._tasksLoading = false;
+    }
+
+    this._postStateUpdate();
   }
 
   private async _preloadTasksData(tasks: BrainTask[]): Promise<void> {
@@ -292,8 +358,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
   private _postStateUpdate(): void {
     if (!this._view) return;
 
-    // 使用 StrategyManager 进行聚合
-    const quotas = this._aggregateQuotas();
+    // Use ViewModel quotas if available, otherwise fallback to legacy aggregation
+    const quotas = this._quotas.length > 0 ? this._quotas : this._aggregateQuotas();
     const cache = this._cache;
     
     // 构建任务数据 (不变)
@@ -343,11 +409,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
     debugLog('Aggregating quotas', { mode, modelCount: models.length });
 
     if (mode === 'groups') {
+      const showGptQuota = configManager.get('showGptQuota', false);
       const groups = strategyManager.getGroups();
-      return groups.map(group => {
+
+      // Filter out GPT group if showGptQuota is disabled
+      const filteredGroups = showGptQuota ? groups : groups.filter(g => g.id !== 'gpt');
+
+      return filteredGroups.map(group => {
         // Find models belonging to this group
         const groupModels = models.filter(m => strategyManager.getGroupForModel(m.modelId, m.label).id === group.id);
-        
+
         let remaining = 0;
         let resetTime = 'N/A';
         let hasData = false;
@@ -372,30 +443,35 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
       });
     } else {
       // Models Mode
-      const displayModels = [...models];
+      const showGptQuota = configManager.get('showGptQuota', false);
+
+      // Filter out GPT models if showGptQuota is disabled
+      const filteredModels = showGptQuota
+        ? [...models]
+        : models.filter(m => strategyManager.getGroupForModel(m.modelId, m.label).id !== 'gpt');
 
       // Sort by Config Order
       const allConfigModels: ModelDefinition[] = []; // Use any or import ModelDefinition to avoid import updates
       strategyManager.getGroups().forEach(g => allConfigModels.push(...g.models));
 
-      displayModels.sort((a, b) => {
+      filteredModels.sort((a, b) => {
         const defA = strategyManager.getModelDefinition(a.modelId, a.label);
         const defB = strategyManager.getModelDefinition(b.modelId, b.label);
-        
+
         const indexA = defA ? allConfigModels.indexOf(defA) : 9999;
         const indexB = defB ? allConfigModels.indexOf(defB) : 9999;
-        
+
         return indexA - indexB;
       });
-      
-      debugLog('Sorted models', { first: displayModels[0]?.modelId, configuredCount: allConfigModels.length });
 
-      return displayModels.map(m => {
+      debugLog('Sorted models', { first: filteredModels[0]?.modelId, configuredCount: allConfigModels.length });
+
+      return filteredModels.map(m => {
         const group = strategyManager.getGroupForModel(m.modelId, m.label);
         const configuredName = strategyManager.getModelDisplayName(m.modelId, m.label);
         // Use configured name -> server label -> model ID
         const displayName = configuredName || m.label || m.modelId;
-        
+
         return {
           id: m.modelId,
           label: displayName,
@@ -418,17 +494,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
 
   private _buildTaskFolders(): FolderItem[] {
     const tasks = this._cache?.brainTasks || [];
-    return tasks.map(task => {
+    const configManager = new ConfigManager();
+    const hideEmpty = configManager.get('cacheHideEmptyFolders', false);
+
+    const folders = tasks.map(task => {
       const files = this._taskFilesCache.get(task.id) || [];
       const size = this._taskSizeCache.get(task.id) || 'Loading...';
       const mtime = this._taskMtimeCache.get(task.id) || task.lastModified;
-      
+
       const parts = task.id.split('-');
       const shortId = parts.length > 0 ? parts[0] : task.id;
-      const title = task.title 
+      const title = task.title
         ? (task.title.length > 30 ? task.title.substring(0, 30) + "..." : task.title)
         : `Task ${shortId}`;
-      
+
       return {
         id: task.id,
         label: title,
@@ -436,15 +515,27 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         mtime: mtime,
         files: this._expandedTasks.has(task.id) ? files : [],
         expanded: this._expandedTasks.has(task.id),
-        type: 'task'
+        type: 'task',
+        _fileCount: files.length  // Helper for filtering
       };
     });
+
+    // Filter empty folders if configured
+    const result = hideEmpty
+      ? folders.filter(f => f._fileCount > 0)
+      : folders;
+
+    // Remove helper property
+    return result.map(({ _fileCount, ...folder }) => folder) as FolderItem[];
   }
 
   private _buildContextFolders(): FolderItem[] {
-    return this._contexts.map(ctx => {
+    const configManager = new ConfigManager();
+    const hideEmpty = configManager.get('cacheHideEmptyFolders', false);
+
+    const folders = this._contexts.map(ctx => {
       const files = this._contextFilesCache.get(ctx.id) || [];
-      
+
       return {
         id: ctx.id,
         label: ctx.name,
@@ -452,9 +543,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         mtime: 0,
         files: this._expandedContexts.has(ctx.id) ? files : [],
         expanded: this._expandedContexts.has(ctx.id),
-        type: 'context'
+        type: 'context',
+        _fileCount: files.length  // Helper for filtering
       };
     });
+
+    // Filter empty folders if configured
+    const result = hideEmpty
+      ? folders.filter(f => f._fileCount > 0)
+      : folders;
+
+    // Remove helper property
+    return result.map(({ _fileCount, ...folder }) => folder) as FolderItem[];
   }
 
   private async _getCodeContextsAsync(): Promise<Array<{ id: string; name: string; size: number }>> {
