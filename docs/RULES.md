@@ -41,6 +41,7 @@ English | [中文文档](RULES_zh.md)
 - `npm run lint` - ESLint
 - `npm run build` - Compile
 - `npm test` - Unit tests
+- `git status` - Review staged/untracked files
 
 ## Git
 

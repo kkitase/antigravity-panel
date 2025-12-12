@@ -41,6 +41,7 @@
 - `npm run lint` - ESLint
 - `npm run build` - 编译
 - `npm test` - 单元测试
+- `git status` - 审查暂存/未跟踪文件
 
 ## Git
 
