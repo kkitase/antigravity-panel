@@ -306,19 +306,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         this._taskMtimeCache.set(task.id, dirStat.mtimeMs);
         
         const entries = await fs.promises.readdir(taskPath, { withFileTypes: true });
-        const files: FileItem[] = [];
-        let totalSize = 0;
         
-        for (const entry of entries) {
-          if (entry.isFile()) {
-            const fileStat = await fs.promises.stat(path.join(taskPath, entry.name));
-            totalSize += fileStat.size;
-            files.push({
-              name: entry.name,
-              path: path.join(taskPath, entry.name)
-            });
-          }
-        }
+        // Parallel file stat for better performance
+        const fileEntries = entries.filter(e => e.isFile());
+        const fileStats = await Promise.all(
+          fileEntries.map(e => fs.promises.stat(path.join(taskPath, e.name)))
+        );
+        
+        const files: FileItem[] = fileEntries.map((entry) => ({
+          name: entry.name,
+          path: path.join(taskPath, entry.name)
+        }));
+        const totalSize = fileStats.reduce((sum, stat) => sum + stat.size, 0);
         
         // 排序：.md 文件优先
         files.sort((a, b) => {
@@ -577,51 +576,57 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
       }
 
       const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-      const contexts: Array<{ id: string; name: string; size: number }> = [];
-
-      for (const entry of entries) {
-        if (entry.isDirectory() && entry.name !== "no_repo") {
-          const fullPath = path.join(dir, entry.name);
-          const parts = entry.name.split("_");
-          const hash = parts.pop() || "";
-          const projectName = parts.join("_") || entry.name;
-          const displayName = `${projectName} (${hash.substring(0, 8)}...)`;
+      
+      // Filter directories first, then process in parallel for better performance
+      const directories = entries.filter(e => e.isDirectory() && e.name !== "no_repo");
+      
+      const contexts = await Promise.all(directories.map(async (entry) => {
+        const fullPath = path.join(dir, entry.name);
+        const parts = entry.name.split("_");
+        const hash = parts.pop() || "";
+        const projectName = parts.join("_") || entry.name;
+        const displayName = `${projectName} (${hash.substring(0, 8)}...)`;
+        
+        // Parallel: get size and file list simultaneously
+        const [size, subEntries] = await Promise.all([
+          this._getDirSizeAsync(fullPath),
+          fs.promises.readdir(fullPath, { withFileTypes: true })
+        ]);
+        
+        const files: FileItem[] = subEntries
+          .filter(e => e.isFile())
+          .map(e => ({
+            name: e.name,
+            path: path.join(fullPath, e.name)
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
           
-          const size = await this._getDirSizeAsync(fullPath);
-          
-          // 获取文件列表
-          const subEntries = await fs.promises.readdir(fullPath, { withFileTypes: true });
-          const files: FileItem[] = subEntries
-            .filter(e => e.isFile())
-            .map(e => ({
-              name: e.name,
-              path: path.join(fullPath, e.name)
-            }))
-            .sort((a, b) => a.name.localeCompare(b.name));
-            
-          this._contextFilesCache.set(entry.name, files);
-          
-          contexts.push({ id: entry.name, name: displayName, size });
-        }
-      }
+        this._contextFilesCache.set(entry.name, files);
+        
+        return { id: entry.name, name: displayName, size };
+      }));
+      
       return contexts.sort((a, b) => b.size - a.size);
     } catch { return []; }
   }
 
   private async _getDirSizeAsync(dirPath: string): Promise<number> {
     try {
-      let total = 0;
       const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
-      for (const entry of entries) {
+      
+      // Parallel traversal for better performance
+      const sizes = await Promise.all(entries.map(async (entry) => {
         const filePath = path.join(dirPath, entry.name);
         if (entry.isFile()) {
           const stat = await fs.promises.stat(filePath);
-          total += stat.size;
+          return stat.size;
         } else if (entry.isDirectory()) {
-          total += await this._getDirSizeAsync(filePath);
+          return this._getDirSizeAsync(filePath);
         }
-      }
-      return total;
+        return 0;
+      }));
+      
+      return sizes.reduce((sum, size) => sum + size, 0);
     } catch { return 0; }
   }
 }
