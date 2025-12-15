@@ -6,7 +6,7 @@
 
 import { retry } from "../utils/retry";
 import { httpRequest } from "../utils/http_client";
-import { debugLog } from "../utils/logger";
+
 import {
   ModelQuotaInfo,
   PromptCreditsInfo,
