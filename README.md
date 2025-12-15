@@ -1,21 +1,23 @@
 English | [中文文档](README_zh.md)
 
-# Antigravity Panel
+# Toolkit for Antigravity
 
 > Monitor your AI quota usage and manage cache with ease
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat&cacheSeconds=3600)](LICENSE)
-[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.104.0-007ACC?logo=visual-studio-code&style=flat&cacheSeconds=3600)](https://code.visualstudio.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat&cacheSeconds=10800)](LICENSE)
+[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.104.0-007ACC?logo=visual-studio-code&style=flat&cacheSeconds=10800)](https://code.visualstudio.com/)
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/n2ns.antigravity-panel?style=flat&label=version&cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
-[![Open VSX Version](https://img.shields.io/open-vsx/v/n2ns/antigravity-panel?style=flat&label=open%20vsx&cacheSeconds=3600)](https://open-vsx.org/extension/n2ns/antigravity-panel)
-[![Downloads](https://img.shields.io/open-vsx/dt/n2ns/antigravity-panel?style=flat&cacheSeconds=3600)](https://open-vsx.org/extension/n2ns/antigravity-panel)
-[![Last Commit](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&cacheSeconds=3600)](https://github.com/n2ns/antigravity-panel/commits/main)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/n2ns.antigravity-panel?style=flat&label=version&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
+[![Open VSX Version](https://img.shields.io/open-vsx/v/n2ns/antigravity-panel?style=flat&label=open%20vsx&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
+[![Downloads](https://img.shields.io/open-vsx/dt/n2ns/antigravity-panel?style=flat&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
+[![Last Commit](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/commits/main)
 
-**Antigravity Panel** helps you stay on top of your AI model usage in **Google Antigravity IDE**. Get real-time quota monitoring, usage trends, and powerful cache management—all in one beautiful sidebar panel.
+**Toolkit for Antigravity** (formerly *Antigravity Panel*) helps you stay on top of your AI model usage in **Google Antigravity IDE**. Get real-time quota monitoring, usage trends, and powerful cache management—all in one beautiful sidebar panel.
 
-## ✨ Why Antigravity Panel?
+> **📢 Notice:** We have renamed from "Antigravity Panel" to "**Toolkit for Antigravity**" to better reflect our vision of building a comprehensive utility suite for the ecosystem. Same great features, just a more accurate name!
+
+## ✨ Why Toolkit for Antigravity?
 
 - 🎯 **Track your quota** - Real-time monitoring with visual warnings
 - 📊 **Understand your usage** - Interactive charts showing usage trends
@@ -147,11 +149,14 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `gagp` to c
 | **Warning Threshold** | `500 MB` | Show warning when cache exceeds this size |
 | **Hide Empty Folders** | `✗` | Hide empty folders in Brain and Code Tracker trees |
 
-## 🔒 Privacy
+## 🔒 Privacy & Safety Disclaimer
 
 **Your data stays yours.**
 
 Antigravity Panel does not collect, transmit, or store any user data. All operations are performed locally on your machine. The extension only communicates with your local Antigravity Language Server—nothing is sent to external servers.
+
+**Experimental Feature Notice:**
+The *Smart Quota Monitoring* feature relies on internal metrics exposed by the local Antigravity environment. This functionality is experimental and provided "as-is" to help users better understand their personal usage. It is not an official Google product and may be subject to changes in future IDE updates.
 
 ## 🤝 Contributing
 

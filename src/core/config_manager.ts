@@ -18,6 +18,12 @@ export const MIN_POLLING_INTERVAL = 60;
 /** Minimum cache check interval in seconds */
 export const MIN_CACHE_CHECK_INTERVAL = 30;
 
+/** Default quota API path */
+export const DEFAULT_QUOTA_API_PATH = "/exa.language_server_pb.LanguageServerService/GetUserStatus";
+
+/** Default server hostname */
+export const DEFAULT_SERVER_HOST = "127.0.0.1";
+
 /**
  * Configuration reader interface - abstracts config source
  */
@@ -64,6 +70,9 @@ export class ConfigManager {
       autoCleanCache: this.reader.get<boolean>("autoCleanCache", false),
       // Debug Settings
       debugMode: this.reader.get<boolean>("debugMode", false),
+      // Advanced Settings
+      advancedQuotaApiPath: this.reader.get<string>("advancedQuotaApiPath", DEFAULT_QUOTA_API_PATH),
+      advancedServerHost: this.reader.get<string>("advancedServerHost", DEFAULT_SERVER_HOST),
     };
   }
 

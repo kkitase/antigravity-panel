@@ -176,6 +176,12 @@ export interface GagpConfig {
   // ===== Debug Settings =====
   /** Whether to enable debug mode */
   debugMode: boolean;
+
+  // ===== Advanced Settings =====
+  /** Custom API path for quota metrics (advanced users only) */
+  advancedQuotaApiPath: string;
+  /** Custom server hostname for quota metrics (advanced users only) */
+  advancedServerHost: string;
 }
 
 // ==================== Callback Types ====================

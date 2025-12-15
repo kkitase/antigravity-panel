@@ -1,14 +1,15 @@
 {
-    "extension.displayName": "Antigravity Panel",
-    "extension.description": "Google Antigravity IDE 的配额监控、历史趋势、缓存管理和配置快捷方式",
+    "extension.displayName": "Toolkit for Antigravity",
+    "extension.description": "Google Antigravity IDE 用户的必备工具箱。提供本地配额监控、缓存管理和系统指标可视化。",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
-    "views.gagp.sidebar.name": "Antigravity Panel",
+    "views.gagp.sidebar.name": "Toolkit",
     "command.openPanel.title": "打开面板",
     "command.showCacheSize.title": "显示缓存大小",
     "command.cleanCache.title": "清理缓存",
     "command.refreshQuota.title": "刷新配额",
     "command.openSettings.title": "打开设置",
+    "command.showDisclaimer.title": "关于",
     "config.statusBar.title": "状态栏",
     "config.quota.title": "配额",
     "config.cache.title": "缓存",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "缓存大小超过此值（MB）时显示警告（默认：500MB）",
     "config.cacheHideEmptyFolders.description": "在 Brain 和 Code Tracker 树视图中隐藏空目录",
     "config.autoCleanCache.description": "⚠️ 未实现 - 缓存超过警告阈值时自动清理（需要确认）",
-    "config.debugMode.description": "启用调试模式：在 UI 中显示原始模型 ID，并将详细日志输出到 'Antigravity Panel' 通道（视图 > 输出）"
+    "config.debugMode.description": "启用调试日志输出到 'Antigravity Panel' 输出通道",
+    "config.advanced.title": "高级",
+    "config.advancedQuotaApiPath.description": "⚠️ 高级：自定义配额查询 API 端点。修改风险自负，需要重新加载扩展。",
+    "config.advancedServerHost.description": "⚠️ 高级：自定义配额查询服务器地址。默认：127.0.0.1（本地）。修改风险自负。"
 }

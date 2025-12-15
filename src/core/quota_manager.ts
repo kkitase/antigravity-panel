@@ -25,11 +25,15 @@ export type { ModelQuotaInfo, PromptCreditsInfo, QuotaSnapshot };
 export interface QuotaManagerConfig {
   port: number;
   csrfToken: string;
+  apiPath: string;
+  host: string;
 }
 
 export class QuotaManager {
   private readonly port: number;
   private readonly csrfToken: string;
+  private readonly apiPath: string;
+  private readonly host: string;
   private updateCallback?: QuotaUpdateCallback;
   private errorCallback?: ErrorCallback;
 
@@ -39,15 +43,19 @@ export class QuotaManager {
   protected constructor(config: QuotaManagerConfig) {
     this.port = config.port;
     this.csrfToken = config.csrfToken;
+    this.apiPath = config.apiPath;
+    this.host = config.host;
   }
 
   /**
    * Static factory method: create instance from LanguageServerInfo
    */
-  static create(serverInfo: LanguageServerInfo): QuotaManager {
+  static create(serverInfo: LanguageServerInfo, apiPath: string, host: string): QuotaManager {
     return new QuotaManager({
       port: serverInfo.port,
       csrfToken: serverInfo.csrfToken,
+      apiPath,
+      host,
     });
   }
 
@@ -94,7 +102,7 @@ export class QuotaManager {
    */
   private async doFetchQuota(): Promise<QuotaSnapshot | null> {
     const data = await this.request<ServerUserStatusResponse>(
-      "/exa.language_server_pb.LanguageServerService/GetUserStatus",
+      this.apiPath,
       {
         metadata: {
           ideName: "antigravity",
@@ -103,7 +111,6 @@ export class QuotaManager {
         },
       }
     );
-    debugLog('Server Response', data);
     return this.parseResponse(data);
   }
 
@@ -112,7 +119,7 @@ export class QuotaManager {
    */
   protected async request<T>(path: string, body: object): Promise<T> {
     const response = await httpRequest<T>({
-      hostname: "127.0.0.1",
+      hostname: this.host,
       port: this.port,
       path,
       method: "POST",

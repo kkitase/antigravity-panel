@@ -1,14 +1,15 @@
 {
-    "extension.displayName": "Antigravity Panel",
-    "extension.description": "Quota monitoring with history trends, cache management, and config shortcuts for Google Antigravity IDE",
+    "extension.displayName": "Toolkit for Antigravity",
+    "extension.description": "The essential toolkit for Google Antigravity IDE users. Monitor quotas, manage caches, and visualize system metrics.",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
-    "views.gagp.sidebar.name": "Antigravity Panel",
+    "views.gagp.sidebar.name": "Toolkit",
     "command.openPanel.title": "Open Panel",
     "command.showCacheSize.title": "Show Cache Size",
     "command.cleanCache.title": "Clean Cache",
     "command.refreshQuota.title": "Refresh Quota",
     "command.openSettings.title": "Open Settings",
+    "command.showDisclaimer.title": "About",
     "config.statusBar.title": "Status Bar",
     "config.quota.title": "Quota",
     "config.cache.title": "Cache",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "Show warning when cache size exceeds this value in MB (default: 500MB)",
     "config.cacheHideEmptyFolders.description": "Hide empty folders in Brain and Code Tracker tree views",
     "config.autoCleanCache.description": "⚠️ NOT IMPLEMENTED - Automatically clean cache when it exceeds the warning threshold (requires confirmation)",
-    "config.debugMode.description": "Enable debug mode: show raw model IDs in UI and output detailed logs to 'Antigravity Panel' channel (View > Output)"
+    "config.debugMode.description": "Enable debug logging to 'Antigravity Panel' output channel",
+    "config.advanced.title": "Advanced",
+    "config.advancedQuotaApiPath.description": "⚠️ Advanced: Custom API endpoint for quota metrics. Modify at your own risk. Requires extension reload.",
+    "config.advancedServerHost.description": "⚠️ Advanced: Custom server hostname for quota metrics. Default: 127.0.0.1 (localhost). Modify at your own risk."
 }

@@ -1,6 +1,6 @@
 {
     "extension.displayName": "Antigravity Panel",
-    "extension.description": "Google Antigravity IDE 的配額監控、歷史趨勢、快取管理和配置快捷方式",
+    "extension.description": "專為 Google Antigravity IDE 設計的本機配額視覺化、快取管理與工作流程增強輔助工具",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
     "views.gagp.sidebar.name": "Antigravity Panel",
@@ -9,6 +9,7 @@
     "command.cleanCache.title": "清理快取",
     "command.refreshQuota.title": "重新整理配額",
     "command.openSettings.title": "開啟設定",
+    "command.showDisclaimer.title": "關於",
     "config.statusBar.title": "狀態列",
     "config.quota.title": "配額",
     "config.cache.title": "快取",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "快取大小超過此值（MB）時顯示警告（預設：500MB）",
     "config.cacheHideEmptyFolders.description": "在 Brain 和 Code Tracker 樹狀視圖中隱藏空目錄",
     "config.autoCleanCache.description": "⚠️ 未實作 - 快取超過警告閾值時自動清理（需要確認）",
-    "config.debugMode.description": "啟用偵錯模式：在 UI 中顯示原始模型 ID，並將詳細記錄輸出到 'Antigravity Panel' 通道（檢視 > 輸出）"
+    "config.debugMode.description": "啟用偵錯記錄輸出到 'Antigravity Panel' 輸出通道",
+    "config.advanced.title": "進階",
+    "config.advancedQuotaApiPath.description": "⚠️ 進階：自訂配額查詢 API 端點。修改風險自負，需要重新載入擴充功能。",
+    "config.advancedServerHost.description": "⚠️ 進階：自訂配額查詢伺服器地址。預設：127.0.0.1（本機）。修改風險自負。"
 }

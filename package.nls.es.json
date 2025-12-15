@@ -1,6 +1,6 @@
 {
     "extension.displayName": "Antigravity Panel",
-    "extension.description": "Monitorización de cuotas con historial de tendencias, gestión de caché y atajos de configuración para Google Antigravity IDE",
+    "extension.description": "Una utilidad complementaria para Google Antigravity IDE con visualización de cuota local, gestión de caché y herramientas de mejora del flujo de trabajo",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
     "views.gagp.sidebar.name": "Antigravity Panel",
@@ -9,6 +9,7 @@
     "command.cleanCache.title": "Limpiar caché",
     "command.refreshQuota.title": "Actualizar cuota",
     "command.openSettings.title": "Abrir configuración",
+    "command.showDisclaimer.title": "Acerca de",
     "config.statusBar.title": "Barra de estado",
     "config.quota.title": "Cuota",
     "config.cache.title": "Caché",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "Mostrar advertencia cuando el tamaño de caché exceda este valor en MB (predeterminado: 500MB)",
     "config.cacheHideEmptyFolders.description": "Ocultar carpetas vacías en las vistas de árbol de Brain y Code Tracker",
     "config.autoCleanCache.description": "⚠️ NO IMPLEMENTADO - Limpiar caché automáticamente cuando exceda el umbral de advertencia (requiere confirmación)",
-    "config.debugMode.description": "Habilitar modo de depuración: mostrar IDs de modelos sin procesar en UI y logs detallados en el canal 'Antigravity Panel' (Ver > Salida)"
+    "config.debugMode.description": "Habilitar registro de depuración en el canal de salida 'Antigravity Panel'",
+    "config.advanced.title": "Avanzado",
+    "config.advancedQuotaApiPath.description": "⚠️ Avanzado: Endpoint de API personalizado para métricas de cuota. Modifique bajo su propio riesgo. Requiere recargar la extensión.",
+    "config.advancedServerHost.description": "⚠️ Avanzado: Nombre de host del servidor personalizado para métricas de cuota. Por defecto: 127.0.0.1 (localhost). Modifique bajo su propio riesgo."
 }

@@ -5,6 +5,8 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 ## [1.2.0] - 2025-12-12
 
 ### Improved
+### Changed
+- **Rebranding**: Renamed extension to **Toolkit for Antigravity** (formerly *Antigravity Panel*) to align with our long-term product vision
 - **Architecture Optimization**: Refactored `ConfigManager` and `WebviewHtmlBuilder` for better testability
   - Introduced `IConfigReader` interface for dependency injection
   - Removed direct `vscode` module dependency from core modules
@@ -16,6 +18,8 @@ English | [中文文档](docs/CHANGELOG_zh.md)
   - `config_manager.test.ts`: 18 new tests
   - `html_builder.test.ts`: 13 new tests
   - Total: 168 tests passing
+- **Advanced Configuration**: Added customizable Quota Server Host setting (`gagp.advancedServerHost`) for complex network environments
+- **API Path Config**: Added configurable API endpoint path (`gagp.advancedQuotaApiPath`)
 
 ## [1.1.0] - 2025-12-11
 

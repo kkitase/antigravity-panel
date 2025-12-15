@@ -85,7 +85,7 @@ suite('QuotaManager Test Suite', () => {
     };
 
     setup(() => {
-        manager = new TestQuotaManager({ port: 1234, csrfToken: 'abc' });
+        manager = new TestQuotaManager({ port: 1234, csrfToken: 'abc', apiPath: '/test/api', host: '127.0.0.1' });
     });
 
     test('should fetch and parse quota correctly', async () => {

@@ -1,6 +1,6 @@
 {
     "extension.displayName": "Antigravity Panel",
-    "extension.description": "Monitoramento de cotas com histórico de tendências, gerenciamento de cache e atalhos de configuração para Google Antigravity IDE",
+    "extension.description": "Um utilitário complementar para o Google Antigravity IDE com visualização de cota local, gerenciamento de cache e ferramentas de fluxo de trabalho",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
     "views.gagp.sidebar.name": "Antigravity Panel",
@@ -9,6 +9,7 @@
     "command.cleanCache.title": "Limpar Cache",
     "command.refreshQuota.title": "Atualizar Cota",
     "command.openSettings.title": "Abrir Configurações",
+    "command.showDisclaimer.title": "Sobre",
     "config.statusBar.title": "Barra de status",
     "config.quota.title": "Cota",
     "config.cache.title": "Cache",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "Mostrar aviso quando o tamanho do cache exceder este valor em MB (padrão: 500MB)",
     "config.cacheHideEmptyFolders.description": "Ocultar pastas vazias nas visualizações em árvore de Brain e Code Tracker",
     "config.autoCleanCache.description": "⚠️ NÃO IMPLEMENTADO - Limpar cache automaticamente quando exceder o limite de aviso (requer confirmação)",
-    "config.debugMode.description": "Habilitar modo de depuração: mostrar IDs de modelos brutos na UI e logs detalhados no canal 'Antigravity Panel' (Exibir > Saída)"
+    "config.debugMode.description": "Habilitar registro de depuração no canal de saída 'Antigravity Panel'",
+    "config.advanced.title": "Avançado",
+    "config.advancedQuotaApiPath.description": "⚠️ Avançado: Endpoint de API personalizado para métricas de cota. Modifique por sua conta e risco. Requer recarregar a extensão.",
+    "config.advancedServerHost.description": "⚠️ Avançado: Nome de host do servidor personalizado para métricas de cota. Padrão: 127.0.0.1 (localhost). Modifique por sua conta e risco."
 }

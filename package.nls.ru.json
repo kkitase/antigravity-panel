@@ -1,6 +1,6 @@
 {
     "extension.displayName": "Antigravity Panel",
-    "extension.description": "Мониторинг квот с историей трендов, управление кешем и быстрые настройки для Google Antigravity IDE",
+    "extension.description": "Вспомогательная утилита для Google Antigravity IDE с локальной визуализацией квот, управлением кешем и инструментами рабочего процесса",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
     "views.gagp.sidebar.name": "Antigravity Panel",
@@ -9,6 +9,7 @@
     "command.cleanCache.title": "Очистить кеш",
     "command.refreshQuota.title": "Обновить квоту",
     "command.openSettings.title": "Открыть настройки",
+    "command.showDisclaimer.title": "О программе",
     "config.statusBar.title": "Строка состояния",
     "config.quota.title": "Квота",
     "config.cache.title": "Кеш",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "Показать предупреждение, когда размер кеша превышает это значение в МБ (по умолч.: 500МБ)",
     "config.cacheHideEmptyFolders.description": "Скрывать пустые папки в древовидных представлениях Brain и Code Tracker",
     "config.autoCleanCache.description": "⚠️ НЕ РЕАЛИЗОВАНО - Автоматически очищать кеш при превышении порога (требуется подтверждение)",
-    "config.debugMode.description": "Включить режим отладки: показывать сырые ID моделей в UI и подробные логи в канале 'Antigravity Panel' (Вид > Вывод)"
+    "config.debugMode.description": "Включить ведение журнала отладки в канале вывода 'Antigravity Panel'",
+    "config.advanced.title": "Дополнительно",
+    "config.advancedQuotaApiPath.description": "⚠️ Дополнительно: Пользовательская конечная точка API для метрик квоты. Изменяйте на свой страх и риск. Требуется перезагрузка расширения.",
+    "config.advancedServerHost.description": "⚠️ Дополнительно: Пользовательское имя хоста сервера для метрик квоты. По умолчанию: 127.0.0.1 (localhost). Изменяйте на свой страх и риск."
 }

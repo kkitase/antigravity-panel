@@ -60,6 +60,12 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "gagp.showDisclaimer",
+        "title": "%command.showDisclaimer.title%",
+        "category": "%extension.category%",
+        "icon": "$(info)"
+      },
+      {
         "command": "gagp.openSettings",
         "title": "%command.openSettings.title%",
         "category": "%extension.category%",
@@ -70,6 +76,11 @@
       "view/title": [
         {
           "command": "gagp.refreshQuota",
+          "when": "view == gagp.sidebar",
+          "group": "navigation"
+        },
+        {
+          "command": "gagp.showDisclaimer",
           "when": "view == gagp.sidebar",
           "group": "navigation"
         },
@@ -188,6 +199,21 @@
             "type": "boolean",
             "default": false,
             "description": "%config.autoCleanCache.description%"
+          }
+        }
+      },
+      {
+        "title": "%config.advanced.title%",
+        "properties": {
+          "gagp.advancedQuotaApiPath": {
+            "type": "string",
+            "default": "/exa.language_server_pb.LanguageServerService/GetUserStatus",
+            "description": "%config.advancedQuotaApiPath.description%"
+          },
+          "gagp.advancedServerHost": {
+            "type": "string",
+            "default": "127.0.0.1",
+            "description": "%config.advancedServerHost.description%"
           }
         }
       },

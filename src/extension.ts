@@ -199,6 +199,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.commands.registerCommand("gagp.openSettings", () => {
       vscode.commands.executeCommand("workbench.action.openSettings", "gagp");
+    }),
+    vscode.commands.registerCommand("gagp.showDisclaimer", async () => {
+      const uri = vscode.Uri.joinPath(context.extensionUri, "DISCLAIMER.md");
+      await vscode.commands.executeCommand("markdown.showPreview", uri);
     })
   );
 
@@ -210,8 +214,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const processFinder = new ProcessFinder();
     const serverInfo = await processFinder.detect();
     if (serverInfo) {
-      // Create QuotaManager using factory method
-      quotaManager = QuotaManager.create(serverInfo);
+      // Create QuotaManager using factory method with configured API path and host
+      const config = configManager.getConfig();
+      quotaManager = QuotaManager.create(serverInfo, config.advancedQuotaApiPath, config.advancedServerHost);
 
       // Setup callbacks
       quotaManager.onUpdate((snapshot) => {

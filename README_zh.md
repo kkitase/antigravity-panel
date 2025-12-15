@@ -1,21 +1,23 @@
 [English](README.md) | 中文文档
 
-# Antigravity Panel
+# Toolkit for Antigravity
 
 > 轻松监控 AI 配额使用和管理缓存
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat&cacheSeconds=3600)](LICENSE)
-[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.104.0-007ACC?logo=visual-studio-code&style=flat&cacheSeconds=3600)](https://code.visualstudio.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat&cacheSeconds=10800)](LICENSE)
+[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.104.0-007ACC?logo=visual-studio-code&style=flat&cacheSeconds=10800)](https://code.visualstudio.com/)
 
-[![版本](https://img.shields.io/visual-studio-marketplace/v/n2ns.antigravity-panel?style=flat&label=版本&cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
-[![安装量](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
-[![Open VSX 版本](https://img.shields.io/open-vsx/v/n2ns/antigravity-panel?style=flat&label=Open%20VSX&cacheSeconds=3600)](https://open-vsx.org/extension/n2ns/antigravity-panel)
-[![下载量](https://img.shields.io/open-vsx/dt/n2ns/antigravity-panel?style=flat&cacheSeconds=3600)](https://open-vsx.org/extension/n2ns/antigravity-panel)
-[![最后更新](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&label=最后更新&cacheSeconds=3600)](https://github.com/n2ns/antigravity-panel/commits/main)
+[![版本](https://img.shields.io/visual-studio-marketplace/v/n2ns.antigravity-panel?style=flat&label=版本&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
+[![安装量](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
+[![Open VSX 版本](https://img.shields.io/open-vsx/v/n2ns/antigravity-panel?style=flat&label=Open%20VSX&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
+[![下载量](https://img.shields.io/open-vsx/dt/n2ns/antigravity-panel?style=flat&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
+[![最后更新](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&label=最后更新&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/commits/main)
 
-**Antigravity Panel** 帮助你掌控 **Google Antigravity IDE** 中的 AI 模型使用情况。实时配额监控、用量趋势分析、强大的缓存管理——一切尽在一个精美的侧边栏面板中。
+**Toolkit for Antigravity**（原名 *Antigravity Panel*）帮助你掌控 **Google Antigravity IDE** 中的 AI 模型使用情况。实时配额监控、用量趋势分析、强大的缓存管理——一切尽在一个精美的侧边栏面板中。
 
-## ✨ 为什么选择 Antigravity Panel？
+> **📢 注意：** 我们已从 "Antigravity Panel" 更名为 "**Toolkit for Antigravity**"，以更好地反映我们构建全面生态系统工具套件的愿景。同样强大的功能，更精准的定位！
+
+## ✨ 为什么选择 Toolkit for Antigravity？
 
 - 🎯 **监控配额** - 实时监控配额，可视化警告提醒
 - 📊 **了解用量** - 交互式图表展示使用趋势
@@ -147,11 +149,14 @@
 | **警告阈值** | `500 MB` | 缓存超过此大小时显示警告 |
 | **隐藏空目录** | `✗` | 在 Brain 和 Code Tracker 树中隐藏空目录 |
 
-## 🔒 隐私声明
+## 🔒 隐私与安全免责声明
 
 **你的数据属于你自己。**
 
 Antigravity Panel 不会收集、传输或存储任何用户数据。所有操作都在你的本地计算机上执行。扩展仅与你本地的 Antigravity Language Server 通信——不会向任何外部服务器发送数据。
+
+**实验性功能提示：**
+本扩展的“智能配额监控”功能依赖于本地 Antigravity 环境所暴露的内部指标。该功能属于实验性质，仅按“原样”提供，旨在帮助用户更好地了解个人资源使用情况。它不是 Google 的官方产品，并且在未来的 IDE 更新中可能会发生变化。
 
 ## 🤝 参与贡献
 

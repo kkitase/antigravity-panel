@@ -1,6 +1,6 @@
 {
     "extension.displayName": "Antigravity Panel",
-    "extension.description": "Surveillance des quotas avec historique des tendances, gestion du cache et raccourcis de configuration pour Google Antigravity IDE",
+    "extension.description": "Un utilitaire compagnon pour Google Antigravity IDE avec visualisation des quotas locaux, gestion du cache et outils d'amélioration du flux de travail",
     "extension.category": "Antigravity Panel",
     "viewsContainers.gagp-sidebar.title": "Antigravity Panel",
     "views.gagp.sidebar.name": "Antigravity Panel",
@@ -9,6 +9,7 @@
     "command.cleanCache.title": "Vider le cache",
     "command.refreshQuota.title": "Actualiser le quota",
     "command.openSettings.title": "Ouvrir les paramètres",
+    "command.showDisclaimer.title": "À propos",
     "config.statusBar.title": "Barre d'état",
     "config.quota.title": "Quota",
     "config.cache.title": "Cache",
@@ -32,5 +33,8 @@
     "config.cacheWarningThreshold.description": "Afficher un avertissement lorsque la taille du cache dépasse cette valeur en Mo (défaut : 500 Mo)",
     "config.cacheHideEmptyFolders.description": "Masquer les dossiers vides dans les arborescences Brain et Code Tracker",
     "config.autoCleanCache.description": "⚠️ NON IMPLÉMENTÉ - Vider automatiquement le cache lorsqu'il dépasse le seuil d'avertissement (nécessite une confirmation)",
-    "config.debugMode.description": "Activer le mode de débogage : afficher les identifiants bruts des modèles dans l'interface et les journaux détaillés dans le canal 'Antigravity Panel' (Affichage > Sortie)"
+    "config.debugMode.description": "Activer la journalisation de débogage dans le canal de sortie 'Antigravity Panel'",
+    "config.advanced.title": "Avancé",
+    "config.advancedQuotaApiPath.description": "⚠️ Avancé : Point d'accès API personnalisé pour les métriques de quota. Modifier à vos propres risques. Nécessite le rechargement de l'extension.",
+    "config.advancedServerHost.description": "⚠️ Avancé : Nom d'hôte du serveur personnalisé pour les métriques de quota. Par défaut : 127.0.0.1 (localhost). Modifier à vos propres risques."
 }

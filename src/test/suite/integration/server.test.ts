@@ -25,6 +25,7 @@ import * as assert from 'assert';
 import { ProcessFinder } from '../../../core/process_finder';
 import { QuotaManager, QuotaSnapshot } from '../../../core/quota_manager';
 import { QuotaStrategyManager } from '../../../core/quota_strategy_manager';
+import { DEFAULT_QUOTA_API_PATH, DEFAULT_SERVER_HOST } from '../../../core/config_manager';
 import { LanguageServerInfo } from '../../../utils/types';
 
 // 如果设置了环境变量，跳过服务器测试
@@ -58,7 +59,7 @@ suite('Server Integration Tests (需要运行中的服务器)', function() {
     }
 
     console.log(`\n✅ 服务器已检测到，端口: ${serverInfo.port}`);
-    quotaManager = QuotaManager.create(serverInfo);
+    quotaManager = QuotaManager.create(serverInfo, DEFAULT_QUOTA_API_PATH, DEFAULT_SERVER_HOST);
   });
 
   // ==================== 服务器检测测试 ====================
@@ -117,7 +118,7 @@ suite('Server Integration Tests (需要运行中的服务器)', function() {
     test('onUpdate 回调应被触发', async function() {
       if (!serverInfo) { this.skip(); return; }
 
-      const manager = QuotaManager.create(serverInfo);
+      const manager = QuotaManager.create(serverInfo, DEFAULT_QUOTA_API_PATH, DEFAULT_SERVER_HOST);
       let receivedSnapshot: QuotaSnapshot | null = null;
 
       manager.onUpdate((snapshot) => {
