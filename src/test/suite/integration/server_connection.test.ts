@@ -10,9 +10,11 @@ class MockConfigReader {
     set(key: string, value: any) { }
 }
 
+import { HttpResponse } from '../../../shared/utils/http_client';
+
 // Debug wrapper to intercept and log requests
 class DebugQuotaService extends QuotaService {
-    protected async request<T>(path: string, body: object): Promise<T> {
+    protected async request<T>(path: string, body: object): Promise<HttpResponse<T>> {
         console.log('\n    📝 Request Payload:');
         console.log(`    POST ${path}`);
         console.log('    ' + JSON.stringify(body, null, 2).replace(/\n/g, '\n    '));
@@ -20,7 +22,7 @@ class DebugQuotaService extends QuotaService {
         try {
             const result = await super.request<T>(path, body);
             console.log('\n    📦 Raw Response Data:');
-            console.log('    ' + JSON.stringify(result, null, 2).replace(/\n/g, '\n    '));
+            console.log('    ' + JSON.stringify(result.data, null, 2).replace(/\n/g, '\n    '));
             return result;
         } catch (error) {
             console.error('\n    ❌ Request Failed:', error);

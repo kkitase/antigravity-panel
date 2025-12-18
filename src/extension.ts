@@ -99,11 +99,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       // Update UI and check for parsing errors
       await appViewModel.refreshQuota();
+      // Final check for parsing errors if no higher-level notification was shown
       if (!hasShownNotification && quotaService.parsingError) {
-        await FeedbackManager.showFeedbackNotification(
-          vscode.l10n.t("notification.parsing_error"),
-          { ...commonMeta, reason: "parsing_error", parsingInfo: quotaService.parsingError }
-        );
+        let message = vscode.l10n.t("notification.parsing_error");
+
+        // If it's an auth failure during quota fetch, show the login message
+        if (quotaService.parsingError.startsWith('AUTH_FAILED')) {
+          message = vscode.l10n.t("notification.login_required");
+        }
+
+        await FeedbackManager.showFeedbackNotification(message, {
+          ...commonMeta,
+          reason: "parsing_error",
+          parsingInfo: quotaService.parsingError
+        });
         hasShownNotification = true;
       }
     } else {

@@ -92,7 +92,7 @@ export class QuotaService implements IQuotaService {
         const config = this.configManager.getConfig();
         const apiPath = config.advancedQuotaApiPath;
 
-        const data = await this.request<ServerUserStatusResponse>(
+        const response = await this.request<ServerUserStatusResponse>(
             apiPath,
             {
                 metadata: {
@@ -103,8 +103,16 @@ export class QuotaService implements IQuotaService {
             }
         );
 
+        if (response.statusCode === 401 || response.statusCode === 403) {
+            this.parsingError = `AUTH_FAILED_${response.statusCode}`;
+            return null;
+        }
+
+        const data = response.data;
         if (!data || !data.userStatus) {
-            this.parsingError = 'Invalid Response Structure';
+            this.parsingError = response.statusCode !== 200
+                ? `HTTP_ERROR_${response.statusCode}`
+                : 'Invalid Response Structure';
             return null;
         }
 
@@ -119,7 +127,7 @@ export class QuotaService implements IQuotaService {
     /**
      * Send request (supports HTTPS → HTTP automatic fallback)
      */
-    protected async request<T>(path: string, body: object): Promise<T> {
+    protected async request<T>(path: string, body: object): Promise<import('../../shared/utils/http_client').HttpResponse<T>> {
         if (!this.serverInfo) {
             throw new Error("Server info not set");
         }
@@ -141,7 +149,7 @@ export class QuotaService implements IQuotaService {
             allowFallback: true,
         });
 
-        return response.data;
+        return response;
     }
 
     private parseResponse(data: ServerUserStatusResponse): QuotaSnapshot {

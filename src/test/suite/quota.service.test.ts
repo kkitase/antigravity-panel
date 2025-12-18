@@ -14,6 +14,8 @@ class MockConfigReader implements IConfigReader {
     set(key: string, value: any) { this.values.set(key, value); }
 }
 
+import { HttpResponse } from '../../shared/utils/http_client';
+
 // Test Subclass to mock protected request method
 class TestQuotaService extends QuotaService {
     public mockResponse: any | Error | null = null;
@@ -25,7 +27,7 @@ class TestQuotaService extends QuotaService {
         this.requestCount = 0;
     }
 
-    protected async request<T>(path: string, body: object): Promise<T> {
+    protected async request<T>(path: string, body: object): Promise<HttpResponse<T>> {
         this.requestCount++;
         let response: any | Error;
 
@@ -40,7 +42,12 @@ class TestQuotaService extends QuotaService {
         if (response instanceof Error) {
             throw response;
         }
-        return response as T;
+
+        return {
+            statusCode: 200,
+            data: response as T,
+            protocol: 'https'
+        };
     }
 }
 

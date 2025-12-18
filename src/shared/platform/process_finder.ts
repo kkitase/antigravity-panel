@@ -151,10 +151,12 @@ export class ProcessFinder {
         }
       }
 
-      const ports = await this.getListeningPorts(bestInfo.pid);
-      if (ports.length === 0) {
-        this.failureReason = 'no_port';
-        return null;
+      // Get all candidate ports
+      let ports = await this.getListeningPorts(bestInfo.pid);
+
+      // If we have a fixed port from cmdline, ensure it's tried even if not found by OS tools
+      if (bestInfo.extensionPort > 0 && !ports.includes(bestInfo.extensionPort)) {
+        ports = [bestInfo.extensionPort, ...ports];
       }
 
       const workingPort = await this.findWorkingPort(bestInfo.pid, ports, bestInfo.csrfToken);
