@@ -138,6 +138,7 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `gagp` to c
 | **Polling Interval** | `120s` | How often to refresh quota (min: 60s) |
 | **Show Quota** | `✓` | Display quota in status bar |
 | **Status Bar Style** | `percentage` | Display mode: percentage, resetTime, used, or remaining |
+| **Quota Style** | `semi-arc` | Visualization style: `semi-arc` or `classic-donut` |
 | **Visualization Mode** | `groups` | Show dashboard by `groups` or `models` |
 | **Show GPT Quota** | `✗` | Whether to display GPT family models in the panel |
 | **History Range** | `90 min` | Time range for usage chart (10-120 minutes) |

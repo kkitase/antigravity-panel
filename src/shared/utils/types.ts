@@ -175,6 +175,8 @@ export interface GagpConfig {
   showGptQuota: boolean;
   /** History chart display time range (minutes), default 60 */
   historyDisplayMinutes: number;
+  /** Quota visualization style in sidebar */
+  quotaDisplayStyle?: "semi-arc" | "classic-donut";
 
   // ===== Cache Settings =====
   /** Cache check interval (seconds), minimum 30 */

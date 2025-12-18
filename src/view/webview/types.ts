@@ -92,6 +92,7 @@ export interface WebviewStateUpdate {
   chart?: UsageChartData;
   tasks?: TreeSectionState;
   contexts?: TreeSectionState;
+  gaugeStyle?: string;
 }
 
 // ==================== VS Code API ====================

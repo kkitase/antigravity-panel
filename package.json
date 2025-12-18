@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Toolkit for Antigravity",
   "description": "%extension.description%",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "publisher": "n2ns",
   "license": "MIT",
   "repository": {
@@ -147,6 +147,19 @@
             "default": 120,
             "minimum": 60,
             "description": "%config.pollingInterval.description%"
+          },
+          "gagp.quotaDisplayStyle": {
+            "type": "string",
+            "default": "semi-arc",
+            "enum": [
+              "semi-arc",
+              "classic-donut"
+            ],
+            "enumDescriptions": [
+              "%config.quotaDisplayStyle.semi-arc%",
+              "%config.quotaDisplayStyle.classic-donut%"
+            ],
+            "description": "%config.quotaDisplayStyle.description%"
           },
           "gagp.visualizationMode": {
             "type": "string",

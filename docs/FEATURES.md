@@ -13,6 +13,9 @@ English | [中文文档](FEATURES_zh.md)
 - Pie charts showing remaining quota percentage per group
 - Color-coded warnings when quota runs low (warning/critical thresholds)
 - Separate tracking and display for **Gemini 3 Flash**, Pro, and Ultra groups
+- **Customizable Gauge Styles**: Refactored the visualization engine to support multiple rendering strategies. Users can choose between:
+  - **Semi-Arc**: A modern, 210-degree industrial precision instrument style (Default).
+  - **Classic Donut**: The historical full-circle gauge style.
 - Automatic refresh with configurable polling interval (minimum 60s)
 
 ### Active Group Detection
@@ -160,7 +163,7 @@ English | [中文文档](FEATURES_zh.md)
 ## 🧪 Testing
 
 ### Unit Test Coverage
-- 152 tests across 15 test files
+- 165 tests across 16 test files
 - Pure Node.js environment (no VS Code runtime required)
 - Core modules fully tested:
   - ConfigManager, CacheManager, QuotaManager
@@ -181,6 +184,7 @@ English | [中文文档](FEATURES_zh.md)
 | `gagp.statusBarThresholdWarning` | `30` | Warning threshold (%) |
 | `gagp.statusBarThresholdCritical` | `10` | Critical threshold (%) |
 | `gagp.pollingInterval` | `120` | Quota refresh interval (seconds, min 60) |
+| `gagp.quotaDisplayStyle` | `semi-arc` | Gauge style: semi-arc or classic-donut |
 | `gagp.visualizationMode` | `groups` | Display mode: groups/models |
 | `gagp.showGptQuota` | `false` | Show GPT quota (shares with Claude) |
 | `gagp.historyDisplayMinutes` | `60` | Usage chart time range (10-120 min) |

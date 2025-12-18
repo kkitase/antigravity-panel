@@ -9,7 +9,7 @@ import { getGaugeRenderer } from './quota/renderers/index';
 
 @customElement('quota-pie')
 export class QuotaPie extends LitElement {
-  @property({ type: Object }) data?: Record<string, any>;
+  @property({ type: Object }) data?: Record<string, unknown>;
 
   @property({ type: String }) color: string = '#007acc';
 

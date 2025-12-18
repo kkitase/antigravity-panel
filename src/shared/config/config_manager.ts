@@ -61,6 +61,7 @@ export class ConfigManager {
       // Quota Settings
       pollingInterval,
       visualizationMode: this.reader.get<"groups" | "models">("visualizationMode", "groups"),
+      quotaDisplayStyle: this.reader.get<"semi-arc" | "classic-donut">("quotaDisplayStyle", "semi-arc"),
       showGptQuota: this.reader.get<boolean>("showGptQuota", false),
       historyDisplayMinutes: this.reader.get<number>("historyDisplayMinutes", 90),
       // Cache Settings

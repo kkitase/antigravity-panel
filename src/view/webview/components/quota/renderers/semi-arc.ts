@@ -1,26 +1,25 @@
 import { html } from 'lit';
 import { GaugeRendererProps } from '../types';
+import { getArcPath, getArcLength } from '../../../../../shared/utils/gauge_math';
 
 export const renderSemiArc = ({ data, color, label }: GaugeRendererProps) => {
-    const remaining = data.hasData ? data.remaining : 0;
-    const valueStr = data.hasData ? remaining.toFixed(0) : 'N/A';
-    const resetTime = data.resetTime || '';
+  const remaining = data.hasData ? data.remaining : 0;
+  const valueStr = data.hasData ? remaining.toFixed(0) : 'N/A';
+  const resetTime = data.resetTime || '';
 
-    // Precision Polar Arc Math (Center 50,40)
-    // Angles: 195deg Start -> -15deg End (Clockwise) = 210 deg sweep
-    // Radii: 43 (Outer), 39.5 (Sep), 36 (Fill), 32.5 (Sep), 29 (Inner)
-    const fillArcLength = 131.95; // (210/360) * 2 * PI * 36
-    const dashOffset = fillArcLength - (remaining / 100) * fillArcLength;
+  // Precision Arcs at Center 50,40
+  const fillArcLength = getArcLength(36, 210);
+  const dashOffset = fillArcLength - (remaining / 100) * fillArcLength;
 
-    const getPath = (r: number) => {
-        const rx = 50 + r * Math.cos((195 * Math.PI) / 180);
-        const ry = 40 - r * Math.sin((195 * Math.PI) / 180);
-        const ex = 50 + r * Math.cos((-15 * Math.PI) / 180);
-        const ey = 40 - r * Math.sin((-15 * Math.PI) / 180);
-        return `M ${rx.toFixed(2)} ${ry.toFixed(2)} A ${r} ${r} 0 1 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`;
-    };
+  const getPath = (r: number) => getArcPath({
+    centerX: 50,
+    centerY: 40,
+    radius: r,
+    startAngle: 195,
+    endAngle: -15
+  });
 
-    return html`
+  return html`
     <div class="gauge-container style-semi-arc">
       <div class="gauge-visual">
         <svg viewBox="0 0 100 70" class="gauge-svg">

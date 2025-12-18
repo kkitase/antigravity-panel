@@ -108,6 +108,11 @@ suite('ConfigManager Test Suite', () => {
       assert.strictEqual(config.debugMode, false);
     });
 
+    test('should use default for quotaDisplayStyle', () => {
+      const config = configManager.getConfig();
+      assert.strictEqual(config.quotaDisplayStyle, 'semi-arc');
+    });
+
     test('should have valid threshold relationship', () => {
       const config = configManager.getConfig();
       assert.ok(config.statusBarThresholdCritical < config.statusBarThresholdWarning);
@@ -137,6 +142,12 @@ suite('ConfigManager Test Suite', () => {
       mockReader.set('debugMode', true);
       const config = configManager.getConfig();
       assert.strictEqual(config.debugMode, true);
+    });
+
+    test('should read custom quotaDisplayStyle', () => {
+      mockReader.set('quotaDisplayStyle', 'classic-donut');
+      const config = configManager.getConfig();
+      assert.strictEqual(config.quotaDisplayStyle, 'classic-donut');
     });
 
     test('should read custom thresholds', () => {

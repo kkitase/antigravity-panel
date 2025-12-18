@@ -129,6 +129,7 @@ export interface SidebarData {
     cache: CacheViewState;
     tasks: TreeSectionState;
     contexts: TreeSectionState;
+    gaugeStyle?: string;
 }
 
 // ==================== App State ====================

@@ -12,7 +12,7 @@ English | [中文文档](TODO_zh.md)
 
 ### Test Coverage Improvement
 
-- [ ] **Add remaining unit tests** (Target: 80%, Current: 152 tests)
+- [ ] **Maintain high unit test coverage** (Target: 80%, Current: 165 tests)
   - [ ] `HttpClient` - HTTPS→HTTP fallback, protocol cache
   - [ ] `StatusBarManager` - Status bar updates (requires VS Code integration tests)
   - [ ] `SidebarProvider` - Webview message handling (requires VS Code integration tests)
@@ -36,7 +36,7 @@ English | [中文文档](TODO_zh.md)
 
 ### Code Quality
 
-- [ ] **Configure pre-commit hook** for automatic ESLint checking
+- [x] **Configure pre-commit hook** for automatic ESLint checking (Completed in v2.1.0)
 
 ---
 
@@ -49,16 +49,15 @@ English | [中文文档](TODO_zh.md)
   - Configurable retention policy
   - Dry-run mode
 
-- [ ] **Advanced Quota Analytics**
+- [x] **Advanced Quota Analytics** (Completed in v2.1.0)
   - Burn rate calculation (quota/hour)
   - Estimated time to exhaustion (ETE)
   - Usage pattern analysis
 
 ### UI/UX Improvements
 
-- [ ] **Dark/Light Theme Support**
-  - Ensure all custom colors respect VS Code theme
-  - Test with popular themes (One Dark, Solarized, etc.)
+- [x] **Dark/Light Theme Support** (Completed in v2.0.0/v2.2.0)
+  - Native VS Code theme colors and transitions implemented
 
 ### Performance
 
@@ -95,9 +94,7 @@ English | [中文文档](TODO_zh.md)
   - Log detailed errors in Output Channel
   - Avoid exposing technical details in UI
 
-- [ ] **Webview i18n Support**
-  - Webview components have hardcoded English strings
-  - Affected: Usage History, Timeline, Stable, Brain, Code Tracker, Loading...
-  - Need to pass translations from extension to webview
+- [x] **Webview i18n Support** (Completed in v2.1.0)
+  - Implemented dynamic translation passing to webview components.
 
 ---

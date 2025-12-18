@@ -2,7 +2,22 @@
 
 This file contains detailed technical changes for developers. For user-facing changes, see CHANGELOG.md.
 
-## [2.0.0] - 2025-12-17
+## [2.2.0] - 2025-12-18
+
+### Added
+- **Strategy-Based Gauge Rendering**: Introduced a modular rendering system using the Strategy pattern (`GaugeRenderer` interface).
+- **Semi-Arc Instrument Style**: Implemented a new SVG-based instrument gauge with precise angle calculations and multi-track visual feedback.
+- **Shared Geometry Utility**: Extracted SVG path and arc calculations to `src/shared/utils/gauge_math.ts`.
+- **Unit Testing**: Added dedicated tests for geometry logic (`gauge_math.test.ts`) and renderer dispatching (`gauge_renderers.test.ts`).
+
+### Changed
+- **Webview Architecture**: The `QuotaPie` component now uses a dispatcher (`getGaugeRenderer`) to dynamically switch rendering logic based on the `gaugeStyle` property.
+- **CSS Logic**: Refactored `webview.css` to handle scoped styles for different gauge display modes.
+
+### Fixed
+- **Footer Responsiveness**: Implemented flex-wrap and text truncation for sidebar footer buttons to handle narrow panel widths.
+
+## [2.1.0] - 2025-12-17
 
 ### Added
 - **MVVM Architecture**: Complete refactoring of the codebase into strict Model, View-Model, View, Shared, and Config layers.

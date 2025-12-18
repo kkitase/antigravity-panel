@@ -13,6 +13,9 @@
 - 饼图显示各分组剩余配额百分比
 - 配额不足时颜色警告（警告/严重阈值）
 - 独立追踪并显示 **Gemini 3 Flash**、Pro 与 Ultra 分组
+- **可视化仪表盘样式**: 重构了可视化引擎以支持多种渲染策略。用户可以在以下样式间切换：
+  - **半圆弧 (Semi-Arc)**: 现代化的 210 度工业精密仪表样式（默认）。
+  - **经典圆环 (Classic Donut)**: 延续传统的全圆仪表样式。
 - 可配置轮询间隔自动刷新（最小 60 秒）
 
 ### 活跃分组检测
@@ -162,7 +165,7 @@
 ## 🧪 测试
 
 ### 单元测试覆盖
-- 15 个测试文件，152 个测试用例通过
+- 16 个测试文件，165 个测试用例通过
 - 纯 Node.js 环境（无需 VS Code 运行时）
 - 核心模块全覆盖：
   - ConfigManager、CacheManager、QuotaManager
@@ -183,6 +186,7 @@
 | `gagp.statusBarThresholdWarning` | `30` | 警告阈值（%） |
 | `gagp.statusBarThresholdCritical` | `10` | 严重阈值（%） |
 | `gagp.pollingInterval` | `120` | 配额刷新间隔（秒，最小 60） |
+| `gagp.quotaDisplayStyle` | `semi-arc` | 仪表盘样式：semi-arc (半圆弧) 或 classic-donut (圆环) |
 | `gagp.visualizationMode` | `groups` | 显示模式：groups/models |
 | `gagp.showGptQuota` | `false` | 显示 GPT 配额（与 Claude 共享） |
 | `gagp.historyDisplayMinutes` | `60` | 使用图表时间范围（10-120 分钟） |

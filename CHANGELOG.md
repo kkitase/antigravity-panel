@@ -2,6 +2,21 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Changelog
 
+## [2.2.0] - 2025-12-18
+
+### Added
+- **Modular Gauge Architecture**: Refactored the quota visualization system into a strategy-based modular architecture, allowing for multiple display styles.
+- **Precision Semi-Arc Gauge**: Implemented a new 210-degree "Industrial Precision" instrument style with multi-track layout and theme-adaptive coloring (set as default).
+- **Visual Customization**: Added `gagp.quotaDisplayStyle` setting enabling users to choose between the new Semi-Arc and the Classic Donut styles.
+- **Responsive Footer**: Optimized the sidebar footer for narrow panel widths with automatic button wrapping and layout adjustments.
+
+### Improved
+- **Type Safety**: Eliminated `any` usage in core webview components for better reliability.
+- **Math Precision**: Extracted SVG geometry calculations to a shared utility with dedicated unit tests.
+
+### Fixed
+- **Sidebar Layout Overflow**: Resolved an issue where footer buttons would be cut off in extremely narrow sidebar states.
+
 ## [2.1.0] - 2025-12-17
 
 ### Added

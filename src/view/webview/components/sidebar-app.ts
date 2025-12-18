@@ -45,6 +45,9 @@ export class SidebarApp extends LitElement {
     loading: true
   };
 
+  @state()
+  private _gaugeStyle: string = 'semi-arc';
+
   private _vscode = acquireVsCodeApi();
 
   // Light DOM mode
@@ -122,6 +125,9 @@ export class SidebarApp extends LitElement {
         loading: false
       };
     }
+    if (state.gaugeStyle) {
+      this._gaugeStyle = state.gaugeStyle;
+    }
   }
 
   // ==================== 事件处理 (Light DOM 简化版) ====================
@@ -196,6 +202,7 @@ export class SidebarApp extends LitElement {
       <quota-dashboard 
         .quotas=${this._quotas} 
         .chartData=${this._chartData}
+        .gaugeStyle=${this._gaugeStyle}
       ></quota-dashboard>
       
       <app-toolbar></app-toolbar>

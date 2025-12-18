@@ -119,6 +119,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
 
         // Get READ-ONLY view model data -> purely for display
         const data = this._viewModel.getSidebarData();
+        const config = vscode.workspace.getConfiguration('gagp');
+        data.gaugeStyle = config.get('quotaDisplayStyle', 'semi-arc');
 
         this._view.webview.postMessage({ type: 'update', payload: data });
     }

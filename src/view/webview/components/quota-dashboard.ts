@@ -17,6 +17,9 @@ export class QuotaDashboard extends LitElement {
   @property({ type: Object })
   chartData: UsageChartData | null = null;
 
+  @property({ type: String })
+  gaugeStyle: string = 'semi-arc';
+
   // Light DOM 模式
   createRenderRoot() { return this; }
 
@@ -29,6 +32,7 @@ export class QuotaDashboard extends LitElement {
             label=${item.label}
             .data=${item}
             .color=${item.themeColor}
+            .gaugeStyle=${this.gaugeStyle}
           ></quota-pie>
         `)}
       </div>
