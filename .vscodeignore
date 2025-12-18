@@ -6,14 +6,19 @@ out/**
 
 # Test files
 test/**
+src/test/**
 
 # Build and development files
 .vscode/**
 .vscode-test/**
 .github/**
 scripts/**
+src/scripts/**
 local_bak/**
 docs/**
+.husky/**
+.husky/**/*
+**/.husky/**
 
 # Configuration files
 tsconfig.json
@@ -24,6 +29,7 @@ eslint.config.mjs
 .gitignore
 .gitattributes
 esbuild.js
+package-lock.json
 
 # All node_modules (dependencies are bundled into dist/)
 node_modules/**
@@ -36,6 +42,8 @@ node_modules/**
 README_zh.md
 CHANGELOG_zh.md
 DEVELOPMENT_HISTORY.md
+DISCLAIMER.md
+DISCLAIMER_zh.md
 
 # Misc
 .DS_Store
@@ -43,4 +51,7 @@ DEVELOPMENT_HISTORY.md
 *.log
 .editorconfig
 .npmrc
+.agent/**
+.cursor/**
+check-l10n.js
 

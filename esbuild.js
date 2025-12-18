@@ -22,6 +22,7 @@ async function run() {
     format: "cjs",
     outfile: path.resolve(__dirname, "dist", "extension.js"),
     sourcemap: enableSourcemap ? "inline" : false,
+    minify: !isWatch,
     external: ["vscode"],
     logLevel: "info",
     // 排除 webview 目录，避免 Node.js 环境导入浏览器代码

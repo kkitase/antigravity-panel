@@ -56,15 +56,15 @@ function setCachedProtocol(hostname: string, port: number, protocol: Protocol): 
  */
 export async function httpRequest<T>(options: HttpRequestOptions): Promise<HttpResponse<T>> {
   const { hostname, port, allowFallback = true } = options;
-  
+
   // 检查缓存的协议
   const cachedProtocol = getCachedProtocol(hostname, port);
-  
+
   // 如果缓存是 HTTP，直接使用 HTTP
   if (cachedProtocol === "http") {
     return doRequest<T>(options, "http");
   }
-  
+
   // 尝试 HTTPS
   try {
     return await doRequest<T>(options, "https");
@@ -92,10 +92,10 @@ export async function httpRequest<T>(options: HttpRequestOptions): Promise<HttpR
  */
 function doRequest<T>(options: HttpRequestOptions, protocol: Protocol): Promise<HttpResponse<T>> {
   const { hostname, port, path, method, headers = {}, body, timeout = 5000 } = options;
-  
+
   return new Promise((resolve, reject) => {
     const requestModule = protocol === "https" ? https : http;
-    
+
     const requestOptions: https.RequestOptions | http.RequestOptions = {
       hostname,
       port,
@@ -113,33 +113,43 @@ function doRequest<T>(options: HttpRequestOptions, protocol: Protocol): Promise<
       // - Self-signed certificates are common in local dev environments
       ...(protocol === "https" ? { rejectUnauthorized: false } : {}),
     };
-    
+
     const req = requestModule.request(requestOptions, (res) => {
       let responseBody = "";
       res.on("data", (chunk) => (responseBody += chunk));
       res.on("end", () => {
+        const statusCode = res.statusCode || 0;
         try {
           const data = responseBody ? JSON.parse(responseBody) as T : ({} as T);
           resolve({
-            statusCode: res.statusCode || 0,
+            statusCode,
             data,
             protocol,
           });
         } catch {
-          reject(new Error(`Invalid JSON response: ${responseBody.substring(0, 100)}`));
+          // If JSON parse fails but status is 4xx/5xx, it might be an HTML error page
+          if (statusCode >= 400) {
+            resolve({
+              statusCode,
+              data: { error: `HTTP ${statusCode}: ${responseBody.substring(0, 100)}` } as unknown as T,
+              protocol
+            });
+          } else {
+            reject(new Error(`Invalid JSON response: ${responseBody.substring(0, 100)}`));
+          }
         }
       });
     });
-    
+
     req.on("error", (err) => {
       reject(new Error(`${protocol.toUpperCase()} request failed: ${err.message}`));
     });
-    
+
     req.on("timeout", () => {
       req.destroy();
       reject(new Error(`${protocol.toUpperCase()} request timeout`));
     });
-    
+
     if (body) {
       req.write(body);
     }
@@ -156,7 +166,7 @@ export async function testPort(
   path: string,
   headers: Record<string, string>,
   body?: string
-): Promise<{ success: boolean; protocol: Protocol }> {
+): Promise<{ success: boolean; protocol: Protocol; statusCode: number; error?: string }> {
   try {
     const response = await httpRequest<unknown>({
       hostname,
@@ -168,9 +178,14 @@ export async function testPort(
       timeout: 800,
       allowFallback: true,
     });
-    return { success: response.statusCode === 200, protocol: response.protocol };
-  } catch {
-    return { success: false, protocol: "https" };
+    return {
+      success: response.statusCode === 200,
+      protocol: response.protocol,
+      statusCode: response.statusCode
+    };
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, protocol: "https", statusCode: 0, error: errorMsg };
   }
 }
 

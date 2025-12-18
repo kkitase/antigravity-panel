@@ -4,6 +4,7 @@
     "notification.ambiguous": "Local server not found, unable to get quota reference",
     "notification.no_port": "Server process found but no listening port detected",
     "notification.auth_failed": "Handshake with server failed (CSRF check failed)",
+    "notification.login_required": "Please ensure you are logged into Antigravity IDE (Authentication failed).",
     "notification.parsing_error": "Server data parsing error detected, some features limited",
     "report.title": "Diagnostic System Information (Auto-generated)",
     "report.version": "Extension Version",

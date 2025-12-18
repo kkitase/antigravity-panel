@@ -422,10 +422,10 @@ quota-pie {
   justify-content: center;
   gap: 6px;
   padding: 8px;
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-  border: none;
-  border-radius: 2px;
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 3px;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.85em;
@@ -435,7 +435,7 @@ quota-pie {
 }
 
 .discussions-btn:hover {
-  background: var(--vscode-button-hoverBackground);
+  background: var(--vscode-button-secondaryHoverBackground);
 }
 
 .discussions-btn .codicon {

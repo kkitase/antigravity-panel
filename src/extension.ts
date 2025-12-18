@@ -111,6 +111,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       const reason = processFinder.failureReason || "unknown_failure";
       const count = processFinder.candidateCount;
+      const attempts = processFinder.attemptDetails;
 
       const messages: Record<string, string> = {
         'no_process': vscode.l10n.t("notification.no_process"),
@@ -119,12 +120,27 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         'auth_failed': vscode.l10n.t("notification.auth_failed")
       };
 
-      const message = messages[reason];
+      let message = messages[reason];
+      let parsingInfo: string | undefined;
+
+      // Smart decision: If it's a single server but auth failed, it's likely a login issue
+      if (reason === 'auth_failed' && count === 1) {
+        message = vscode.l10n.t("notification.login_required");
+      }
+
+      // Collect useful diagnostic info only
+      if (attempts.length > 0) {
+        parsingInfo = attempts
+          .map(a => `PID:${a.pid} Port:${a.port} Status:${a.statusCode || 'Failed'}${a.error ? ` (${a.error})` : ''}`)
+          .join('; ');
+      }
+
       if (message) {
         await FeedbackManager.showFeedbackNotification(message, {
           ...commonMeta,
           reason,
-          candidateCount: count
+          candidateCount: count,
+          parsingInfo
         });
         hasShownNotification = true;
       }
@@ -222,8 +238,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       vscode.commands.executeCommand("workbench.action.openSettings", "gagp");
     }),
     vscode.commands.registerCommand("gagp.showDisclaimer", async () => {
-      const uri = vscode.Uri.joinPath(context.extensionUri, "DISCLAIMER.md");
-      await vscode.commands.executeCommand("markdown.showPreview", uri);
+      const isZh = vscode.env.language.startsWith('zh');
+      const fileName = isZh ? "DISCLAIMER_zh.md" : "DISCLAIMER.md";
+      const url = `https://github.com/n2ns/antigravity-panel/blob/main/${fileName}`;
+      await vscode.env.openExternal(vscode.Uri.parse(url));
     })
   );
 

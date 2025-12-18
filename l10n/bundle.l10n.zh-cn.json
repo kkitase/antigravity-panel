@@ -4,6 +4,7 @@
     "notification.ambiguous": "未找到本地服务进程，无法获取配额参考",
     "notification.no_port": "已找到服务进程但未检测到监听端口",
     "notification.auth_failed": "与服务握手认证失败 (CSRF校验未通过)",
+    "notification.login_required": "请确保已登录 Antigravity IDE (身份校验失败)。",
     "notification.parsing_error": "检测到服务端数据解析异常，部分功能受限",
     "report.title": "诊断系统信息 (自动生成)",
     "report.version": "插件版本",

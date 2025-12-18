@@ -20,7 +20,20 @@ export class WindowsStrategy implements PlatformStrategy {
   }
 
   getProcessListCommand(processName: string): string {
-    return `powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \\"name='${processName}'\\" | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json"`;
+    // Robust PowerShell script for Windows 10/11
+    // 1. [Console]::OutputEncoding: Ensures UTF-8 output to handle special characters in paths
+    // 2. Try-Catch: Falls back from Get-CimInstance (modern) to Get-WmiObject (legacy) if services are restricted
+    // 3. @( ... ): Forces result into an array structure
+    // 4. if ($p): Ensures we return '[]' instead of empty string if no process is found to avoid JSON.parse errors
+    const script = `
+      [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
+      $n = '${processName}';
+      $f = \\"name='$n'\\";
+      try { $p = Get-CimInstance Win32_Process -Filter $f } catch { $p = Get-WmiObject Win32_Process -Filter $f };
+      if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
+    `.replace(/\n\s+/g, ' ').trim();
+
+    return `powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
   }
 
   parseProcessInfo(stdout: string): ProcessInfo[] | null {
@@ -55,7 +68,7 @@ export class WindowsStrategy implements PlatformStrategy {
         }
 
         const portMatch = commandLine.match(/--extension_server_port[=\s]+(\d+)/);
-        const tokenMatch = commandLine.match(/--csrf_token[=\s]+([a-zA-Z0-9-]+)/);
+        const tokenMatch = commandLine.match(/--csrf_token[=\s]+([a-zA-Z0-9\-_.]+)/);
 
         if (tokenMatch?.[1]) {
           results.push({
@@ -125,14 +138,16 @@ export class UnixStrategy implements PlatformStrategy {
 
         if (cmd.includes("--extension_server_port")) {
           const portMatch = cmd.match(/--extension_server_port[=\s]+(\d+)/);
-          const tokenMatch = cmd.match(/--csrf_token[=\s]+([a-zA-Z0-9-]+)/);
+          const tokenMatch = cmd.match(/--csrf_token[=\s]+([a-zA-Z0-9\-_.]+)/);
 
-          results.push({
-            pid,
-            ppid, // Now allows ancestry checking on Unix
-            extensionPort: portMatch ? parseInt(portMatch[1], 10) : 0,
-            csrfToken: tokenMatch ? tokenMatch[1] : "",
-          });
+          if (tokenMatch?.[1]) {
+            results.push({
+              pid,
+              ppid,
+              extensionPort: portMatch ? parseInt(portMatch[1], 10) : 0,
+              csrfToken: tokenMatch[1],
+            });
+          }
         }
       }
     }

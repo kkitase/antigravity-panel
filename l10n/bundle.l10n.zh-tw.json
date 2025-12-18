@@ -4,6 +4,7 @@
     "notification.ambiguous": "找不到本機伺服器，無法取得配額參照",
     "notification.no_port": "已找到伺服器處理程序，但未偵測到接聽連接埠",
     "notification.auth_failed": "與伺服器交握失敗（CSRF 檢查失敗）",
+    "notification.login_required": "請確保已登入 Antigravity IDE (身份驗證失敗)。",
     "notification.parsing_error": "偵測到伺服器資料解析錯誤，部分功能受限",
     "report.title": "診斷系統資訊（自動產生）",
     "report.version": "延伸模組版本",

@@ -29,6 +29,8 @@ export class ProcessFinder {
   public failureReason: 'no_process' | 'ambiguous' | 'no_port' | 'auth_failed' | null = null;
   // Number of candidate processes found
   public candidateCount: number = 0;
+  // Detailed info about attempts (for diagnostics)
+  public attemptDetails: Array<{ pid: number, port: number, statusCode: number, error?: string }> = [];
 
   constructor() {
     const platform = process.platform;
@@ -77,6 +79,7 @@ export class ProcessFinder {
   protected async tryDetect(): Promise<LanguageServerInfo | null> {
     this.failureReason = null; // Reset failure reason
     this.candidateCount = 0;   // Reset candidate count
+    this.attemptDetails = [];  // Reset attempts
     try {
       const cmd = this.strategy.getProcessListCommand(this.processName);
       const { stdout } = await this.execute(cmd);
@@ -154,9 +157,11 @@ export class ProcessFinder {
         return null;
       }
 
-      const workingPort = await this.findWorkingPort(ports, bestInfo.csrfToken);
+      const workingPort = await this.findWorkingPort(bestInfo.pid, ports, bestInfo.csrfToken);
       if (!workingPort) {
-        this.failureReason = 'auth_failed';
+        // If we found a server but couldn't talk to it, check why
+        const hasAuthFailure = this.attemptDetails.some(a => a.statusCode === 401 || a.statusCode === 403);
+        this.failureReason = hasAuthFailure ? 'auth_failed' : 'no_port';
         return null;
       }
 
@@ -200,11 +205,22 @@ export class ProcessFinder {
   }
 
   private async findWorkingPort(
+    pid: number,
     ports: number[],
     csrfToken: string
   ): Promise<number | null> {
     for (const port of ports) {
-      if (await this.testPort(port, csrfToken)) {
+      const result = await this.testPort(port, csrfToken);
+
+      // Record attempt for diagnostics
+      this.attemptDetails.push({
+        pid,
+        port,
+        statusCode: result.statusCode,
+        error: result.error
+      });
+
+      if (result.success) {
         return port;
       }
     }
@@ -223,8 +239,8 @@ export class ProcessFinder {
   /**
    * Test if port is accessible (supports HTTPS → HTTP automatic fallback)
    */
-  protected async testPort(port: number, csrfToken: string): Promise<boolean> {
-    const result = await httpTestPort(
+  protected async testPort(port: number, csrfToken: string): Promise<{ success: boolean; statusCode: number; error?: string }> {
+    return httpTestPort(
       "127.0.0.1",
       port,
       "/exa.language_server_pb.LanguageServerService/GetUnleashData",
@@ -234,6 +250,5 @@ export class ProcessFinder {
       },
       JSON.stringify({ wrapper_data: {} })
     );
-    return result.success;
   }
 }
