@@ -5,18 +5,14 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 ## [2.2.0] - 2025-12-18
 
 ### Changed
-- **Rebranding**: Global rebranding from `gagp` to `tfa` (Toolkit for Antigravity) for consistency.
+- **Configuration Adjustment**: Global update from `gagp` to `tfa` (Toolkit for Antigravity) for consistency.
 - **Configuration**: All settings now use the `tfa` prefix (e.g., `tfa.quotaDisplayStyle`).
 
 ### Added
 - **Service Recovery UI**: Added dedicated "Restart Service" and "Reset Status" buttons in the sidebar for quick troubleshooting of Agent unresponsiveness and quota sync issues.
-
-## [2.2.0] - 2025-12-18
-
-### Added
 - **Modular Gauge Architecture**: Refactored the quota visualization system into a strategy-based modular architecture, allowing for multiple display styles.
 - **Precision Semi-Arc Gauge**: Implemented a new 210-degree "Industrial Precision" instrument style with multi-track layout and theme-adaptive coloring (set as default).
-- **Visual Customization**: Added `gagp.quotaDisplayStyle` setting enabling users to choose between the new Semi-Arc and the Classic Donut styles.
+- **Visual Customization**: Added `tfa.quotaDisplayStyle` setting enabling users to choose between the new Semi-Arc and the Classic Donut styles.
 - **Responsive Footer**: Optimized the sidebar footer for narrow panel widths with automatic button wrapping and layout adjustments.
 
 ### Improved
