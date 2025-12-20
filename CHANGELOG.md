@@ -10,6 +10,7 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 ### Added
 - **Service Recovery UI**: Added dedicated "Restart Service" and "Reset Status" buttons in the sidebar for quick troubleshooting of Agent unresponsiveness and quota sync issues.
+- **Connectivity Diagnostics**: Introduced `tfa.runDiagnostics` command to manually verify server status. Detailed logs (attempts, ports, PIDs) are now redirected to the primary "Toolkit for Antigravity" output channel for easier analysis without losing context.
 
 ### Fixed
 - **Status Bar Display**: Fixed `resetTime` not updating and `used`/`remaining` formats always showing as percentage. They now correctly display time (e.g., "2h 30m") and fractional values (e.g., "25/100") [Fixes #9].
