@@ -14,7 +14,7 @@ import { FeedbackManager } from './shared/utils/feedback_manager';
 import { AppViewModel } from "./view-model/app.vm";
 import { StatusBarManager } from "./view/status-bar";
 import { SidebarProvider } from "./view/sidebar-provider";
-import { initLogger, setDebugMode, infoLog, errorLog } from "./shared/utils/logger";
+import { initLogger, setDebugMode, infoLog, errorLog, getLogger } from "./shared/utils/logger";
 
 
 /**
@@ -312,43 +312,45 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         const selection = await vscode.window.showInformationMessage(fullMsg, { modal: true }, detailsBtn);
 
         if (selection === detailsBtn) {
-          const outputChannel = vscode.window.createOutputChannel("TFA Diagnostics");
-          outputChannel.clear();
-          outputChannel.appendLine(`=========================================`);
-          outputChannel.appendLine(`   ANTIGRAVITY CONNECTIVITY DIAGNOSTICS  `);
-          outputChannel.appendLine(`=========================================`);
-          outputChannel.appendLine(`Time:     ${new Date().toLocaleString()}`);
-          outputChannel.appendLine(`Result:   ${result ? "✅ PASSED" : "❌ FAILED"}`);
-          outputChannel.appendLine(`Reason:   ${reason || "N/A"}`);
-          outputChannel.appendLine(`Duration: ${duration}s`);
-          outputChannel.appendLine(`-----------------------------------------`);
-
-          if (result) {
-            outputChannel.appendLine(`ACTIVE CONNECTION:`);
-            outputChannel.appendLine(`- Port:  ${result.port}`);
-            outputChannel.appendLine(`- CSRF:  ${result.csrfToken.substring(0, 12)}...`);
+          const outputChannel = getLogger();
+          if (outputChannel) {
             outputChannel.appendLine(``);
-          }
+            outputChannel.appendLine(`=========================================`);
+            outputChannel.appendLine(`   ANTIGRAVITY CONNECTIVITY DIAGNOSTICS  `);
+            outputChannel.appendLine(`=========================================`);
+            outputChannel.appendLine(`Time:     ${new Date().toLocaleString()}`);
+            outputChannel.appendLine(`Result:   ${result ? "✅ PASSED" : "❌ FAILED"}`);
+            outputChannel.appendLine(`Reason:   ${reason || "N/A"}`);
+            outputChannel.appendLine(`Duration: ${duration}s`);
+            outputChannel.appendLine(`-----------------------------------------`);
 
-          outputChannel.appendLine(`COMMUNICATION ATTEMPTS PER PID:`);
+            if (result) {
+              outputChannel.appendLine(`ACTIVE CONNECTION:`);
+              outputChannel.appendLine(`- Port:  ${result.port}`);
+              outputChannel.appendLine(`- CSRF:  ${result.csrfToken.substring(0, 12)}...`);
+              outputChannel.appendLine(``);
+            }
 
-          const groupedAttempts = attempts.reduce((acc: any, curr: any) => {
-            if (!acc[curr.pid]) acc[curr.pid] = [];
-            acc[curr.pid].push(curr);
-            return acc;
-          }, {});
+            outputChannel.appendLine(`COMMUNICATION ATTEMPTS PER PID:`);
 
-          Object.keys(groupedAttempts).forEach(pid => {
-            outputChannel.appendLine(`[PID ${pid}]`);
-            groupedAttempts[pid].forEach((a: any) => {
-              const status = a.statusCode ? `${a.statusCode}` : "FAILED";
-              const errorLabel = a.error ? ` | Error: ${a.error}` : "";
-              outputChannel.appendLine(`  --> Port ${a.port.toString().padEnd(5)} | Status: ${status.padEnd(3)}${errorLabel}`);
+            const groupedAttempts = attempts.reduce((acc: any, curr: any) => {
+              if (!acc[curr.pid]) acc[curr.pid] = [];
+              acc[curr.pid].push(curr);
+              return acc;
+            }, {});
+
+            Object.keys(groupedAttempts).forEach(pid => {
+              outputChannel.appendLine(`[PID ${pid}]`);
+              groupedAttempts[pid].forEach((a: any) => {
+                const status = a.statusCode ? `${a.statusCode}` : "FAILED";
+                const errorLabel = a.error ? ` | Error: ${a.error}` : "";
+                outputChannel.appendLine(`  --> Port ${a.port.toString().padEnd(5)} | Status: ${status.padEnd(3)}${errorLabel}`);
+              });
             });
-          });
 
-          outputChannel.appendLine(`=========================================`);
-          outputChannel.show();
+            outputChannel.appendLine(`=========================================`);
+            outputChannel.show(true);
+          }
         }
       });
     })
