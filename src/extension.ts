@@ -313,17 +313,41 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         if (selection === detailsBtn) {
           const outputChannel = vscode.window.createOutputChannel("TFA Diagnostics");
-          outputChannel.appendLine(`--- TFA Connectivity Diagnostics ---`);
-          outputChannel.appendLine(`Time: ${new Date().toISOString()}`);
-          outputChannel.appendLine(`Result: ${result ? "SUCCESS" : "FAILED"}`);
-          outputChannel.appendLine(`Reason: ${reason || "N/A"}`);
-          outputChannel.appendLine(`Candidates: ${count}`);
+          outputChannel.clear();
+          outputChannel.appendLine(`=========================================`);
+          outputChannel.appendLine(`   ANTIGRAVITY CONNECTIVITY DIAGNOSTICS  `);
+          outputChannel.appendLine(`=========================================`);
+          outputChannel.appendLine(`Time:     ${new Date().toLocaleString()}`);
+          outputChannel.appendLine(`Result:   ${result ? "✅ PASSED" : "❌ FAILED"}`);
+          outputChannel.appendLine(`Reason:   ${reason || "N/A"}`);
           outputChannel.appendLine(`Duration: ${duration}s`);
-          outputChannel.appendLine(``);
-          outputChannel.appendLine(`Attempts:`);
-          attempts.forEach((a, i) => {
-            outputChannel.appendLine(`[${i + 1}] PID:${a.pid} Port:${a.port} Status:${a.statusCode || 'Failed'}${a.error ? ` Err:${a.error}` : ''}`);
+          outputChannel.appendLine(`-----------------------------------------`);
+
+          if (result) {
+            outputChannel.appendLine(`ACTIVE CONNECTION:`);
+            outputChannel.appendLine(`- Port:  ${result.port}`);
+            outputChannel.appendLine(`- CSRF:  ${result.csrfToken.substring(0, 12)}...`);
+            outputChannel.appendLine(``);
+          }
+
+          outputChannel.appendLine(`COMMUNICATION ATTEMPTS PER PID:`);
+
+          const groupedAttempts = attempts.reduce((acc: any, curr: any) => {
+            if (!acc[curr.pid]) acc[curr.pid] = [];
+            acc[curr.pid].push(curr);
+            return acc;
+          }, {});
+
+          Object.keys(groupedAttempts).forEach(pid => {
+            outputChannel.appendLine(`[PID ${pid}]`);
+            groupedAttempts[pid].forEach((a: any) => {
+              const status = a.statusCode ? `${a.statusCode}` : "FAILED";
+              const errorLabel = a.error ? ` | Error: ${a.error}` : "";
+              outputChannel.appendLine(`  --> Port ${a.port.toString().padEnd(5)} | Status: ${status.padEnd(3)}${errorLabel}`);
+            });
           });
+
+          outputChannel.appendLine(`=========================================`);
           outputChannel.show();
         }
       });
