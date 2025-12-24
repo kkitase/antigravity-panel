@@ -149,7 +149,7 @@ ACTIVE_GROUP_THRESHOLD = 0.1  （0.1%）
 
 ### 5.3 局限性
 
-- 检测依赖轮询周期（默认 120 秒）
+- 检测依赖轮询周期（默认 90 秒）
 - 用户在轮询间隔内切换模型时，活跃分组不会立即更新
 - 首次启动时，默认活跃分组为 `gemini`
 
@@ -232,7 +232,7 @@ Cache:  {cacheSize}
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `tfa.pollingInterval` | 120 | 轮询间隔（秒） |
+| `tfa.pollingInterval` | 90 | 轮询间隔（秒） |
 | `tfa.historyDisplayMinutes` | 60 | 图表显示的历史时长（分钟） |
 | `tfa.showQuota` | true | 是否在状态栏显示配额 |
 | `tfa.showCacheSize` | true | 是否在状态栏显示缓存大小 |
@@ -252,7 +252,7 @@ Cache:  {cacheSize}
 
 ### 9.2 活跃分组检测延迟
 
-活跃分组检测依赖轮询，存在最多 120 秒的延迟。
+活跃分组检测依赖轮询，存在最多 90 秒的延迟。
 
 **可能的改进方向**:
 - 监听 Antigravity 的模型切换事件（如果 API 支持）

@@ -214,6 +214,36 @@ export class StorageService implements IStorageService {
         await this.globalState.update('tfa.lastPredictionGroup', groupId);
     }
 
+    // ==================== User & Token Cache ====================
+
+    /**
+     * Get cached user info
+     */
+    getLastUserInfo<T>(): T | null {
+        return this.globalState.get<T>('tfa.lastUserInfo') ?? null;
+    }
+
+    /**
+     * Cache user info
+     */
+    async setLastUserInfo<T>(userInfo: T): Promise<void> {
+        await this.globalState.update('tfa.lastUserInfo', userInfo);
+    }
+
+    /**
+     * Get cached token usage
+     */
+    getLastTokenUsage<T>(): T | null {
+        return this.globalState.get<T>('tfa.lastTokenUsage') ?? null;
+    }
+
+    /**
+     * Cache token usage
+     */
+    async setLastTokenUsage<T>(tokenUsage: T): Promise<void> {
+        await this.globalState.update('tfa.lastTokenUsage', tokenUsage);
+    }
+
     // ==================== Core Logic ====================
 
     private load(): void {

@@ -26,7 +26,7 @@
 - 📊 **了解用量** - 交互式图表展示使用趋势
 - 🧹 **保持整洁** - 一键管理 AI 对话缓存
 - 🎨 **界面精美** - 原生主题集成，经过优化的 UI 组件
-- 🌍 **全面国际化** - 提供 11 种语言支持，运行时的弹窗消息现已实现 100% 对齐
+- 🌍 **全面国际化** - 提供 13 种语言支持，运行时的弹窗消息现已实现 100% 对齐
 - 🛠️ **智能诊断反馈** - 内置故障诊断系统，提供自动化错误报告和“搜索优先”反馈机制
 
 ## 📸 界面预览
@@ -41,8 +41,9 @@
 
 **一眼掌握 AI 使用情况**
 - 按模型家族（Gemini、Claude、GPT 等）分组显示配额
-- 状态栏显示剩余配额和缓存大小
-- 配额不足时颜色警告
+- 状态栏显示剩余配额，带 Emoji 状态指示器（🟢🟡🔴）和缓存大小
+- 悬停提示使用 Markdown 表格显示所有模型配额和重置时间
+- 可配置的警告阈值（≤30%）和危险阈值（≤10%）
 
 ### 📈 用量趋势分析
 
@@ -52,6 +53,13 @@
 - 按模型家族颜色编码可视化
 - 🔥 **消耗速率**: 实时消耗速度（%/小时）
 - ⏱️ **耗尽预测**: 预计配额耗尽时间
+
+### 💳 Token 积分追踪
+
+**监控你的 AI 使用积分**
+- Prompt 积分：用于对话输入和结果生成（推理）
+- Flow 积分：用于搜索、修改和命令执行（操作）
+- 可在设置中隐藏用户信息卡片
 
 ### 🗂️ 缓存管理
 
@@ -93,6 +101,15 @@
 - [扩展市场](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
 - [Open VSX Registry](https://open-vsx.org/extension/n2ns/antigravity-panel)
 
+### 从 GitHub Releases 手动安装
+
+如果扩展市场无法访问，或需要安装特定版本：
+
+1. 从 [GitHub Releases](https://github.com/n2ns/antigravity-panel/releases) 下载 `.vsix` 文件
+2. 打开 Antigravity IDE → 扩展面板
+3. 点击 `⋯`（更多操作）→ `从 VSIX 安装...`
+4. 选择下载的 `.vsix` 文件
+
 ## 🎯 快速开始
 
 ### 第一步：打开面板
@@ -127,6 +144,11 @@
 | `Antigravity 工具箱: Refresh Quota` | 手动刷新配额数据 |
 | `Antigravity 工具箱: Show Cache Size` | 显示缓存总大小通知 |
 | `Antigravity 工具箱: Clean Cache` | 删除所有缓存数据（谨慎使用！）|
+| `Antigravity 工具箱: Open Settings` | 打开扩展设置 |
+| `Antigravity 工具箱: Show Disclaimer` | 查看隐私与安全免责声明 |
+| `Antigravity 工具箱: Restart Language Server` | 重启 Antigravity 代理服务 |
+| `Antigravity 工具箱: Reset User Status` | 重置状态更新器 |
+| `Antigravity 工具箱: Run Diagnostics` | 运行连接诊断 |
 
 ## ⚙️ 配置选项
 
@@ -136,7 +158,7 @@
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| **轮询间隔** | `120秒` | 刷新配额的频率（最小 60 秒） |
+| **轮询间隔** | `90秒` | 刷新配额的频率（最小 60 秒） |
 | **显示配额** | `✓` | 在状态栏显示配额信息 |
 | **状态栏样式** | `percentage` | 状态栏显示：百分比、时间、已用量或剩余量 |
 | **仪表盘样式** | `semi-arc` | 模型配额呈现样式：`semi-arc`（半圆弧）或 `classic-donut`（经典圆环） |
@@ -154,7 +176,8 @@
 | **检查间隔** | `120秒` | 检查缓存大小的频率（30-600秒） |
 | **警告阈值** | `500 MB` | 缓存超过此大小时状态栏显示警告颜色 |
 | **隐藏空目录** | `✗` | 在 Brain 和 Code Tracker 树中隐藏空目录 |
-| **自动清理** | `✗` | 是否在缓存过大时执行静默清理（仅保留最新 5 个任务） |
+| **自动清理** | `✗` | 是否在缓存过大时执行静默清理 |
+| **保留任务数** | `5` | 自动清理时保留最新任务的数量（1-50） |
 
 ### 🔧 高级设置
 
@@ -199,5 +222,7 @@ Toolkit for Antigravity 不会收集、传输或存储任何用户数据。所�
 **由 [Datafrog LLC](https://datafrog.io) 开发并维护**
 
 [官方网站](https://datafrog.io) · [反馈与支持](https://github.com/n2ns/antigravity-panel/issues) · [商业咨询](mailto:support@datafrog.io)
+
+*For Antigravity. By Antigravity.*
 
 </div>

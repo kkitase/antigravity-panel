@@ -4,7 +4,7 @@
 
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { UsageChartData } from '../types.js';
+import type { UsageChartData, WindowWithVsCode } from '../types.js';
 
 @customElement('usage-chart')
 export class UsageChart extends LitElement {
@@ -20,61 +20,66 @@ export class UsageChart extends LitElement {
     }
 
     const { buckets, maxUsage, interval, prediction } = this.data;
+    const t = (window as unknown as WindowWithVsCode).__TRANSLATIONS__;
 
-    // 左侧：Timeline 信息
-    const timelineText = `Timeline: ${this.data.displayMinutes} min · Step: ${interval} sec`;
-    
-    // 右侧：预测信息
-    let predictionText = '';
-    if (prediction && prediction.usageRate > 0) {
-      predictionText = `🔥${prediction.usageRate.toFixed(1)}%/h · ⏱️${prediction.runway}`;
-    } else if (prediction) {
-      predictionText = 'Stable';
-    }
+    const timelineText = `${t?.timeline || 'Timeline'}: ${this.data.displayMinutes} ${t?.min || 'min'} · ${t?.step || 'Step'}: ${interval} ${t?.sec || 'sec'}`;
 
     return html`
       <div class="usage-chart">
         <div class="usage-chart-title">
-          <span>Usage History</span>
-          <span>max: ${maxUsage.toFixed(1)}%</span>
+          <span>${t?.usageHistory || 'Usage History'}</span>
+          <span>${t?.max || 'max'}: ${maxUsage.toFixed(1)}%</span>
         </div>
         <div class="usage-chart-bars">
           ${buckets.map(bucket => {
-            const maxHeight = 36;
-            let currentHeight = 0;
-            const gradientStops: string[] = [];
-            const tooltipParts: string[] = [];
+      const maxHeight = 36;
+      let currentHeight = 0;
+      const gradientStops: string[] = [];
+      const tooltipParts: string[] = [];
 
-            if (bucket.items && bucket.items.length > 0) {
-              // 计算每段高度并生成渐变
-              for (const item of bucket.items) {
-                 const height = (item.usage / maxUsage) * maxHeight;
-                 // 忽略太细微的变化以保持 UI 干净，累积高度
-                 const start = currentHeight;
-                 const end = currentHeight + height;
-                 gradientStops.push(`${item.color} ${start}px ${end}px`);
-                 
-                 currentHeight = end;
-                 tooltipParts.push(`${item.groupId}: ${item.usage.toFixed(1)}%`);
-              }
-            }
-            
-            // 至少显示 3px 高度以占位
-            const totalHeight = Math.max(3, currentHeight);
-            
-            // 构造 CSS 背景
-            const background = gradientStops.length > 0
-              ? `linear-gradient(to top, ${gradientStops.join(', ')})`
-              : 'rgba(255, 255, 255, 0.15)'; // 空数据颜色
+      if (bucket.items && bucket.items.length > 0) {
+        for (const item of bucket.items) {
+          const height = (item.usage / maxUsage) * maxHeight;
+          const start = currentHeight;
+          const end = currentHeight + height;
+          gradientStops.push(`${item.color} ${start}px ${end}px`);
 
-            const title = tooltipParts.length > 0 ? tooltipParts.join('\n') : 'No usage data';
-            
-            return html`<div class="usage-bar" style="height: ${totalHeight}px; background: ${background}" title="${title}"></div>`;
-          })}
+          currentHeight = end;
+          tooltipParts.push(`${item.groupId}: ${item.usage.toFixed(1)}%`);
+        }
+      }
+
+      const totalHeight = Math.max(3, currentHeight);
+      const background = gradientStops.length > 0
+        ? `linear-gradient(to top, ${gradientStops.join(', ')})`
+        : 'rgba(255, 255, 255, 0.15)';
+
+      const tooltip = tooltipParts.length > 0 ? tooltipParts.join('\n') : 'No usage data';
+
+      return html`
+              <div class="usage-bar" 
+                   style="height: ${totalHeight}px; background: ${background}" 
+                   data-tooltip="${tooltip}">
+              </div>`;
+    })}
         </div>
         <div class="usage-legend">
-          <span>${timelineText}</span>
-          ${predictionText ? html`<span>${predictionText}</span>` : nothing}
+          <div class="timeline-info">${timelineText}</div>
+          <div class="prediction-info" style="display: flex; gap: 6px;">
+            ${prediction && prediction.usageRate > 0 ? html`
+              <span data-tooltip="${t?.usageRateTooltip || 'Usage Rate: Average percentage of quota consumed per hour'}">
+                🔥${prediction.usageRate.toFixed(1)}%/h
+              </span>
+              <span class="legend-sep">·</span>
+              <span data-tooltip="${t?.runwayTooltip || 'Runway: Estimated remaining time before quota is exhausted'}">
+                ⏱️${prediction.runway}
+              </span>
+            ` : (prediction ? html`
+              <span data-tooltip="${t?.stableStatusTooltip || 'Quota usage status: Stable'}">
+                ⏱️Stable
+              </span>
+            ` : nothing)}
+          </div>
         </div>
       </div>
     `;

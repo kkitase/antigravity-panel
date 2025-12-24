@@ -2,6 +2,33 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Changelog
 
+## [2.3.0] - 2025-12-24
+
+### Added
+- **User Info Extraction**: Now extracts user subscription information from Antigravity API (tier, plan name, upgrade options).
+- **Token Usage Tracking**: Added support for tracking Prompt Credits and Flow Credits usage with formatted display.
+- **TokenUsageViewState**: New view state for displaying token/credit consumption in the panel.
+- **User Info Card Toggle**: New setting `tfa.dashboard.showUserInfoCard` to show/hide the user profile card and credits bar.
+- **Tokens Section**: Added a dedicated "Tokens" section header in the sidebar for Prompt/Flow credits.
+- **Full i18n Coverage**: Completed internationalization for Turkish (`tr`) and Polish (`pl`) language packs.
+
+### Changed
+- **Status Bar Emoji Indicators**: Replaced background color warnings with emoji indicators (🟢🟡🔴) for a cleaner appearance.
+- **Removed Dashboard Icon**: Removed the `$(dashboard)` icon from status bar text since emoji indicators now provide visual feedback.
+- **Markdown Tooltip**: Status bar tooltip now uses MarkdownString with table formatting for perfect column alignment.
+- **Cache Icon Updated**: Changed cache icon from 💾 to 💿 (optical disk) for better visual representation.
+- **Default Polling Interval**: Changed default quota refresh interval from 120s to 90s for better responsiveness.
+- **Toolbar Button Tooltip Removal**: Removed tooltips from Rules, MCP, and Allowlist buttons (common knowledge for developers).
+
+### Improved
+- **PromptCreditsInfo Enhanced**: Added `usedPercentage` field for more comprehensive credit tracking.
+- **FlowCreditsInfo**: New interface for tracking Flow Credits (used in complex AI operations).
+- **Toolbar Button Layout**: Fixed button text squeezing in narrow sidebar by using flexible basis with `white-space: nowrap`.
+- **Usage Chart Legend**: Improved adaptive wrapping for Timeline/Step and prediction info groups.
+- **Credits Bar Spacing**: Added 16px top margin to separate Tokens section from Usage History chart.
+- **Section Header Theming**: Applied VS Code's secondary button theme colors to Brain and Code Tracker titles.
+- **Tooltip Overflow Fix**: Implemented smart right-edge alignment for tooltips to prevent sidebar boundary clipping.
+
 ## [2.2.2] - 2025-12-20
 
 ### Changed

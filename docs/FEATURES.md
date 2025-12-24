@@ -38,6 +38,17 @@ English | [中文文档](FEATURES_zh.md)
 - Shows available/monthly prompt credits
 - Remaining percentage calculation
 
+### Token Credits Tracking
+- **Prompt Credits**: Used for conversation input and result generation (reasoning)
+- **Flow Credits**: Used for search, modification, and command execution (operations)
+- Visual progress bars with color-coded status
+- Dedicated "Tokens" section in sidebar
+
+### User Info Card
+- Display user subscription tier and plan name
+- Toggle visibility via `tfa.dashboard.showUserInfoCard` setting
+- Shows browser and knowledge base feature status
+
 ---
 
 ## 🗂️ Cache Management
@@ -135,7 +146,7 @@ English | [中文文档](FEATURES_zh.md)
 
 ## 🌐 Internationalization
 
-### Supported Languages (11)
+### Supported Languages (13)
 - English
 - 简体中文 (Simplified Chinese)
 - 繁體中文 (Traditional Chinese)
@@ -147,6 +158,8 @@ English | [中文文档](FEATURES_zh.md)
 - Italiano (Italian)
 - 한국어 (Korean)
 - Русский (Russian)
+- Türkçe (Turkish)
+- Polski (Polish)
 
 ---
 
@@ -183,11 +196,12 @@ English | [中文文档](FEATURES_zh.md)
 | `tfa.statusBarStyle` | `percentage` | Display style: percentage/resetTime/used/remaining |
 | `tfa.statusBarThresholdWarning` | `30` | Warning threshold (%) |
 | `tfa.statusBarThresholdCritical` | `10` | Critical threshold (%) |
-| `tfa.pollingInterval` | `120` | Quota refresh interval (seconds, min 60) |
+| `tfa.pollingInterval` | `90` | Quota refresh interval (seconds, min 60) |
 | `tfa.quotaDisplayStyle` | `semi-arc` | Gauge style: semi-arc or classic-donut |
 | `tfa.visualizationMode` | `groups` | Display mode: groups/models |
 | `tfa.showGptQuota` | `false` | Show GPT quota (shares with Claude) |
 | `tfa.historyDisplayMinutes` | `60` | Usage chart time range (10-120 min) |
+| `tfa.showUserInfoCard` | `true` | Show user info card and credits bar |
 | `tfa.cacheCheckInterval` | `120` | Cache check interval (seconds, min 30) |
 | `tfa.cacheWarningThreshold` | `500` | Cache warning threshold (MB) |
 | `tfa.cacheHideEmptyFolders` | `false` | Hide empty folders in tree views |

@@ -13,7 +13,10 @@ export type {
     // Quota Related
     ModelQuotaInfo,
     PromptCreditsInfo,
+    FlowCreditsInfo,
+    TokenUsageInfo,
     QuotaSnapshot,
+    UserInfo,
 
     // Process Detection Related
     LanguageServerInfo,

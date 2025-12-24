@@ -61,6 +61,10 @@ const defaultMockStorageService: IStorageService = {
     getRecentHistory: () => [],
     getLastDisplayPercentage: () => 0,
     getLastPrediction: () => ({ usageRate: 0, runway: '', groupId: '' }),
+    getLastUserInfo: () => null,
+    setLastUserInfo: async () => { },
+    getLastTokenUsage: () => null,
+    setLastTokenUsage: async () => { },
     clear: async () => { },
     count: 0
 };

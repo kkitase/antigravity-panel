@@ -22,6 +22,7 @@ import type {
     SidebarData,
     UsageChartData,
     UsageBucket,
+    TokenUsageViewState,
 } from './types';
 
 export type {
@@ -34,6 +35,7 @@ export type {
     StatusBarData,
     StatusBarGroupItem,
     SidebarData,
+    TokenUsageViewState,
 };
 
 const ACTIVE_GROUP_THRESHOLD = 0.1;
@@ -316,6 +318,41 @@ export class AppViewModel implements vscode.Disposable {
             displayItems
         };
 
+        // Update user info if available
+        if (snapshot.userInfo) {
+            this._state.user = {
+                name: snapshot.userInfo.name,
+                email: snapshot.userInfo.email,
+                tier: snapshot.userInfo.tier,
+                tierDescription: snapshot.userInfo.tierDescription,
+                planName: snapshot.userInfo.planName,
+                browserEnabled: snapshot.userInfo.browserEnabled,
+                knowledgeBaseEnabled: snapshot.userInfo.knowledgeBaseEnabled,
+                upgradeUri: snapshot.userInfo.upgradeUri,
+                upgradeText: snapshot.userInfo.upgradeText,
+            };
+        }
+
+        // Update token usage if available
+        if (snapshot.tokenUsage) {
+            const tu = snapshot.tokenUsage;
+            this._state.tokenUsage = {
+                promptCredits: tu.promptCredits,
+                flowCredits: tu.flowCredits,
+                totalAvailable: tu.totalAvailable,
+                totalMonthly: tu.totalMonthly,
+                overallRemainingPercentage: tu.overallRemainingPercentage,
+                formatted: {
+                    promptAvailable: this.formatCredits(tu.promptCredits?.available),
+                    promptMonthly: this.formatCredits(tu.promptCredits?.monthly),
+                    flowAvailable: this.formatCredits(tu.flowCredits?.available),
+                    flowMonthly: this.formatCredits(tu.flowCredits?.monthly),
+                    totalAvailable: this.formatCredits(tu.totalAvailable),
+                    totalMonthly: this.formatCredits(tu.totalMonthly),
+                },
+            };
+        }
+
         await this.storageService.setLastViewState(this._state.quota);
         await this.storageService.setLastSnapshot(snapshot);
         await this.storageService.setLastDisplayPercentage(Math.round(currentRemaining));
@@ -324,6 +361,24 @@ export class AppViewModel implements vscode.Disposable {
             chart.prediction?.runway || 'Stable',
             activeGroupId
         );
+
+        // Cache user info and token usage for instant startup
+        if (this._state.user) {
+            await this.storageService.setLastUserInfo(this._state.user);
+        }
+        if (this._state.tokenUsage) {
+            await this.storageService.setLastTokenUsage(this._state.tokenUsage);
+        }
+    }
+
+    /**
+     * Format credits number for display
+     */
+    private formatCredits(value?: number): string {
+        if (value === undefined || value === null) return 'N/A';
+        if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+        if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+        return value.toString();
     }
 
     private aggregateGroups(snapshot: QuotaSnapshot): QuotaGroupState[] {
@@ -563,6 +618,8 @@ export class AppViewModel implements vscode.Disposable {
             quotas: this._state.quota.displayItems,
             chart: this._state.quota.chart,
             cache: this._state.cache,
+            user: this._state.user,
+            tokenUsage: this._state.tokenUsage,
             tasks: this._state.tree.tasks,
             contexts: this._state.tree.contexts
         };
@@ -658,6 +715,17 @@ export class AppViewModel implements vscode.Disposable {
             formattedBrain: formatBytes(cacheDetails.brain),
             formattedConversations: formatBytes(cacheDetails.workspace)
         };
+
+        // Restore user info and token usage for instant startup
+        const cachedUserInfo = this.storageService.getLastUserInfo<typeof this._state.user>();
+        if (cachedUserInfo) {
+            this._state.user = cachedUserInfo;
+        }
+
+        const cachedTokenUsage = this.storageService.getLastTokenUsage<typeof this._state.tokenUsage>();
+        if (cachedTokenUsage) {
+            this._state.tokenUsage = cachedTokenUsage;
+        }
 
         return cachedQuota !== null || cachedTree !== null;
     }

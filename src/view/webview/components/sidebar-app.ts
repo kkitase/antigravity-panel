@@ -2,7 +2,7 @@
  * SidebarApp - Main sidebar application component (Light DOM)
  */
 
-import { LitElement, html } from 'lit';
+import { LitElement, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import type {
   QuotaDisplayItem,
@@ -10,12 +10,16 @@ import type {
   TreeSectionState,
   WebviewStateUpdate,
   VsCodeApi,
-  WindowWithVsCode
+  WindowWithVsCode,
+  UserInfoData,
+  TokenUsageData
 } from '../types.js';
 
 import './quota-dashboard.js';
 import './toolbar.js';
 import './folder-tree.js';
+import './credits-bar.js';
+import './user-info-card.js';
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 
@@ -47,6 +51,18 @@ export class SidebarApp extends LitElement {
 
   @state()
   private _gaugeStyle: string = 'semi-arc';
+
+  @state()
+  private _user: UserInfoData | null = null;
+
+  @state()
+  private _tokenUsage: TokenUsageData | null = null;
+
+  @state()
+  private _showUserInfoCard: boolean = true;
+
+  @state()
+  private _cache: WebviewStateUpdate['cache'] | null = null;
 
   private _vscode = acquireVsCodeApi();
 
@@ -103,12 +119,15 @@ export class SidebarApp extends LitElement {
     if (state.chart) {
       this._chartData = state.chart;
     }
+    if (state.cache) {
+      this._cache = state.cache;
+    }
     if (state.tasks) {
       // Adapter: Backend (expanded) -> Frontend (collapsed)
       const backendTasks = state.tasks as TreeSectionState & { expanded?: boolean };
       this._tasks = {
         title: 'Brain',
-        stats: `${backendTasks.folders?.length || 0} Tasks`,
+        stats: this._cache?.formattedBrain || `${backendTasks.folders?.length || 0} Tasks`,
         collapsed: !backendTasks.expanded, // Invert logic
         folders: backendTasks.folders || [],
         loading: false
@@ -119,7 +138,7 @@ export class SidebarApp extends LitElement {
       const backendContexts = state.contexts as TreeSectionState & { expanded?: boolean };
       this._contexts = {
         title: 'Code Tracker',
-        stats: `${backendContexts.folders?.length || 0} Projects`,
+        stats: this._cache?.formattedConversations || `${backendContexts.folders?.length || 0} Projects`,
         collapsed: !backendContexts.expanded, // Invert logic
         folders: backendContexts.folders || [],
         loading: false
@@ -127,6 +146,15 @@ export class SidebarApp extends LitElement {
     }
     if (state.gaugeStyle) {
       this._gaugeStyle = state.gaugeStyle;
+    }
+    if (state.user) {
+      this._user = state.user;
+    }
+    if (state.tokenUsage) {
+      this._tokenUsage = state.tokenUsage;
+    }
+    if (state.showUserInfoCard !== undefined) {
+      this._showUserInfoCard = state.showUserInfoCard;
     }
   }
 
@@ -207,50 +235,69 @@ export class SidebarApp extends LitElement {
         .gaugeStyle=${this._gaugeStyle}
       ></quota-dashboard>
       
+      <credits-bar
+        .tokenUsage=${this._tokenUsage}
+      ></credits-bar>
+      
+      ${this._showUserInfoCard ? html`
+        <user-info-card
+          .user=${this._user}
+        ></user-info-card>
+      ` : nothing}
+      
       <app-toolbar></app-toolbar>
       
       <folder-tree
-        title="Brain"
+        title="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.brain || 'Brain'}"
         .stats=${this._tasks.stats}
         ?collapsed=${this._tasks.collapsed}
         ?loading=${this._tasks.loading}
         .folders=${this._tasks.folders}
-        emptyText="No tasks found"
+        emptyText="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.noTasksFound || 'No tasks found'}"
         @toggle=${this._onToggleTasks}
       ></folder-tree>
       
       <folder-tree
-        title="Code Tracker"
+        title="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.codeTracker || 'Code Tracker'}"
         .stats=${this._contexts.stats}
         ?collapsed=${this._contexts.collapsed}
         ?loading=${this._contexts.loading}
         .folders=${this._contexts.folders}
-        emptyText="No code context cache"
+        emptyText="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.noCacheFound || 'No code context cache'}"
         @toggle=${this._onToggleContexts}
       ></folder-tree>
 
       <div class="recovery-actions">
-        <button class="recovery-btn primary" @click=${() => this._vscode.postMessage({ type: 'restartLanguageServer' })} title=${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.restartService || "Restart Service"}>
+        <button class="recovery-btn primary" 
+                @click=${() => this._vscode.postMessage({ type: 'restartLanguageServer' })} 
+                data-tooltip="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.restartServiceTooltip || 'Restart the background Agent language server (use when code analysis is stuck)'}">
           <i class="codicon codicon-sync"></i>
           <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.restartService || "Restart Service"}</span>
         </button>
-        <button class="recovery-btn primary" @click=${() => this._vscode.postMessage({ type: 'restartUserStatusUpdater' })} title=${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.resetStatus || "Reset Status"}>
+        <button class="recovery-btn primary" 
+                @click=${() => this._vscode.postMessage({ type: 'restartUserStatusUpdater' })} 
+                data-tooltip="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.resetStatusTooltip || 'Reset user subscription and quota refresh status (use when quota display is not updating)'}">
           <i class="codicon codicon-refresh"></i>
           <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.resetStatus || "Reset Status"}</span>
         </button>
       </div>
 
       <div class="sidebar-footer">
-        <button class="discussions-btn" @click=${this._onReportIssue} title=${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.reportIssue || "Report Issue"}>
+        <button class="discussions-btn" 
+                @click=${this._onReportIssue} 
+                data-tooltip="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.feedbackTooltip || 'Report an issue or suggestion: Jump to the GitHub Issues page'}">
           <i class="codicon codicon-bug"></i>
-          <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.reportIssue || "Report Issue"}</span>
+          <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.reportIssue || "Feedback"}</span>
         </button>
-        <button class="discussions-btn" @click=${this._onProjectHome} title=${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.projectHome || "Project Home"}>
-          <i class="codicon codicon-github"></i>
-          <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.projectHome || "Project Home"}</span>
+        <button class="discussions-btn" 
+                @click=${this._onProjectHome} 
+                data-tooltip="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.starTooltip || 'If you like this extension, please star it on GitHub to support us. It is our greatest motivation for continuous improvement!'}">
+          <i class="codicon codicon-star-full" style="color: #e3b341;"></i>
+          <span>${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.giveStar || "Star"}</span>
         </button>
       </div>
 
+      <div class="sidebar-tagline">For Antigravity. By Antigravity.</div>
 
     `;
   }

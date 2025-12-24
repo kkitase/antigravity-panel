@@ -87,12 +87,66 @@ export interface WebviewMessage {
   path?: string;
 }
 
+// ==================== 用户信息相关 ====================
+
+/** 用户信息数据 */
+export interface UserInfoData {
+  name?: string;
+  email?: string;
+  tier?: string;
+  tierDescription?: string;
+  planName?: string;
+  browserEnabled?: boolean;
+  knowledgeBaseEnabled?: boolean;
+  upgradeUri?: string;
+  upgradeText?: string;
+}
+
+/** Token 使用数据 */
+export interface TokenUsageData {
+  promptCredits?: {
+    available: number;
+    monthly: number;
+    usedPercentage: number;
+    remainingPercentage: number;
+  };
+  flowCredits?: {
+    available: number;
+    monthly: number;
+    usedPercentage: number;
+    remainingPercentage: number;
+  };
+  totalAvailable: number;
+  totalMonthly: number;
+  overallRemainingPercentage: number;
+  formatted: {
+    promptAvailable: string;
+    promptMonthly: string;
+    flowAvailable: string;
+    flowMonthly: string;
+    totalAvailable: string;
+    totalMonthly: string;
+  };
+}
+
 export interface WebviewStateUpdate {
   quotas?: QuotaDisplayItem[];
   chart?: UsageChartData;
+  user?: UserInfoData;
+  tokenUsage?: TokenUsageData;
   tasks?: TreeSectionState;
   contexts?: TreeSectionState;
   gaugeStyle?: string;
+  showUserInfoCard?: boolean;
+  cache?: {
+    totalSize: number;
+    brainSize: number;
+    conversationsSize: number;
+    brainCount: number;
+    formattedTotal: string;
+    formattedBrain: string;
+    formattedConversations: string;
+  };
 }
 
 // ==================== VS Code API ====================

@@ -80,43 +80,47 @@ export class StatusBarManager implements vscode.Disposable {
         criticalThreshold: number
     ): void {
         const parts: string[] = [];
-        const tooltipParts: string[] = [];
+        const tooltipRows: string[] = [];
 
         if (showQuota) {
             const primary = statusData.primary;
-            const displayText = this.formatQuotaDisplay(primary, statusBarStyle);
-            parts.push(displayText);
-
-            // Tooltip always shows all groups
-            statusData.allGroups.forEach(g => {
-                tooltipParts.push(
-                    `${g.label}: ${g.percentage}% (Reset: ${g.resetTime})`
-                );
-            });
-
-            // Set background color based on primary group
-            this.item.backgroundColor = this.getBackgroundColor(
+            const statusEmoji = this.getStatusEmoji(
                 primary.percentage,
                 warningThreshold,
                 criticalThreshold
             );
-        } else {
-            // No quota shown, reset background
-            this.item.backgroundColor = undefined;
+            const displayText = this.formatQuotaDisplay(primary, statusBarStyle);
+            parts.push(`${statusEmoji} ${displayText}`);
+
+            // Build markdown table rows for each group
+            statusData.allGroups.forEach(g => {
+                const emoji = this.getStatusEmoji(g.percentage, warningThreshold, criticalThreshold);
+                tooltipRows.push(`| ${emoji} ${g.label} | ${g.percentage}% |  | ⏱ ${g.resetTime} |`);
+            });
         }
 
         if (showCache && cache) {
             parts.push(formatBytes(cache.totalSize));
-            tooltipParts.push(`Cache: ${formatBytes(cache.totalSize)}`);
+            tooltipRows.push(`| 💿 Cache | ${formatBytes(cache.totalSize)} |  | |`);
         }
 
         if (parts.length === 0) {
-            this.item.text = "$(dashboard) TFA";
+            this.item.text = "TFA";
         } else {
-            this.item.text = `$(dashboard) ${parts.join(" | ")}`;
+            this.item.text = parts.join(" | ");
         }
 
-        this.item.tooltip = tooltipParts.join("\n");
+        // Use MarkdownString with table for perfect alignment (no header)
+        if (tooltipRows.length > 0) {
+            const md = new vscode.MarkdownString();
+            // Hidden header row (required for markdown table) + spacer column
+            md.appendMarkdown('|  |  |  |  |\n');
+            md.appendMarkdown('|:--|--:|:--:|:--|\n');
+            md.appendMarkdown(tooltipRows.join('\n'));
+            this.item.tooltip = md;
+        } else {
+            this.item.tooltip = "Toolkit for Antigravity";
+        }
         this.item.show();
     }
 
@@ -145,17 +149,17 @@ export class StatusBarManager implements vscode.Disposable {
         }
     }
 
-    private getBackgroundColor(
+    private getStatusEmoji(
         percentage: number,
         warningThreshold: number,
         criticalThreshold: number
-    ): vscode.ThemeColor | undefined {
+    ): string {
         if (percentage <= criticalThreshold) {
-            return new vscode.ThemeColor('statusBarItem.errorBackground');
+            return '🔴';
         } else if (percentage <= warningThreshold) {
-            return new vscode.ThemeColor('statusBarItem.warningBackground');
+            return '🟡';
         }
-        return undefined;
+        return '🟢';
     }
 
     dispose(): void {

@@ -30,6 +30,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
             this._viewModel.onCacheChange(() => this._postStateUpdate()),
             this._viewModel.onTreeChange(() => this._postStateUpdate())
         );
+
+        // Subscribe to configuration changes (for showUserInfoCard, gaugeStyle, etc.)
+        this._disposables.push(
+            vscode.workspace.onDidChangeConfiguration((e) => {
+                if (e.affectsConfiguration('tfa.dashboard')) {
+                    this._postStateUpdate();
+                }
+            })
+        );
     }
 
     resolveWebviewView(
@@ -127,6 +136,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         const data = this._viewModel.getSidebarData();
         const config = vscode.workspace.getConfiguration('tfa');
         data.gaugeStyle = config.get('dashboard.gaugeStyle', 'semi-arc');
+        data.showUserInfoCard = config.get('dashboard.showUserInfoCard', true);
 
         this._view.webview.postMessage({ type: 'update', payload: data });
     }
@@ -148,10 +158,41 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         this._view.webview.html = new WebviewHtmlBuilder()
             .setHead(cspSource, codiconsUri.toString(), stylesUri.toString(), webviewUri.toString())
             .setTranslations({
-                reportIssue: vscode.l10n.t('Report Issue'),
-                projectHome: vscode.l10n.t('Project Home'),
+                reportIssue: vscode.l10n.t('Feedback'),
+                giveStar: vscode.l10n.t('Star'),
                 restartService: vscode.l10n.t('Restart Service'),
-                resetStatus: vscode.l10n.t('Reset Status')
+                resetStatus: vscode.l10n.t('Reset Status'),
+                userProfile: vscode.l10n.t('User Profile'),
+                tier: vscode.l10n.t('Tier'),
+                plan: vscode.l10n.t('Plan'),
+                promptCredits: vscode.l10n.t('Prompt'),
+                flowCredits: vscode.l10n.t('Flow'),
+                used: vscode.l10n.t('Used'),
+                tokens: vscode.l10n.t('Tokens'),
+                // Tooltips
+                restartServiceTooltip: vscode.l10n.t('Restart the background Agent language server (use when code analysis is stuck)'),
+                resetStatusTooltip: vscode.l10n.t('Reset user subscription and quota refresh status (use when quota display is not updating)'),
+                feedbackTooltip: vscode.l10n.t('Report an issue or suggestion: Jump to the GitHub Issues page'),
+                starTooltip: vscode.l10n.t('If you like this extension, please star it on GitHub to support us. It is our greatest motivation for continuous improvement!'),
+                usageRateTooltip: vscode.l10n.t('Usage Rate: Average percentage of quota consumed per hour'),
+                runwayTooltip: vscode.l10n.t('Runway: Estimated remaining time before quota is exhausted'),
+                stableStatusTooltip: vscode.l10n.t('Quota usage status: Stable'),
+                promptTooltip: vscode.l10n.t('Reasoning Credits: Consumed by conversation input and result generation (thinking).'),
+                flowTooltip: vscode.l10n.t('Execution Credits: Consumed by steps during search, modification, and command execution (operation).'),
+                // Added for completeness
+                rules: vscode.l10n.t('Rules'),
+                mcp: vscode.l10n.t('MCP'),
+                allowlist: vscode.l10n.t('Allowlist'),
+                usageHistory: vscode.l10n.t('Usage History'),
+                max: vscode.l10n.t('max'),
+                timeline: vscode.l10n.t('Timeline'),
+                step: vscode.l10n.t('Step'),
+                min: vscode.l10n.t('min'),
+                sec: vscode.l10n.t('sec'),
+                brain: vscode.l10n.t('Brain'),
+                codeTracker: vscode.l10n.t('Code Tracker'),
+                noTasksFound: vscode.l10n.t('No tasks found'),
+                noCacheFound: vscode.l10n.t('No code context cache')
             })
             .build();
     }

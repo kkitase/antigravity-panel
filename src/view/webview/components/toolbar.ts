@@ -17,16 +17,23 @@ export class AppToolbar extends LitElement {
   }
 
   protected render() {
+    const t = (window as unknown as WindowWithVsCode).__TRANSLATIONS__;
     return html`
       <div class="toolbar">
-        <button class="toolbar-btn primary" @click=${() => this._postMessage('openRules')}>
-          <i class="codicon codicon-symbol-ruler"></i>Rules
+        <button class="toolbar-btn primary" 
+                @click=${() => this._postMessage('openRules')}>
+          <i class="codicon codicon-symbol-ruler"></i>
+          ${t?.rules || 'Rules'}
         </button>
-        <button class="toolbar-btn primary" @click=${() => this._postMessage('openMcp')}>
-          <i class="codicon codicon-plug"></i>MCP
+        <button class="toolbar-btn primary" 
+                @click=${() => this._postMessage('openMcp')}>
+          <i class="codicon codicon-plug"></i>
+          ${t?.mcp || 'MCP'}
         </button>
-        <button class="toolbar-btn primary" @click=${() => this._postMessage('openBrowserAllowlist')}>
-          <i class="codicon codicon-globe"></i>Allowlist
+        <button class="toolbar-btn primary" 
+                @click=${() => this._postMessage('openBrowserAllowlist')}>
+          <i class="codicon codicon-globe"></i>
+          ${t?.allowlist || 'Allowlist'}
         </button>
       </div>
     `;

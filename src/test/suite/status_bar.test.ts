@@ -49,6 +49,20 @@ suite('StatusBarManager Test Suite', () => {
             backgroundColor: undefined
         };
 
+        // Mock vscode.MarkdownString
+        (vscode as any).MarkdownString = class MockMarkdownString {
+            value: string = '';
+            isTrusted = true;
+            supportHtml = true;
+            constructor(value?: string) {
+                this.value = value || '';
+            }
+            appendMarkdown(value: string) {
+                this.value += value;
+                return this;
+            }
+        };
+
         // Stub vscode.window.createStatusBarItem
         const createStub = (vscode.window.createStatusBarItem as unknown) = () => mockStatusBarItem;
 

@@ -31,8 +31,40 @@ export interface PromptCreditsInfo {
   available: number;
   /** Monthly total credits */
   monthly: number;
-  /** Remaining percentage */
+  /** Used percentage (0-100) */
+  usedPercentage: number;
+  /** Remaining percentage (0-100) */
   remainingPercentage: number;
+}
+
+/**
+ * Flow Credits information (for complex operations)
+ */
+export interface FlowCreditsInfo {
+  /** Available flow credits */
+  available: number;
+  /** Monthly total flow credits */
+  monthly: number;
+  /** Used percentage (0-100) */
+  usedPercentage: number;
+  /** Remaining percentage (0-100) */
+  remainingPercentage: number;
+}
+
+/**
+ * Combined Token Usage information for display
+ */
+export interface TokenUsageInfo {
+  /** Prompt credits usage */
+  promptCredits?: PromptCreditsInfo;
+  /** Flow credits usage */
+  flowCredits?: FlowCreditsInfo;
+  /** Total available credits */
+  totalAvailable: number;
+  /** Total monthly credits */
+  totalMonthly: number;
+  /** Overall remaining percentage */
+  overallRemainingPercentage: number;
 }
 
 /**
@@ -43,8 +75,48 @@ export interface QuotaSnapshot {
   timestamp: Date;
   /** Prompt Credits information */
   promptCredits?: PromptCreditsInfo;
+  /** Flow Credits information */
+  flowCredits?: FlowCreditsInfo;
+  /** Combined token usage info */
+  tokenUsage?: TokenUsageInfo;
+  /** User subscription information */
+  userInfo?: UserInfo;
   /** Quota information for each model */
   models: ModelQuotaInfo[];
+}
+
+/**
+ * User subscription information
+ */
+export interface UserInfo {
+  /** User display name */
+  name?: string;
+  /** User email */
+  email?: string;
+  /** Subscription tier name (e.g., "Pro", "Individual", "Enterprise") */
+  tier?: string;
+  /** Tier ID */
+  tierId?: string;
+  /** Tier description */
+  tierDescription?: string;
+  /** Plan name */
+  planName?: string;
+  /** Teams tier */
+  teamsTier?: string;
+  /** Upgrade subscription URI */
+  upgradeUri?: string;
+  /** Upgrade subscription text */
+  upgradeText?: string;
+  /** Whether browser feature is enabled */
+  browserEnabled?: boolean;
+  /** Whether knowledge base is enabled */
+  knowledgeBaseEnabled?: boolean;
+  /** Whether user can buy more credits */
+  canBuyMoreCredits?: boolean;
+  /** Monthly prompt credits limit */
+  monthlyPromptCredits?: number;
+  /** Available prompt credits */
+  availablePromptCredits?: number;
 }
 
 // ==================== Process Detection Related ====================

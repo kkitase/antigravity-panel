@@ -120,6 +120,65 @@ export interface StatusBarData {
     allGroups: StatusBarGroupItem[];
 }
 
+// ==================== User View State ====================
+
+/** User subscription view state */
+export interface UserViewState {
+    /** User display name */
+    name?: string;
+    /** User email */
+    email?: string;
+    /** Subscription tier (e.g., "Pro", "Individual", "Enterprise") */
+    tier?: string;
+    /** Tier description */
+    tierDescription?: string;
+    /** Plan name */
+    planName?: string;
+    /** Whether browser feature is enabled */
+    browserEnabled?: boolean;
+    /** Whether knowledge base is enabled */
+    knowledgeBaseEnabled?: boolean;
+    /** Upgrade URI if available */
+    upgradeUri?: string;
+    /** Upgrade button text */
+    upgradeText?: string;
+}
+
+// ==================== Token Usage View State ====================
+
+/** Token/Credits usage view state */
+export interface TokenUsageViewState {
+    /** Prompt credits info */
+    promptCredits?: {
+        available: number;
+        monthly: number;
+        usedPercentage: number;
+        remainingPercentage: number;
+    };
+    /** Flow credits info */
+    flowCredits?: {
+        available: number;
+        monthly: number;
+        usedPercentage: number;
+        remainingPercentage: number;
+    };
+    /** Total available credits */
+    totalAvailable: number;
+    /** Total monthly credits */
+    totalMonthly: number;
+    /** Overall remaining percentage */
+    overallRemainingPercentage: number;
+    /** Formatted display strings */
+    formatted: {
+        promptAvailable: string;
+        promptMonthly: string;
+        flowAvailable: string;
+        flowMonthly: string;
+        totalAvailable: string;
+        totalMonthly: string;
+    };
+}
+
 // ==================== Sidebar Data ====================
 
 /** Complete sidebar data for webview */
@@ -127,9 +186,12 @@ export interface SidebarData {
     quotas: QuotaDisplayItem[];
     chart: UsageChartData;
     cache: CacheViewState;
+    user?: UserViewState;
+    tokenUsage?: TokenUsageViewState;
     tasks: TreeSectionState;
     contexts: TreeSectionState;
     gaugeStyle?: string;
+    showUserInfoCard?: boolean;
 }
 
 // ==================== App State ====================
@@ -138,6 +200,8 @@ export interface SidebarData {
 export interface AppState {
     quota: QuotaViewState;
     cache: CacheViewState;
+    user?: UserViewState;
+    tokenUsage?: TokenUsageViewState;
     tree: TreeViewState;
     lastUpdated: number;
 }

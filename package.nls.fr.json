@@ -23,6 +23,7 @@
     "config.visualizationMode.models": "Afficher tous les modèles individuellement",
     "config.dashboard.gaugeStyle.description": "Choisir le style visuel pour l'affichage du quota dans la barre latérale",
     "config.dashboard.viewMode.description": "Choisir entre l'affichage groupé ou individuel des modèles dans la barre latérale",
+    "config.dashboard.showUserInfoCard.description": "Afficher la carte de profil utilisateur (Avatar, Tier, Plan) dans la barre latérale",
     "config.dashboard.historyRange.description": "Plage de temps pour le graphique d'utilisation en minutes (par défaut : 90 minutes)",
     "config.dashboard.refreshRate.description": "Intervalle de rafraîchissement automatique en secondes (minimum : 60s, recommandé : 120s)",
     "config.dashboard.includeSecondaryModels.description": "Afficher le quota GPT dans la barre latérale (GPT partage le pool de quota avec Claude)",

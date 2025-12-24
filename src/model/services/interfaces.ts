@@ -210,6 +210,28 @@ export interface IStorageService {
      */
     setLastPrediction(usageRate: number, runway: string, groupId: string): Promise<void>;
 
+    // ==================== User & Token Cache ====================
+
+    /**
+     * Get cached user info
+     */
+    getLastUserInfo<T>(): T | null;
+
+    /**
+     * Set user info cache
+     */
+    setLastUserInfo<T>(userInfo: T): Promise<void>;
+
+    /**
+     * Get cached token usage
+     */
+    getLastTokenUsage<T>(): T | null;
+
+    /**
+     * Set token usage cache
+     */
+    setLastTokenUsage<T>(tokenUsage: T): Promise<void>;
+
     /**
      * Clear all history
      */

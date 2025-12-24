@@ -23,6 +23,7 @@
     "config.visualizationMode.models": "Alle Modelle einzeln anzeigen",
     "config.dashboard.gaugeStyle.description": "Visuellen Stil für die Kontingentanzeige in der Seitenleiste wählen",
     "config.dashboard.viewMode.description": "Zwischen gruppierter oder individueller Modellanzeige in der Seitenleiste wählen",
+    "config.dashboard.showUserInfoCard.description": "Benutzerprofilkarte (Avatar, Tier, Plan) in der Seitenleiste anzeigen",
     "config.dashboard.historyRange.description": "Zeitbereich für das Nutzungsverlaufsdiagramm in Minuten (Standard: 90 Minuten)",
     "config.dashboard.refreshRate.description": "Automatisches Aktualisierungsintervall in Sekunden (Minimum: 60s, empfohlen: 120s)",
     "config.dashboard.includeSecondaryModels.description": "GPT-Kontingent in der Seitenleiste anzeigen (GPT teilt Kontingentpool mit Claude)",

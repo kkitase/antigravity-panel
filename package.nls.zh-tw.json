@@ -23,6 +23,7 @@
     "config.visualizationMode.models": "單獨顯示所有模型",
     "config.dashboard.gaugeStyle.description": "選擇側邊欄配額儀表的視覺樣式",
     "config.dashboard.viewMode.description": "選擇側邊欄中的分組或個別模型顯示模式",
+    "config.dashboard.showUserInfoCard.description": "在側邊欄顯示使用者資訊卡片 (頭像、等級、計劃)",
     "config.dashboard.historyRange.description": "使用量時間線圖表的時間範圍（分鐘）（預設：90分鐘）",
     "config.dashboard.refreshRate.description": "自動重新整理間隔（秒）（最小：60秒，建議：120秒）",
     "config.dashboard.includeSecondaryModels.description": "在側邊欄顯示 GPT 配額（GPT 與 Claude 共享配額池）",

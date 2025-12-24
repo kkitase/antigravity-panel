@@ -27,6 +27,202 @@ body {
   animation: spin 1s linear infinite;
 }
 
+/* Tooltip Utility - Follows VS Code Theme */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 6px 10px;
+  background-color: var(--vscode-editorHoverWidget-background, #252526);
+  color: var(--vscode-editorHoverWidget-foreground, #cccccc);
+  border: 1px solid var(--vscode-editorHoverWidget-border, #454545);
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  max-width: 180px;
+  width: max-content;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  text-align: left;
+}
+
+[data-tooltip]:hover {
+  z-index: 2000;
+  /* Lift the whole item above siblings */
+}
+
+[data-tooltip]:hover::after {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Specific fix for dashboard components which might have stacking contexts */
+quota-pie:hover {
+  z-index: 2000;
+  position: relative;
+}
+
+
+/* Dashboard Special: Flip tooltips DOWNWARD because they are at the very top */
+.pies-container [data-tooltip]::after {
+  bottom: auto;
+  top: calc(100% + 4px);
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.pies-container [data-tooltip]:hover::after {
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* Smart Alignment: Prevent tooltips from going off-screen on the edges */
+
+/* 1. Right Edge: Align to right and expand left */
+.credit-item:last-child[data-tooltip]::after,
+.gauge-container:last-child[data-tooltip]::after,
+quota-pie:last-child .gauge-container[data-tooltip]::after,
+.prediction-info span[data-tooltip]::after,
+.recovery-btn:last-child::after,
+.discussions-btn:last-child::after {
+  left: auto;
+  right: 0;
+  transform: translateY(4px);
+}
+
+.credit-item:last-child[data-tooltip]:hover::after,
+.gauge-container:last-child[data-tooltip]:hover::after,
+quota-pie:last-child .gauge-container[data-tooltip]:hover::after,
+.prediction-info span[data-tooltip]:hover::after,
+.recovery-btn:last-child:hover::after,
+.discussions-btn:last-child:hover::after {
+  transform: translateY(0);
+}
+
+/* 2. Left Edge: Align to left and expand right */
+.credit-item:first-child[data-tooltip]::after,
+.gauge-container:first-child[data-tooltip]::after,
+quota-pie:first-child .gauge-container[data-tooltip]::after,
+.usage-legend span[data-tooltip]:first-child::after,
+.recovery-btn:first-child::after,
+.discussions-btn:first-child::after {
+  left: 0;
+  transform: translateY(4px);
+}
+
+.credit-item:first-child[data-tooltip]:hover::after,
+.gauge-container:first-child[data-tooltip]:hover::after,
+quota-pie:first-child .gauge-container[data-tooltip]:hover::after,
+.usage-legend span[data-tooltip]:first-child:hover::after,
+.recovery-btn:first-child:hover::after,
+.discussions-btn:first-child:hover::after {
+  transform: translateY(0);
+}
+
+/* 3. Arrow Positioning */
+/* Center Arrow (Default) */
+[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  border: 5px solid transparent;
+  border-top-color: var(--vscode-editorHoverWidget-border, #454545);
+  z-index: 1001;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+
+[data-tooltip]:hover::before {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Dashboard Special: Arrow points UP and is on TOP of tooltip */
+.pies-container [data-tooltip]::before {
+  bottom: auto;
+  top: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--vscode-editorHoverWidget-border, #454545);
+  transform: translateX(-50%) translateY(-4px);
+}
+
+.pies-container [data-tooltip]:hover::before {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Right Edge Arrow */
+.credit-item:last-child[data-tooltip]::before,
+.gauge-container:last-child[data-tooltip]::before,
+quota-pie:last-child .gauge-container[data-tooltip]::before,
+.prediction-info span[data-tooltip]::before,
+.recovery-btn:last-child::before,
+.discussions-btn:last-child::before {
+  left: auto;
+  right: 15px;
+  transform: translateX(0) translateY(4px);
+}
+
+
+.credit-item:last-child[data-tooltip]:hover::before,
+.gauge-container:last-child[data-tooltip]:hover::before,
+quota-pie:last-child .gauge-container:hover::before,
+quota-pie:last-child .gauge-container[data-tooltip]:hover::before,
+.prediction-info span[data-tooltip]:hover::before,
+.recovery-btn:last-child:hover::before,
+.discussions-btn:last-child:hover::before {
+  transform: translateY(0);
+}
+
+/* Left Edge Arrow */
+.credit-item:first-child[data-tooltip]::before,
+.gauge-container:first-child[data-tooltip]::before,
+quota-pie:first-child .gauge-container[data-tooltip]::before,
+.usage-legend span[data-tooltip]:first-child::before,
+.recovery-btn:first-child::before,
+.discussions-btn:first-child::before {
+  left: 15px;
+  transform: translateX(0) translateY(4px);
+}
+
+.credit-item:first-child[data-tooltip]:hover::before,
+.gauge-container:first-child[data-tooltip]:hover::before,
+quota-pie:first-child .gauge-container:hover::before,
+quota-pie:first-child .gauge-container[data-tooltip]:hover::before,
+.usage-legend span[data-tooltip]:first-child:hover::before,
+.recovery-btn:first-child:hover::before,
+.discussions-btn:first-child:hover::before {
+  transform: translateY(0);
+}
+
+/* Ensure consistent hover for flipped dashboard items */
+.pies-container .credit-item:last-child[data-tooltip]::after,
+.pies-container .gauge-container:last-child[data-tooltip]::after {
+  transform: translateX(0) translateY(-4px);
+}
+
+.pies-container .credit-item:first-child[data-tooltip]::after,
+.pies-container .gauge-container:first-child[data-tooltip]::after {
+  transform: translateX(0) translateY(-4px);
+}
+
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -208,15 +404,23 @@ quota-pie {
 }
 
 .gauge-label {
-  font-size: 0.75em;
+  font-size: 0.72em;
+  /* Slightly smaller to fit more text */
   font-weight: 600;
   color: var(--vscode-foreground);
-  /* Model name uses main foreground */
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
+  /* Allow wrapping */
+  word-break: break-word;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 74px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Max 2 lines */
+  -webkit-box-orient: vertical;
+  min-height: 2.4em;
+  /* Reserve 2 lines of space for alignment */
+  max-width: 90px;
+  /* Increased from 74px */
   opacity: 0.9;
   line-height: 1.2;
 }
@@ -231,9 +435,11 @@ quota-pie {
 /* 仪表盘容器样式 */
 .pies-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+  /* Increased min-width */
   justify-items: center;
-  gap: 8px 4px;
+  gap: 12px 6px;
+  /* Slightly more gap */
   padding: 16px 8px 10px 8px;
   background: var(--vscode-sideBar-background);
   border-bottom: 1px solid var(--vscode-widget-border);
@@ -276,6 +482,28 @@ quota-pie {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  /* 允许换行 */
+  gap: 4px 8px;
+  /* 换行时的行间距 */
+}
+
+.timeline-info {
+  white-space: nowrap;
+  /* 保证 Timeline 和 Step 作为一个整体，不要内部换行 */
+}
+
+.prediction-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: max-content;
+  /* 保证预测信息也是一个整体换行 */
+}
+
+.legend-sep {
+  opacity: 0.4;
+  margin: 0 2px;
 }
 
 /* 工具栏样式 */
@@ -289,19 +517,23 @@ quota-pie {
 }
 
 .toolbar-btn {
-  flex: 1;
+  flex: 1 1 70px;
+  /* 设定一个基础宽度，当空间不足时自动换行而不是挤压 */
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 4px 8px;
-  font-size: 0.9em;
+  gap: 4px;
+  padding: 6px 4px;
+  font-size: 0.85em;
   background: var(--vscode-button-secondaryBackground);
   color: var(--vscode-button-secondaryForeground);
   border: 1px solid var(--vscode-button-border, transparent);
   border-radius: 3px;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
+  /* 禁止按钮内部文字换行，迫使整个按钮换行 */
 }
 
 .toolbar-btn .codicon-globe {
@@ -322,7 +554,7 @@ quota-pie {
   background: var(--vscode-button-hoverBackground);
 }
 
-/* 区块标题样式 */
+/* 区块标题样式 (使用次级按钮主题) */
 .section-header {
   display: flex;
   align-items: center;
@@ -336,15 +568,17 @@ quota-pie {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--vscode-sideBarSectionHeader-foreground);
-  background: linear-gradient(180deg, var(--vscode-sideBarSectionHeader-background) 0%, rgba(0, 0, 0, 0.15) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  color: var(--vscode-button-secondaryForeground);
+  background: var(--vscode-button-secondaryBackground);
+  border-top: 1px solid var(--vscode-button-border, transparent);
+  border-bottom: 1px solid var(--vscode-button-border, rgba(0, 0, 0, 0.2));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  /* 增加一点间距感 */
 }
 
 .section-header:hover {
-  background: linear-gradient(180deg, var(--vscode-list-hoverBackground) 0%, rgba(0, 0, 0, 0.1) 100%);
+  background: var(--vscode-button-secondaryHoverBackground);
 }
 
 .section-title {
@@ -558,6 +792,22 @@ quota-pie {
   font-size: 16px;
 }
 
+/* Sidebar Tagline - Engraved Nameplate Effect */
+.sidebar-tagline {
+  text-align: center;
+  font-size: 0.72em;
+  font-style: italic;
+  color: var(--vscode-descriptionForeground);
+  padding: 8px 16px;
+  margin: 12px 12px 8px 12px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.15),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
 
 
 /* Recovery Actions */
@@ -611,4 +861,191 @@ quota-pie {
 
 .recovery-btn .codicon {
   font-size: 14px;
+}
+
+/* Credits Bar Styles */
+.credits-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 12px;
+  background: var(--vscode-sideBar-background);
+  border-bottom: 1px solid var(--vscode-widget-border);
+  margin-top: 16px;
+  /* 增加顶部空白高度，与 usage History 区域拉开距离 */
+}
+
+.credits-title {
+  width: 100%;
+  font-size: 0.85em;
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 4px;
+}
+
+.credits-bar .credit-item {
+  flex: 1 1 100px;
+  min-width: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8em;
+}
+
+.credits-bar .credit-label {
+  color: var(--vscode-descriptionForeground);
+  font-weight: 500;
+}
+
+.credits-bar .credit-value {
+  color: var(--vscode-foreground);
+  font-weight: 600;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.9em;
+}
+
+.credits-bar .credit-progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.credits-bar .credit-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* User Info Card Styles */
+.user-info-card {
+  padding: 10px 14px;
+  background: var(--vscode-sideBar-background);
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.25));
+  border-radius: 4px;
+  margin: 10px 8px;
+  /* Slightly more vertical spacing */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.user-info-card .user-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.user-info-card .user-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 auto;
+  min-width: 0;
+  /* Allow shrinking for ellipsis */
+}
+
+.user-info-card .user-header .codicon {
+  font-size: 16px;
+  color: var(--vscode-foreground);
+  opacity: 0.9;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-info-card .user-email {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  line-height: normal;
+}
+
+.user-info-card .tier-badge {
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  font-size: 0.7em;
+  font-weight: 600;
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.user-info-card .user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85em;
+}
+
+.user-info-card .user-label {
+  color: var(--vscode-descriptionForeground);
+  min-width: 40px;
+}
+
+.user-info-card .user-value {
+  color: var(--vscode-foreground);
+  font-weight: 500;
+}
+
+.user-info-card .token-section {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--vscode-widget-border);
+}
+
+.user-info-card .token-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82em;
+}
+
+.user-info-card .token-label {
+  color: var(--vscode-descriptionForeground);
+}
+
+.user-info-card .token-value {
+  color: var(--vscode-foreground);
+  font-weight: 500;
+  font-family: var(--vscode-editor-font-family, monospace);
+}
+
+.user-info-card .progress-bar {
+  height: 6px;
+  background: var(--vscode-progressBar-background, rgba(255, 255, 255, 0.1));
+  border-radius: 3px;
+  margin: 6px 0;
+  overflow: hidden;
+}
+
+.user-info-card .progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease, background 0.3s ease;
+}
+
+.user-info-card .usage-info {
+  font-size: 0.78em;
+  opacity: 0.8;
+}
+
+.user-info-card .usage-label {
+  color: var(--vscode-descriptionForeground);
+}
+
+.user-info-card .usage-value {
+  font-weight: 600;
 }

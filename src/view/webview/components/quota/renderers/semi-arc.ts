@@ -7,6 +7,9 @@ export const renderSemiArc = ({ data, color, label }: GaugeRendererProps) => {
   const valueStr = data.hasData ? remaining.toFixed(0) : 'N/A';
   const resetTime = data.resetTime || '';
 
+  // Tooltip: Model name + Reset time
+  const tooltip = `${label}\nReset: ${resetTime}`;
+
   // Precision Arcs at Center 50,40
   const fillArcLength = getArcLength(36, 210);
   const dashOffset = fillArcLength - (remaining / 100) * fillArcLength;
@@ -20,7 +23,7 @@ export const renderSemiArc = ({ data, color, label }: GaugeRendererProps) => {
   });
 
   return html`
-    <div class="gauge-container style-semi-arc">
+    <div class="gauge-container style-semi-arc" data-tooltip="${tooltip}">
       <div class="gauge-visual">
         <svg viewBox="0 0 100 70" class="gauge-svg">
           <path class="gauge-track-bg" d="${getPath(43)}" />

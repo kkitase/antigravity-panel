@@ -129,6 +129,12 @@
             ],
             "description": "%config.dashboard.gaugeStyle.description%"
           },
+          "tfa.dashboard.showUserInfoCard": {
+            "type": "boolean",
+            "default": true,
+            "order": 60,
+            "description": "%config.dashboard.showUserInfoCard.description%"
+          },
           "tfa.dashboard.viewMode": {
             "type": "string",
             "default": "groups",
@@ -153,7 +159,7 @@
           },
           "tfa.dashboard.refreshRate": {
             "type": "number",
-            "default": 120,
+            "default": 90,
             "minimum": 60,
             "order": 40,
             "description": "%config.dashboard.refreshRate.description%"

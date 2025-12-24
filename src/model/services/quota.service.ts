@@ -12,10 +12,13 @@ import type { ConfigManager } from '../../shared/config/config_manager';
 import type {
     ModelQuotaInfo,
     PromptCreditsInfo,
+    FlowCreditsInfo,
+    TokenUsageInfo,
     QuotaSnapshot,
     QuotaUpdateCallback,
     ErrorCallback,
     LanguageServerInfo,
+    UserInfo,
 } from '../types/entities';
 
 // Re-export types for backward compatibility
@@ -156,7 +159,9 @@ export class QuotaService implements IQuotaService {
         const userStatus = data.userStatus;
         const planInfo = userStatus.planStatus?.planInfo;
         const availableCredits = userStatus.planStatus?.availablePromptCredits;
+        const availableFlowCredits = userStatus.planStatus?.availableFlowCredits;
 
+        // Parse Prompt Credits
         let promptCredits: PromptCreditsInfo | undefined;
         if (planInfo && availableCredits !== undefined) {
             const monthly = Number(planInfo.monthlyPromptCredits);
@@ -165,10 +170,59 @@ export class QuotaService implements IQuotaService {
                 promptCredits = {
                     available,
                     monthly,
+                    usedPercentage: ((monthly - available) / monthly) * 100,
                     remainingPercentage: (available / monthly) * 100,
                 };
             }
         }
+
+        // Parse Flow Credits
+        let flowCredits: FlowCreditsInfo | undefined;
+        if (planInfo?.monthlyFlowCredits && availableFlowCredits !== undefined) {
+            const monthly = Number(planInfo.monthlyFlowCredits);
+            const available = Number(availableFlowCredits);
+            if (monthly > 0) {
+                flowCredits = {
+                    available,
+                    monthly,
+                    usedPercentage: ((monthly - available) / monthly) * 100,
+                    remainingPercentage: (available / monthly) * 100,
+                };
+            }
+        }
+
+        // Build combined token usage info
+        let tokenUsage: TokenUsageInfo | undefined;
+        if (promptCredits || flowCredits) {
+            const totalAvailable = (promptCredits?.available || 0) + (flowCredits?.available || 0);
+            const totalMonthly = (promptCredits?.monthly || 0) + (flowCredits?.monthly || 0);
+            tokenUsage = {
+                promptCredits,
+                flowCredits,
+                totalAvailable,
+                totalMonthly,
+                overallRemainingPercentage: totalMonthly > 0 ? (totalAvailable / totalMonthly) * 100 : 0,
+            };
+        }
+
+        // Extract user subscription info
+        const userTier = userStatus.userTier;
+        const userInfo: UserInfo | undefined = userStatus.name || userTier ? {
+            name: userStatus.name,
+            email: userStatus.email,
+            tier: userTier?.name || planInfo?.teamsTier,
+            tierId: userTier?.id,
+            tierDescription: userTier?.description,
+            planName: planInfo?.planName,
+            teamsTier: planInfo?.teamsTier,
+            upgradeUri: userTier?.upgradeSubscriptionUri,
+            upgradeText: userTier?.upgradeSubscriptionText,
+            browserEnabled: planInfo?.browserEnabled,
+            knowledgeBaseEnabled: planInfo?.knowledgeBaseEnabled,
+            canBuyMoreCredits: planInfo?.canBuyMoreCredits,
+            monthlyPromptCredits: planInfo?.monthlyPromptCredits,
+            availablePromptCredits: availableCredits,
+        } : undefined;
 
         const rawModels = userStatus.cascadeModelConfigData?.clientModelConfigs || [];
         const models: ModelQuotaInfo[] = rawModels
@@ -189,7 +243,7 @@ export class QuotaService implements IQuotaService {
                 };
             });
 
-        return { timestamp: new Date(), promptCredits, models };
+        return { timestamp: new Date(), promptCredits, flowCredits, tokenUsage, userInfo, models };
     }
 
     private formatTime(ms: number): string {
@@ -217,11 +271,27 @@ interface RawModelConfig {
 
 interface ServerUserStatusResponse {
     userStatus: {
+        name?: string;
+        email?: string;
+        userTier?: {
+            id?: string;
+            name?: string;
+            description?: string;
+            upgradeSubscriptionUri?: string;
+            upgradeSubscriptionText?: string;
+        };
         planStatus?: {
             planInfo: {
                 monthlyPromptCredits: number;
+                monthlyFlowCredits?: number;
+                planName?: string;
+                teamsTier?: string;
+                browserEnabled?: boolean;
+                knowledgeBaseEnabled?: boolean;
+                canBuyMoreCredits?: boolean;
             };
             availablePromptCredits: number;
+            availableFlowCredits?: number;
         };
         cascadeModelConfigData?: {
             clientModelConfigs: RawModelConfig[];

@@ -93,4 +93,29 @@ suite('StorageService Test Suite', () => {
         await service.clear();
         assert.strictEqual(service.count, 0);
     });
+
+    test('should store and retrieve user info', async () => {
+        const userInfo = { tier: 'pro', planName: 'Professional', hasBrowser: true };
+
+        assert.strictEqual(service.getLastUserInfo(), null); // default
+
+        await service.setLastUserInfo(userInfo);
+        const retrieved = service.getLastUserInfo<typeof userInfo>();
+
+        assert.deepStrictEqual(retrieved, userInfo);
+    });
+
+    test('should store and retrieve token usage', async () => {
+        const tokenUsage = {
+            promptCredits: { available: 1000, monthly: 2000, remainingPercentage: 50 },
+            flowCredits: { available: 500, monthly: 1000, remainingPercentage: 50 }
+        };
+
+        assert.strictEqual(service.getLastTokenUsage(), null); // default
+
+        await service.setLastTokenUsage(tokenUsage);
+        const retrieved = service.getLastTokenUsage<typeof tokenUsage>();
+
+        assert.deepStrictEqual(retrieved, tokenUsage);
+    });
 });

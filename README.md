@@ -26,7 +26,7 @@ English | [中文文档](README_zh.md)
 - 📊 **Understand your usage** - Interactive charts showing usage trends
 - 🧹 **Keep things clean** - Manage AI conversation caches with one click
 - 🎨 **Elegant Interface** - Native theme integration with refined UI components
-- 🌍 **Full Localization** - Support for 11 languages with runtime i18n notifications
+- 🌍 **Full Localization** - Support for 13 languages with runtime i18n notifications
 - 🛠️ **Intelligent Diagnostics** - Built-in feedback system with automatic error reporting
 
 ## 📸 Screenshots
@@ -41,8 +41,9 @@ English | [中文文档](README_zh.md)
 
 **See your AI usage at a glance**
 - Visual quota display grouped by model families (Gemini, Claude, GPT, etc.)
-- Status bar shows remaining quota and cache size
-- Color-coded warnings when quota runs low
+- Status bar shows remaining quota with emoji indicators (🟢🟡🔴) and cache size
+- Hover tooltip with Markdown table showing all model quotas and reset times
+- Configurable warning (≤30%) and critical (≤10%) thresholds
 
 ### 📈 Usage Trends & Analytics
 
@@ -52,6 +53,13 @@ English | [中文文档](README_zh.md)
 - Color-coded visualization by model family
 - 🔥 **Usage Rate**: Real-time consumption speed (%/hour)
 - ⏱️ **Runway Prediction**: Estimated time until quota exhaustion
+
+### 💳 Token Credits Tracking
+
+**Monitor your AI usage credits**
+- Prompt Credits: Used for conversation input and result generation (reasoning)
+- Flow Credits: Used for search, modification, and command execution (operations)
+- User info card visibility can be toggled in settings
 
 ### 🗂️ Cache Management
 
@@ -93,6 +101,15 @@ English | [中文文档](README_zh.md)
 - [Extension Marketplace](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
 - [Open VSX Registry](https://open-vsx.org/extension/n2ns/antigravity-panel)
 
+### Manual Install from GitHub Releases
+
+If the marketplace is unavailable or you need a specific version:
+
+1. Download the `.vsix` file from [GitHub Releases](https://github.com/n2ns/antigravity-panel/releases)
+2. Open Antigravity IDE → Extensions panel
+3. Click `⋯` (More Actions) → `Install from VSIX...`
+4. Select the downloaded `.vsix` file
+
 ## 🎯 Quick Start
 
 ### Step 1: Open the Panel
@@ -127,6 +144,11 @@ Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for:
 | `Antigravity Toolkit: Refresh Quota` | Manually refresh quota data |
 | `Antigravity Toolkit: Show Cache Size` | Show total cache size notification |
 | `Antigravity Toolkit: Clean Cache` | Delete all cache data (use with caution!) |
+| `Antigravity Toolkit: Open Settings` | Open extension settings |
+| `Antigravity Toolkit: Show Disclaimer` | View privacy and safety disclaimer |
+| `Antigravity Toolkit: Restart Language Server` | Restart Antigravity Agent Service |
+| `Antigravity Toolkit: Reset User Status` | Reset the status updater |
+| `Antigravity Toolkit: Run Diagnostics` | Run connectivity diagnostics |
 
 ## ⚙️ Configuration
 
@@ -136,7 +158,7 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `tfa` to cu
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| **Polling Interval** | `120s` | How often to refresh quota (min: 60s) |
+| **Polling Interval** | `90s` | How often to refresh quota (min: 60s) |
 | **Show Quota** | `✓` | Display quota in status bar |
 | **Status Bar Style** | `percentage` | Display mode: percentage, resetTime, used, or remaining |
 | **Quota Style** | `semi-arc` | Visualization style: `semi-arc` or `classic-donut` |
@@ -154,7 +176,8 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `tfa` to cu
 | **Check Interval** | `120s` | How often to check cache size (30-600s) |
 | **Warning Threshold** | `500 MB` | Status bar color warning when exceeded |
 | **Hide Empty Folders** | `✗` | Hide empty folders in Brain and Code Tracker trees |
-| **Auto Clean** | `✗` | Automatically clean cache when exceeded (keeps newest 5) |
+| **Auto Clean** | `✗` | Automatically clean cache when exceeded |
+| **Auto Clean Keep Count** | `5` | Number of newest tasks to keep during auto-clean (1-50) |
 
 ### 🔧 Advanced Settings
 
@@ -199,5 +222,7 @@ Licensed under the [GNU General Public License v3.0](LICENSE).
 **Developed by [Datafrog LLC](https://datafrog.io)**
 
 [Website](https://datafrog.io) · [Feedback & Support](https://github.com/n2ns/antigravity-panel/issues) · [Commercial Inquiry](mailto:support@datafrog.io)
+
+*For Antigravity. By Antigravity.*
 
 </div>

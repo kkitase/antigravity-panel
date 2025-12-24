@@ -58,4 +58,24 @@ suite('Localization Alignment Test Suite', () => {
             );
         });
     });
+
+    test('Technical AI terminology should remain in English across all languages', () => {
+        const technicalTerms = ['Tokens', 'Prompt', 'Flow', 'max', 'Rules', 'MCP'];
+        const files = fs.readdirSync(l10nDir).filter(f => f.endsWith('.json') && f !== 'bundle.l10n.json');
+
+        files.forEach(file => {
+            const filePath = path.join(l10nDir, file);
+            const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            technicalTerms.forEach(term => {
+                if (content[term] !== undefined) {
+                    assert.strictEqual(
+                        content[term],
+                        term,
+                        `[${file}] Technical term "${term}" should remain in English, but found: "${content[term]}"`
+                    );
+                }
+            });
+        });
+    });
 });
