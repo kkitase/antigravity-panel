@@ -17,6 +17,7 @@ import { SidebarProvider } from "./view/sidebar-provider";
 import { initLogger, setDebugMode, infoLog, errorLog, getLogger } from "./shared/utils/logger";
 import { formatBytes } from "./shared/utils/format";
 import { CommunicationAttempt } from "./shared/utils/types";
+import { getDetailedOSVersion } from "./shared/utils/platform";
 
 
 /**
@@ -90,10 +91,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   processFinder.detect().then(async serverInfo => {
     const extVersion = context.extension.packageJSON.version;
+    const ideVersion = vscode.version;
     const commonMeta = {
       platform: process.platform,
       arch: process.arch,
-      version: extVersion
+      version: extVersion,
+      ideVersion,
+      processName: processFinder.getProcessName(),
+      osDetailedVersion: getDetailedOSVersion()
     };
 
     if (serverInfo) {
@@ -140,10 +145,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
 
       // Collect useful diagnostic info only
+      let attemptDetailsStr: string | undefined;
       if (attempts.length > 0) {
         parsingInfo = attempts
           .map(a => `PID:${a.pid} Port:${a.port} Status:${a.statusCode || 'Failed'}${a.error ? ` (${a.error})` : ''}`)
           .join('; ');
+        attemptDetailsStr = JSON.stringify(attempts.slice(0, 3)); // Limit to first 3 attempts
       }
 
       if (message) {
@@ -151,7 +158,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           ...commonMeta,
           reason,
           candidateCount: count,
-          parsingInfo
+          parsingInfo,
+          attemptDetails: attemptDetailsStr
         });
         hasShownNotification = true;
       }

@@ -49,6 +49,13 @@ export class ProcessFinder {
   }
 
   /**
+   * Get the process name being searched for (for diagnostics)
+   */
+  getProcessName(): string {
+    return this.processName;
+  }
+
+  /**
    * Detect Antigravity Language Server process with automatic retry
    *
    * Uses exponential backoff: waits 1.5s after first failure, 3s after second, 6s after third...

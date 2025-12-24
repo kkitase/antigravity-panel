@@ -54,14 +54,14 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].pid, 12345);
         });
 
-        test('should return null for non-Antigravity process', () => {
+        test('should return null when no CSRF token in any process', () => {
             const jsonOutput = JSON.stringify({
                 ProcessId: 12345,
-                CommandLine: 'C:\\Program Files\\VSCode\\code.exe --some-args'
+                CommandLine: 'C:\\Program Files\\SomeApp\\app.exe --some-args'
             });
 
             const result = strategy.parseProcessInfo(jsonOutput);
-            assert.strictEqual(result, null);
+            assert.strictEqual(result, null, 'Should return null when no csrf_token');
         });
 
         test('should return null when CSRF token is missing', () => {

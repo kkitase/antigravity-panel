@@ -8,28 +8,22 @@ import { ProcessInfo, PlatformStrategy } from "../utils/types";
 export type { ProcessInfo, PlatformStrategy };
 
 /**
- * Windows platform strategy using PowerShell and WMIC
+ * Windows platform strategy using PowerShell
+ * Compatible with PowerShell 5.1 and pwsh 7.x
+ * Note: Windows 7 is not supported (requires PowerShell 3.0+)
  */
 export class WindowsStrategy implements PlatformStrategy {
-  private isAntigravityProcess(commandLine: string): boolean {
-    const lowerCmd = commandLine.toLowerCase();
-    if (/--app_data_dir\s+antigravity\b/i.test(commandLine)) {
-      return true;
-    }
-    return lowerCmd.includes("\\antigravity\\") || lowerCmd.includes("/antigravity/");
-  }
-
   getProcessListCommand(processName: string): string {
-    // Robust PowerShell script for Windows 10/11
+    // PowerShell script for Windows 10/11
     // 1. [Console]::OutputEncoding: Ensures UTF-8 output to handle special characters in paths
-    // 2. Try-Catch: Falls back from Get-CimInstance (modern) to Get-WmiObject (legacy) if services are restricted
-    // 3. @( ... ): Forces result into an array structure
-    // 4. if ($p): Ensures we return '[]' instead of empty string if no process is found to avoid JSON.parse errors
+    // 2. @( ... ): Forces result into an array structure
+    // 3. if ($p): Ensures we return '[]' instead of empty string if no process is found
+    // Note: Only using Get-CimInstance (no Get-WmiObject fallback) for pwsh 7 compatibility
     const script = `
       [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
       $n = '${processName}';
-      $f = \\"name='$n'\\";
-      try { $p = Get-CimInstance Win32_Process -Filter $f } catch { $p = Get-WmiObject Win32_Process -Filter $f };
+      $f = "name='$n'";
+      $p = Get-CimInstance Win32_Process -Filter $f -ErrorAction SilentlyContinue;
       if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
     `.replace(/\n\s+/g, ' ').trim();
 
@@ -55,10 +49,6 @@ export class WindowsStrategy implements PlatformStrategy {
       const results: ProcessInfo[] = [];
 
       for (const item of processList) {
-        if (!item.CommandLine || !this.isAntigravityProcess(item.CommandLine)) {
-          continue;
-        }
-
         const commandLine = item.CommandLine || "";
         const pid = item.ProcessId;
         const ppid = item.ParentProcessId;

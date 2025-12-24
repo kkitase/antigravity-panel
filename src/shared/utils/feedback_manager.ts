@@ -7,6 +7,12 @@ export interface DiagnosticMetadata {
     platform: string;
     arch: string;
     version: string;
+    // New fields for enhanced diagnostics
+    ideVersion?: string;
+    processName?: string;
+    serverResponse?: string;
+    attemptDetails?: string;
+    osDetailedVersion?: string;
 }
 
 /**
@@ -24,10 +30,15 @@ export class FeedbackManager {
 
         let diagInfo = `**${vscode.l10n.t("Diagnostic System Information (Auto-generated)")}**\n`;
         diagInfo += `- **${vscode.l10n.t("Extension Version")}**: ${meta.version}\n`;
-        diagInfo += `- **${vscode.l10n.t("Operating System")}**: ${meta.platform} (${meta.arch})\n`;
+        const osString = meta.osDetailedVersion ? `${meta.platform} (${meta.osDetailedVersion})` : `${meta.platform} (${meta.arch})`;
+        diagInfo += `- **${vscode.l10n.t("Operating System")}**: ${osString}\n`;
+        if (meta.ideVersion) diagInfo += `- **IDE Version**: ${meta.ideVersion}\n`;
         diagInfo += `- **${vscode.l10n.t("Error Code")}**: ${meta.reason}\n`;
+        if (meta.processName) diagInfo += `- **Process Searched**: ${meta.processName}\n`;
         if (meta.candidateCount !== undefined) diagInfo += `- **${vscode.l10n.t("Candidate Process Count")}**: ${meta.candidateCount}\n`;
         if (meta.parsingInfo) diagInfo += `- **${vscode.l10n.t("Parsing Details")}**: ${meta.parsingInfo}\n`;
+        if (meta.attemptDetails) diagInfo += `- **Attempt Details**: ${meta.attemptDetails}\n`;
+        if (meta.serverResponse) diagInfo += `\n**Server Response**:\n\`\`\`\n${meta.serverResponse.substring(0, 500)}\n\`\`\`\n`;
 
         const body = encodeURIComponent(
             `${vscode.l10n.t("**Problem Description**\n(Please briefly describe the situation under which this problem occurred, e.g., did you just upgrade the IDE?)\n\n---")}\n${diagInfo}`
