@@ -168,7 +168,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
                 promptCredits: vscode.l10n.t('Prompt'),
                 flowCredits: vscode.l10n.t('Flow'),
                 used: vscode.l10n.t('Used'),
-                tokens: vscode.l10n.t('Tokens'),
                 // Tooltips
                 restartServiceTooltip: vscode.l10n.t('Restart the background Agent language server (use when code analysis is stuck)'),
                 resetStatusTooltip: vscode.l10n.t('Reset user subscription and quota refresh status (use when quota display is not updating)'),
@@ -185,10 +184,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
                 allowlist: vscode.l10n.t('Allowlist'),
                 usageHistory: vscode.l10n.t('Usage History'),
                 max: vscode.l10n.t('max'),
-                timeline: vscode.l10n.t('Timeline'),
-                step: vscode.l10n.t('Step'),
-                min: vscode.l10n.t('min'),
-                sec: vscode.l10n.t('sec'),
                 brain: vscode.l10n.t('Brain'),
                 codeTracker: vscode.l10n.t('Code Tracker'),
                 noTasksFound: vscode.l10n.t('No tasks found'),

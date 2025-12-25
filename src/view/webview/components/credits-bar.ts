@@ -30,7 +30,7 @@ export class CreditsBar extends LitElement {
 
     return html`
       <div class="credits-bar">
-        <div class="credits-title">${t.tokens || 'Tokens'}</div>
+        <div class="credits-title">AI Credits</div>
         ${promptCredits ? html`
           <div class="credit-item" data-tooltip="${t.promptTooltip || 'Reasoning Credits: Consumed by conversation input and result generation (thinking).'}\nAvailable: ${promptCredits.available}\nLimit: ${promptCredits.monthly}">
             <span class="credit-label">${t.promptCredits || 'Prompt'}</span>

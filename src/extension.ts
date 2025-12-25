@@ -325,8 +325,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand("tfa.showDisclaimer", async () => {
       const isZh = vscode.env.language.startsWith('zh');
       const fileName = isZh ? "DISCLAIMER_zh.md" : "DISCLAIMER.md";
-      const url = `https://github.com/n2ns/antigravity-panel/blob/main/${fileName}`;
-      await vscode.env.openExternal(vscode.Uri.parse(url));
+      const disclaimerUri = vscode.Uri.joinPath(context.extensionUri, fileName);
+      await vscode.commands.executeCommand('vscode.open', disclaimerUri);
     }),
     vscode.commands.registerCommand("tfa.runDiagnostics", async () => {
       await vscode.window.withProgress({

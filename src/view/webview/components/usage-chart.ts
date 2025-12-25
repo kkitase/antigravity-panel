@@ -22,7 +22,7 @@ export class UsageChart extends LitElement {
     const { buckets, maxUsage, interval, prediction } = this.data;
     const t = (window as unknown as WindowWithVsCode).__TRANSLATIONS__;
 
-    const timelineText = `${t?.timeline || 'Timeline'}: ${this.data.displayMinutes} ${t?.min || 'min'} · ${t?.step || 'Step'}: ${interval} ${t?.sec || 'sec'}`;
+    const timelineText = `Last ${this.data.displayMinutes} min · ${interval}s/bar`;
 
     return html`
       <div class="usage-chart">

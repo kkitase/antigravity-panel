@@ -4,18 +4,14 @@
 
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { QuotaDisplayItem, UsageChartData } from '../types.js';
+import type { QuotaDisplayItem } from '../types.js';
 
 import './quota-pie.js';
-import './usage-chart.js';
 
 @customElement('quota-dashboard')
 export class QuotaDashboard extends LitElement {
   @property({ type: Array })
   quotas: QuotaDisplayItem[] | null = null;
-
-  @property({ type: Object })
-  chartData: UsageChartData | null = null;
 
   @property({ type: String })
   gaugeStyle: string = 'semi-arc';
@@ -36,7 +32,6 @@ export class QuotaDashboard extends LitElement {
           ></quota-pie>
         `)}
       </div>
-      <usage-chart .data=${this.chartData}></usage-chart>
     `;
   }
 }

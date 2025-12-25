@@ -297,6 +297,21 @@ quota-pie {
   font-size: 1.15em;
 }
 
+.style-classic-donut .gauge-info {
+  margin-top: 4px;
+  /* 模型名称与圆圈保持适当距离 */
+}
+
+.style-classic-donut .gauge-label {
+  min-height: auto;
+  /* 取消最小高度，让时间字段自然紧跟 */
+}
+
+.style-classic-donut .gauge-reset-inner {
+  margin-top: 2px;
+  /* 时间字段与模型名称保持适当间距 */
+}
+
 .gauge-svg {
   width: 100%;
   height: 100%;
@@ -445,11 +460,14 @@ quota-pie {
   border-bottom: 1px solid var(--vscode-widget-border);
 }
 
-/* 柱状图样式 */
+/* 柱状图样式 - 卡片包裹 */
 .usage-chart {
-  padding: 8px 12px;
+  padding: 10px 12px;
+  margin: 8px 6px;
   background: var(--vscode-sideBar-background);
-  border-bottom: 1px solid var(--vscode-widget-border);
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .usage-chart-title {
@@ -506,14 +524,17 @@ quota-pie {
   margin: 0 2px;
 }
 
-/* 工具栏样式 */
+/* 工具栏样式 - 卡片包裹 */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding: 6px 8px;
-  background: var(--vscode-sideBarSectionHeader-background);
-  border-bottom: 1px solid var(--vscode-widget-border);
+  padding: 8px;
+  margin: 8px 6px;
+  background: var(--vscode-sideBar-background);
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .toolbar-btn {
@@ -554,6 +575,16 @@ quota-pie {
   background: var(--vscode-button-hoverBackground);
 }
 
+/* 目录树卡片包裹 */
+.folder-tree-card {
+  margin: 8px 6px;
+  background: var(--vscode-sideBar-background);
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
 /* 区块标题样式 (使用次级按钮主题) */
 .section-header {
   display: flex;
@@ -570,11 +601,8 @@ quota-pie {
   letter-spacing: 0.05em;
   color: var(--vscode-button-secondaryForeground);
   background: var(--vscode-button-secondaryBackground);
-  border-top: 1px solid var(--vscode-button-border, transparent);
   border-bottom: 1px solid var(--vscode-button-border, rgba(0, 0, 0, 0.2));
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin-top: 4px;
-  /* 增加一点间距感 */
 }
 
 .section-header:hover {
@@ -863,16 +891,17 @@ quota-pie {
   font-size: 14px;
 }
 
-/* Credits Bar Styles */
+/* Credits Bar Styles - 卡片包裹 */
 .credits-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
-  padding: 12px;
+  padding: 10px 12px;
+  margin: 4px 6px 8px 6px;
   background: var(--vscode-sideBar-background);
-  border-bottom: 1px solid var(--vscode-widget-border);
-  margin-top: 16px;
-  /* 增加顶部空白高度，与 usage History 区域拉开距离 */
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.1));
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .credits-title {

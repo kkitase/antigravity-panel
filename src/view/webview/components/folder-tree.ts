@@ -42,13 +42,15 @@ export class FolderTree extends LitElement {
     const chevronIcon = this.collapsed ? 'codicon-chevron-right' : 'codicon-chevron-down';
 
     return html`
-      <div class="section-header" @click=${this._onHeaderClick}>
-        <i class="codicon ${chevronIcon}"></i>
-        <span class="section-title">${this.title}</span>
-        <span class="section-stats">${this.loading ? 'Loading...' : this.stats}</span>
-      </div>
-      <div class="tree-container ${this.collapsed ? 'hidden' : ''}">
-        ${this._renderContent()}
+      <div class="folder-tree-card">
+        <div class="section-header" @click=${this._onHeaderClick}>
+          <i class="codicon ${chevronIcon}"></i>
+          <span class="section-title">${this.title}</span>
+          <span class="section-stats">${this.loading ? 'Loading...' : this.stats}</span>
+        </div>
+        <div class="tree-container ${this.collapsed ? 'hidden' : ''}">
+          ${this._renderContent()}
+        </div>
       </div>
     `;
   }

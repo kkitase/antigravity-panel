@@ -16,6 +16,7 @@ import type {
 } from '../types.js';
 
 import './quota-dashboard.js';
+import './usage-chart.js';
 import './toolbar.js';
 import './folder-tree.js';
 import './credits-bar.js';
@@ -231,9 +232,10 @@ export class SidebarApp extends LitElement {
     return html`
       <quota-dashboard 
         .quotas=${this._quotas} 
-        .chartData=${this._chartData}
         .gaugeStyle=${this._gaugeStyle}
       ></quota-dashboard>
+      
+      <usage-chart .data=${this._chartData}></usage-chart>
       
       <credits-bar
         .tokenUsage=${this._tokenUsage}
