@@ -2,7 +2,7 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Changelog
 
-## [2.3.0] - 2025-12-24
+## [2.3.0] - 2025-12-25
 
 ### Added
 - **User Info Extraction**: Now extracts user subscription information from Antigravity API (tier, plan name, upgrade options).

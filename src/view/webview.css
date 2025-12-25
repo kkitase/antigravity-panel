@@ -430,6 +430,7 @@ quota-pie {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   /* Max 2 lines */
   -webkit-box-orient: vertical;
   min-height: 2.4em;
@@ -528,7 +529,7 @@ quota-pie {
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
   padding: 8px;
   margin: 8px 6px;
   background: var(--vscode-sideBar-background);

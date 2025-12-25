@@ -2,6 +2,19 @@
 
 This file contains detailed technical changes for developers. For user-facing changes, see CHANGELOG.md.
 
+## [2.3.0] - 2025-12-25
+
+### Added
+- **Token Credit Monitoring**: Integrated `TokenUsageViewState` to track and display Prompt and Flow credits.
+- **Enhanced Status Bar**: Implemented emoji-based status indicators (🟢🟡🔴) and Markdown-formatted tooltips for better alignment and readability.
+- **User Subscription Info**: Added logic to extract and display user tier and plan details from the Antigravity API.
+- **Expanded Localization**: Added support for Turkish (`tr`) and Polish (`pl`) languages.
+
+### Changed
+- **Visual Refinement**: Replaced standard background warnings with emoji indicators in the status bar.
+- **UI Optimization**: Improved tooltip layout using Markdown tables for precise data presentation.
+- **Icon Update**: Changed cache management icon to 💿 for better visual clarity.
+
 ## [2.2.0] - 2025-12-18
 
 ### Added

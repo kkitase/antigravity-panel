@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Toolkit for Antigravity",
   "description": "%extension.description%",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "publisher": "n2ns",
   "license": "GPL-3.0-only",
   "repository": {
@@ -295,27 +295,29 @@
     "lint": "eslint src --ext .ts",
     "test": "tsc -p tsconfig.test.json && node ./out/test/runUnitTests.js",
     "test:server": "tsc -p tsconfig.test.json && node ./out/test/runServerTests.js",
+    "package": "vsce package",
     "prepare": "husky"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
-    "@types/vscode": "^1.104.0",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
+    "@types/vscode": "^1.107.0",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "@vscode/vsce": "^3.7.1",
     "canvas": "^3.2.0",
-    "esbuild": "^0.27.1",
-    "eslint": "^9.39.1",
+    "esbuild": "^0.27.2",
+    "eslint": "^9.39.2",
     "glob": "^13.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "mocha": "^11.7.5",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.1"
+    "typescript-eslint": "^8.50.1"
   },
   "dependencies": {
-    "@vscode/codicons": "^0.0.43",
-    "lit": "^3.3.1"
+    "@vscode/codicons": "^0.0.44",
+    "lit": "^3.3.2"
   },
   "lint-staged": {
     "src/**/*.ts": [
