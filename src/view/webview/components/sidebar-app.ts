@@ -17,11 +17,11 @@ import type {
 
 import './quota-dashboard.js';
 import './usage-chart.js';
-import './toolbar.js';
 import './folder-tree.js';
 import './credits-bar.js';
 import './user-info-card.js';
 import './sidebar-footer.js';
+import { TooltipManager } from '../utils/tooltip-manager.js';
 
 declare const acquireVsCodeApi: () => VsCodeApi;
 
@@ -77,6 +77,8 @@ export class SidebarApp extends LitElement {
   // Light DOM mode
   createRenderRoot() { return this; }
 
+  private _tooltipManager: TooltipManager | null = null;
+
   connectedCallback(): void {
     super.connectedCallback();
 
@@ -105,11 +107,46 @@ export class SidebarApp extends LitElement {
     this.style.display = 'flex';
     this.style.flexDirection = 'column';
     this.style.height = '100vh';
+
+    // Setup ResizeObserver to track panel width for tooltip sizing
+    this._setupResizeObserver();
+  }
+
+  private _resizeObserver: ResizeObserver | null = null;
+
+  private _setupResizeObserver(): void {
+    // 1. Monitor Panel Width for Layout
+    const updatePanelWidth = () => {
+      const width = document.body.clientWidth;
+
+      // Update button layout (single column check)
+      const actionButtons = this.querySelectorAll('.action-buttons');
+      actionButtons.forEach(btn => {
+        if (width < 220) {
+          btn.classList.add('single-column');
+        } else {
+          btn.classList.remove('single-column');
+        }
+      });
+    };
+
+    updatePanelWidth();
+    this._resizeObserver = new ResizeObserver(() => updatePanelWidth());
+    this._resizeObserver.observe(document.body);
+
+    // 2. Initialize Global Tooltip Manager
+    this._tooltipManager = new TooltipManager();
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
     window.removeEventListener('message', this._handleMessage);
+
+    // Clean up ResizeObserver
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+      this._resizeObserver = null;
+    }
   }
 
   private _handleMessage = (event: MessageEvent): void => {
@@ -248,8 +285,6 @@ export class SidebarApp extends LitElement {
             .user=${this._user}
           ></user-info-card>
         ` : nothing}
-        
-        <app-toolbar></app-toolbar>
         
         <folder-tree
           title="${(window as unknown as WindowWithVsCode).__TRANSLATIONS__?.brain || 'Brain'}"

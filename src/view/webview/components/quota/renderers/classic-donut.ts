@@ -6,15 +6,12 @@ export const renderClassicDonut = ({ data, color, label }: GaugeRendererProps) =
   const valueStr = data.hasData ? remaining.toFixed(0) : 'N/A';
   const resetTime = data.resetTime || '';
 
-  // Tooltip: Model name + Reset time
-  const tooltip = `${label}\nReset: ${resetTime}`;
-
   // Background ring color: low opacity adapted for themes
   const emptyColor = 'rgba(128, 128, 128, 0.15)';
   const gradient = `conic-gradient(${color} 0% ${remaining}%, ${emptyColor} ${remaining}% 100%)`;
 
   return html`
-    <div class="gauge-container style-classic-donut" data-tooltip="${tooltip}">
+    <div class="gauge-container style-classic-donut">
       <div class="gauge-visual">
         <div class="pie-ring" style="background: ${gradient}"></div>
         <div class="gauge-center-text">

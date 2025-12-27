@@ -40,47 +40,67 @@ export class SidebarFooter extends LitElement {
 
   protected render() {
     return html`
-      <div class="auto-accept-row" 
-           data-tooltip="${this._t.autoAcceptTooltip || 'Hands-free Mode: Automatically accept agent suggested edits and terminal commands'}">
-        <span class="auto-accept-label">
-          <i class="codicon codicon-rocket"></i>
-          ${this._t.autoAcceptLabel || 'Auto-Accept'}
-        </span>
-        <label class="toggle-switch" @click=${() => this._toggleAutoAccept()}>
-          <input type="checkbox" ?checked=${this.autoAcceptEnabled} @click=${(e: Event) => e.stopPropagation()}>
-          <span class="toggle-slider"></span>
-        </label>
+      <!-- Main Action Card -->
+      <div class="action-card">
+        <!-- Auto-Accept Toggle Row -->
+        <div class="action-row auto-accept-row" 
+             data-tooltip="${this._t.autoAcceptTooltip || 'Hands-free Mode: Automatically accept agent suggested edits and terminal commands'}">
+          <span class="action-label">
+            <i class="codicon codicon-rocket"></i>
+            ${this._t.autoAcceptLabel || 'Auto-Accept'}
+          </span>
+          <label class="toggle-switch" @click=${() => this._toggleAutoAccept()}>
+            <input type="checkbox" ?checked=${this.autoAcceptEnabled} @click=${(e: Event) => e.stopPropagation()}>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Quick Tools -->
+        <div class="action-row action-buttons">
+          <button class="action-btn primary" @click=${() => this._postMessage('openRules')}>
+            <i class="codicon codicon-symbol-ruler"></i>
+            <span>${this._t.rules || 'Rules'}</span>
+          </button>
+          <button class="action-btn primary" @click=${() => this._postMessage('openMcp')}>
+            <i class="codicon codicon-plug"></i>
+            <span>${this._t.mcp || 'MCP'}</span>
+          </button>
+          <button class="action-btn primary" @click=${() => this._postMessage('openBrowserAllowlist')}>
+            <i class="codicon codicon-globe"></i>
+            <span>${this._t.allowlist || 'Allowlist'}</span>
+          </button>
+        </div>
+
+        <!-- Recovery Actions -->
+        <div class="action-row action-buttons">
+          <button class="action-btn primary" 
+                  @click=${() => this._postMessage('restartLanguageServer')} 
+                  data-tooltip="${this._t.restartServiceTooltip || 'Restart the background Agent language server'}">
+            <i class="codicon codicon-sync"></i>
+            <span>Restart</span>
+          </button>
+          <button class="action-btn primary" 
+                  @click=${() => this._postMessage('restartUserStatusUpdater')} 
+                  data-tooltip="${this._t.resetStatusTooltip || 'Reset user subscription and quota refresh status'}">
+            <i class="codicon codicon-refresh"></i>
+            <span>Reset</span>
+          </button>
+          <button class="action-btn primary" 
+                  @click=${() => this._postMessage('reloadWindow')} 
+                  data-tooltip="${this._t.reloadWindowTooltip || 'Reload the entire window'}">
+            <i class="codicon codicon-window"></i>
+            <span>Reload</span>
+          </button>
+        </div>
       </div>
 
-      <div class="recovery-actions" style="margin-top: 4px;">
-        <button class="recovery-btn primary" 
-                @click=${() => this._postMessage('restartLanguageServer')} 
-                data-tooltip="${this._t.restartServiceTooltip || 'Restart the background Agent language server (use when code analysis is stuck)'}">
-          <i class="codicon codicon-sync"></i>
-          <span>${this._t.restartService || 'Restart Service'}</span>
-        </button>
-        <button class="recovery-btn primary" 
-                @click=${() => this._postMessage('restartUserStatusUpdater')} 
-                data-tooltip="${this._t.resetStatusTooltip || 'Reset user subscription and quota refresh status (use when quota display is not updating)'}">
-          <i class="codicon codicon-refresh"></i>
-          <span>${this._t.resetStatus || 'Reset Status'}</span>
-        </button>
-        <button class="recovery-btn" 
-                @click=${() => this._postMessage('reloadWindow')} 
-                data-tooltip="${this._t.reloadWindowTooltip || 'Reload the entire window (use when Agent panel is blank or unresponsive)'}">
-          <i class="codicon codicon-window"></i>
-          <span>${this._t.reloadWindow || 'Reload Window'}</span>
-        </button>
-      </div>
-
-      <div class="sidebar-footer">
-        <button class="discussions-btn" 
-                @click=${() => this._openUrl(GITHUB_ISSUES_URL)}>
+      <!-- External Links (outside card) -->
+      <div class="footer-links">
+        <button class="link-btn" @click=${() => this._openUrl(GITHUB_ISSUES_URL)}>
           <i class="codicon codicon-bug"></i>
           <span>${this._t.reportIssue || 'Feedback'}</span>
         </button>
-        <button class="discussions-btn" 
-                @click=${() => this._openUrl(GITHUB_HOME_URL)}>
+        <button class="link-btn" @click=${() => this._openUrl(GITHUB_HOME_URL)}>
           <i class="codicon codicon-star-full" style="color: #e3b341;"></i>
           <span>${this._t.giveStar || 'Star'}</span>
         </button>

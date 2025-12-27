@@ -47,12 +47,8 @@ sidebar-app {
   cursor: help;
 }
 
-[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
+/* Global Tooltip Element (Managed by TooltipManager.ts) */
+.global-tooltip {
   padding: 6px 10px;
   background-color: var(--vscode-editorHoverWidget-background, #252526);
   color: var(--vscode-editorHoverWidget-foreground, #cccccc);
@@ -60,27 +56,16 @@ sidebar-app {
   border-radius: 3px;
   font-size: 11px;
   line-height: 1.4;
-  white-space: pre-wrap;
-  max-width: 180px;
-  width: max-content;
-  z-index: 1000;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  pointer-events: none;
+  white-space: normal;
+  word-wrap: break-word;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   text-align: left;
+  /* Width controlled by JS */
+  width: max-content;
 }
 
-[data-tooltip]:hover {
-  z-index: 2000;
-  /* Lift the whole item above siblings */
-}
-
-[data-tooltip]:hover::after {
-  visibility: visible;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+[data-tooltip] {
+  cursor: help;
 }
 
 /* Specific fix for dashboard components which might have stacking contexts */
@@ -89,85 +74,6 @@ quota-pie:hover {
   position: relative;
 }
 
-
-/* Dashboard Special: Flip tooltips DOWNWARD because they are at the very top */
-.pies-container [data-tooltip]::after {
-  bottom: auto;
-  top: calc(100% + 4px);
-  transform: translateX(-50%) translateY(-4px);
-}
-
-.pies-container [data-tooltip]:hover::after {
-  transform: translateX(-50%) translateY(0);
-}
-
-
-/* Smart Alignment: Controlled by JS via data-placement attribute */
-
-/* Default (Center) - Defined above in [data-tooltip]::after */
-
-/* Right Placement: Tooltip aligns to the RIGHT edge of the element (grows LEFT) */
-[data-tooltip][data-placement="right"]::after {
-  left: auto;
-  right: 0;
-  transform: translateY(4px);
-}
-
-[data-tooltip][data-placement="right"]:hover::after {
-  transform: translateY(0);
-}
-
-[data-tooltip][data-placement="right"]::before {
-  left: auto;
-  right: 15px;
-  /* Arrow stays near the element center/right */
-  transform: translateX(0) translateY(4px);
-}
-
-[data-tooltip][data-placement="right"]:hover::before {
-  transform: translateY(0);
-}
-
-
-/* Left Placement: Tooltip aligns to the LEFT edge of the element (grows RIGHT) */
-[data-tooltip][data-placement="left"]::after {
-  left: 0;
-  right: auto;
-  transform: translateY(4px);
-}
-
-[data-tooltip][data-placement="left"]:hover::after {
-  transform: translateY(0);
-}
-
-[data-tooltip][data-placement="left"]::before {
-  left: 15px;
-  /* Arrow stays near the element center/left */
-  right: auto;
-  transform: translateX(0) translateY(4px);
-}
-
-[data-tooltip][data-placement="left"]:hover::before {
-  transform: translateY(0);
-}
-
-
-/* Ensure consistent hover for flipped dashboard items (Top positioned tooltips) */
-.pies-container [data-tooltip][data-placement="right"]::after {
-  transform: translateY(-4px);
-}
-
-.pies-container [data-tooltip][data-placement="right"]:hover::after {
-  transform: translateY(0);
-}
-
-.pies-container [data-tooltip][data-placement="left"]::after {
-  transform: translateY(-4px);
-}
-
-.pies-container [data-tooltip][data-placement="left"]:hover::after {
-  transform: translateY(0);
-}
 
 
 @keyframes spin {
@@ -795,30 +701,102 @@ sidebar-footer {
   letter-spacing: 0.5px;
 }
 
-/* Auto-Accept Toggle Row */
-.auto-accept-row {
+/* ==================== Action Card Layout ==================== */
+
+/* Main Action Card */
+.action-card {
+  margin: 8px;
+  padding: 8px;
+  background: var(--vscode-sideBar-background);
+  border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.15));
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Action Row Base */
+.action-row {
+  margin-bottom: 8px;
+}
+
+.action-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Auto-Accept Row */
+.action-row.auto-accept-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  margin: 0 0 4px 0;
-  background: var(--vscode-sideBar-background);
-  border-bottom: 1px solid var(--vscode-widget-border);
+  padding: 8px 10px;
+  background: linear-gradient(135deg,
+      rgba(66, 133, 244, 0.1) 0%,
+      rgba(66, 133, 244, 0.03) 100%);
+  border-radius: 6px;
 }
 
-.auto-accept-label {
+.action-label {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.88em;
+  font-size: 0.9em;
   font-weight: 600;
   color: var(--vscode-foreground);
 }
 
-.auto-accept-label .codicon {
+.action-label .codicon {
   font-size: 16px;
-  opacity: 0.85;
+  opacity: 0.9;
 }
+
+/* Action Buttons Row - Responsive layout controlled by JS */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+/* Single column mode - toggled by JS when panel is narrow */
+.action-buttons.single-column {
+  grid-template-columns: 1fr;
+}
+
+
+.action-btn {
+  flex: 1 1 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82em;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.action-btn.primary {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #ffffff);
+}
+
+.action-btn:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.action-btn.primary:hover {
+  background: var(--vscode-button-hoverBackground, #1177bb);
+}
+
+.action-btn .codicon {
+  font-size: 14px;
+}
+
 
 /* Android-style Toggle Switch */
 .toggle-switch {
@@ -827,6 +805,7 @@ sidebar-footer {
   width: 44px;
   height: 24px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .toggle-switch input {
@@ -863,6 +842,7 @@ sidebar-footer {
 .toggle-switch input:checked+.toggle-slider {
   background-color: var(--vscode-charts-green, #388e3c);
   border-color: var(--vscode-charts-green, #388e3c);
+  box-shadow: 0 0 8px rgba(56, 142, 60, 0.4);
 }
 
 .toggle-switch input:checked+.toggle-slider::before {
@@ -874,8 +854,39 @@ sidebar-footer {
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
 }
 
-.toggle-switch input:checked+.toggle-slider {
-  box-shadow: 0 0 8px rgba(56, 142, 60, 0.4);
+/* Footer Links */
+.footer-links {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  margin: 0 8px;
+}
+
+.link-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8em;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.link-btn:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+  color: var(--vscode-button-secondaryForeground);
+}
+
+.link-btn .codicon {
+  font-size: 14px;
 }
 
 
