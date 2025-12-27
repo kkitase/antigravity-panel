@@ -281,6 +281,8 @@ export interface TfaConfig {
   "system.apiPath": string;
   /** Whether to enable debug mode */
   "system.debugMode": boolean;
+  /** Whether to auto-accept AI steps */
+  "system.autoAccept": boolean;
 }
 
 // ==================== Callback Types ====================

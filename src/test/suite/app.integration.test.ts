@@ -3,9 +3,17 @@ import { AppViewModel } from '../../view-model/app.vm';
 import { StorageService } from '../../model/services/storage.service';
 import { ConfigManager } from '../../shared/config/config_manager';
 import { QuotaStrategyManager } from '../../model/strategy';
-import type { IQuotaService, ICacheService } from '../../model/services/interfaces';
+import type { IQuotaService, ICacheService, IAutomationService } from '../../model/services/interfaces';
 import type { QuotaViewState, TreeViewState } from '../../view-model/types';
 import type { CachedTreeState } from '../../model/types/entities';
+
+// Mock Automation Service
+const mockAutomationService: IAutomationService = {
+    start: () => { },
+    stop: () => { },
+    isRunning: () => false,
+    toggle: () => false
+};
 
 // Mock Config Reader
 class MockConfigReader {
@@ -78,7 +86,8 @@ suite('App Initialization & Cache Integration Test', () => {
             mockCacheService,
             storageService,
             configManager,
-            strategyManager
+            strategyManager,
+            mockAutomationService
         );
     }
 

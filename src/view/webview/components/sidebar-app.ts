@@ -69,6 +69,9 @@ export class SidebarApp extends LitElement {
   @state()
   private _cache: WebviewStateUpdate['cache'] | null = null;
 
+  @state()
+  private _autoAcceptEnabled: boolean = false;
+
   private _vscode = acquireVsCodeApi();
 
   // Light DOM mode
@@ -163,6 +166,9 @@ export class SidebarApp extends LitElement {
     }
     if (state.showCreditsCard !== undefined) {
       this._showCreditsCard = state.showCreditsCard;
+    }
+    if (state.autoAcceptEnabled !== undefined) {
+      this._autoAcceptEnabled = state.autoAcceptEnabled;
     }
   }
 
@@ -266,7 +272,10 @@ export class SidebarApp extends LitElement {
         ></folder-tree>
       </div>
 
-      <sidebar-footer style="flex-shrink: 0; position: relative; z-index: 10;"></sidebar-footer>
+      <sidebar-footer 
+        .autoAcceptEnabled=${this._autoAcceptEnabled}
+        style="flex-shrink: 0; position: relative; z-index: 10;"
+      ></sidebar-footer>
 
     `;
   }

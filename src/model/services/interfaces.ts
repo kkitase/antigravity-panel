@@ -242,3 +242,31 @@ export interface IStorageService {
      */
     readonly count: number;
 }
+
+// ==================== Automation Service ====================
+
+/**
+ * Automation service - handles hands-free features like auto-accepting steps
+ */
+export interface IAutomationService {
+    /**
+     * Start the auto-accept loop
+     */
+    start(): void;
+
+    /**
+     * Stop the auto-accept loop
+     */
+    stop(): void;
+
+    /**
+     * Check if currently running
+     */
+    isRunning(): boolean;
+
+    /**
+     * Toggle the service state
+     * @returns New state
+     */
+    toggle(): boolean;
+}

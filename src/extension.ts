@@ -7,6 +7,7 @@ import { ProcessFinder } from "./shared/platform/process_finder";
 import { QuotaService } from "./model/services/quota.service";
 import { CacheService } from "./model/services/cache.service";
 import { StorageService } from "./model/services/storage.service";
+import { AutomationService } from "./model/services/automation.service";
 import { QuotaStrategyManager } from "./model/strategy";
 import { ConfigManager, IConfigReader, TfaConfig } from "./shared/config/config_manager";
 import { Scheduler } from "./shared/utils/scheduler";
@@ -72,6 +73,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const storageService = new StorageService(context.globalState);
   const cacheService = new CacheService();
   const quotaService = new QuotaService(configManager);
+  const automationService = new AutomationService();
+  context.subscriptions.push(automationService);
 
   // 3. Initialize ViewModel (The Brain)
   const appViewModel = new AppViewModel(
@@ -79,7 +82,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     cacheService,
     storageService,
     configManager,
-    strategyManager
+    strategyManager,
+    automationService
   );
   context.subscriptions.push(appViewModel);
 
@@ -328,6 +332,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const disclaimerUri = vscode.Uri.joinPath(context.extensionUri, fileName);
       // 使用 Markdown 预览模式打开（只读，更好的阅读体验）
       await vscode.commands.executeCommand('markdown.showPreview', disclaimerUri);
+    }),
+    vscode.commands.registerCommand("tfa.toggleAutoAccept", async () => {
+      await appViewModel.toggleAutoAccept();
+      const state = appViewModel.getState();
+      if (state.automation.enabled) {
+        vscode.window.showInformationMessage(vscode.l10n.t("Auto-Accept: ON - Agent steps will be accepted automatically."));
+      } else {
+        vscode.window.showInformationMessage(vscode.l10n.t("Auto-Accept: OFF - Manual approval required."));
+      }
     }),
     vscode.commands.registerCommand("tfa.runDiagnostics", async () => {
       await vscode.window.withProgress({

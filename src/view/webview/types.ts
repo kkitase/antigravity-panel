@@ -146,6 +146,7 @@ export interface WebviewStateUpdate {
     formattedBrain: string;
     formattedConversations: string;
   };
+  autoAcceptEnabled?: boolean;
 }
 
 // ==================== VS Code API ====================

@@ -193,6 +193,7 @@ export interface SidebarData {
     gaugeStyle?: string;
     showUserInfoCard?: boolean;
     showCreditsCard?: boolean;
+    autoAcceptEnabled?: boolean;
 }
 
 // ==================== App State ====================
@@ -204,6 +205,9 @@ export interface AppState {
     user?: UserViewState;
     tokenUsage?: TokenUsageViewState;
     tree: TreeViewState;
+    automation: {
+        enabled: boolean;
+    };
     lastUpdated: number;
 }
 

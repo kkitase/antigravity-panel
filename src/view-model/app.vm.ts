@@ -3,7 +3,7 @@
  */
 
 import * as vscode from 'vscode';
-import type { IQuotaService, ICacheService, IStorageService } from '../model/services/interfaces';
+import type { IQuotaService, ICacheService, IStorageService, IAutomationService } from '../model/services/interfaces';
 import type { QuotaSnapshot, BrainTask, CacheInfo, CodeContext, FileItem } from '../model/types/entities';
 import type { TfaConfig } from '../shared/utils/types';
 import type { QuotaStrategyManager } from '../model/strategy';
@@ -67,9 +67,17 @@ export class AppViewModel implements vscode.Disposable {
         private readonly cacheService: ICacheService,
         private readonly storageService: IStorageService,
         private readonly configManager: ConfigManager,
-        private readonly strategyManager: QuotaStrategyManager
+        private readonly strategyManager: QuotaStrategyManager,
+        private readonly automationService: IAutomationService
     ) {
         this._state = this.createEmptyState();
+
+        // Sync initial state from config
+        const initialAutoAccept = this.configManager.get('system.autoAccept', false);
+        if (initialAutoAccept) {
+            this.automationService.start();
+        }
+        this._state.automation.enabled = initialAutoAccept;
     }
 
     private createEmptyState(): AppState {
@@ -100,6 +108,9 @@ export class AppViewModel implements vscode.Disposable {
             tree: {
                 tasks: { expanded: false, folders: [] },
                 contexts: { expanded: false, folders: [] }
+            },
+            automation: {
+                enabled: false
             },
             lastUpdated: 0
         };
@@ -261,6 +272,29 @@ export class AppViewModel implements vscode.Disposable {
         this._onTreeChange.fire(this._state.tree);
     }
 
+    /**
+     * Toggle the auto-accept automation
+     */
+    async toggleAutoAccept(): Promise<void> {
+        const newValue = !this._state.automation.enabled;
+
+        // 1. Update Service
+        if (newValue) {
+            this.automationService.start();
+        } else {
+            this.automationService.stop();
+        }
+
+        // 2. Update Local State
+        this._state.automation.enabled = newValue;
+
+        // 3. Update Configuration (Persistent)
+        await this.configManager.update('system.autoAccept', newValue);
+
+        // 4. Notify UI
+        this._onStateChange.fire(this._state);
+    }
+
     private async persistTreeState(): Promise<void> {
         // Persist tree state for cache-first startup
         await this.storageService.setLastTreeState({
@@ -292,6 +326,16 @@ export class AppViewModel implements vscode.Disposable {
 
         // Also refresh cache view in case thresholds changed
         await this.refreshCache();
+
+        // Handle auto-accept config change
+        const autoAccept = this.configManager.get('system.autoAccept', false);
+        if (autoAccept !== this._state.automation.enabled) {
+            if (autoAccept) this.automationService.start();
+            else this.automationService.stop();
+
+            this._state.automation.enabled = autoAccept;
+            this._onStateChange.fire(this._state);
+        }
     }
 
     private async updateQuotaState(snapshot: QuotaSnapshot): Promise<void> {
@@ -621,7 +665,8 @@ export class AppViewModel implements vscode.Disposable {
             user: this._state.user,
             tokenUsage: this._state.tokenUsage,
             tasks: this._state.tree.tasks,
-            contexts: this._state.tree.contexts
+            contexts: this._state.tree.contexts,
+            autoAcceptEnabled: this._state.automation.enabled
         };
     }
 

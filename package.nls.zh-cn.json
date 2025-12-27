@@ -12,7 +12,8 @@
     "command.showDisclaimer.title": "关于",
     "command.restartLanguageServer.title": "重启 Agent 服务",
     "command.restartUserStatusUpdater.title": "重置状态更新",
-    "command.runDiagnostics.title": "运行连接诊断",
+    "command.runDiagnostics.title": "连接性诊断",
+    "command.toggleAutoAccept.title": "切换 AI 自动接受",
     "config.statusBarStyle.percentage": "显示剩余配额百分比（例如：75%）",
     "config.statusBarStyle.resetTime": "显示配额重置倒计时（例如：2小时30分）",
     "config.statusBarStyle.used": "显示已使用配额（例如：25/100）",
@@ -40,5 +41,9 @@
     "config.cache.hideEmptyFolders.description": "在数据缓存树视图中隐藏没有内容的空目录",
     "config.system.serverHost.description": "⚠️ 高级：自定义配额查询服务器地址（默认：127.0.0.1）",
     "config.system.apiPath.description": "⚠️ 高级：自定义配额查询 API 路径",
-    "config.system.debugMode.description": "启用调试日志，输出到 'Toolkit for Antigravity' 通道"
+    "config.system.debugMode.description": "启用调试日志和高级连接诊断。",
+    "config.system.autoAccept.description": "自动接受 AI 智能体的终端命令和文件修改。 (无人值守模式)",
+    "Auto-Accept: ON": "自动接受: 开启",
+    "Auto-Accept: OFF": "自动接受: 关闭",
+    "Hands-free Mode: Automatically accept agent suggested edits and terminal commands": "无人值守模式：自动接受智能体建议的文件修改和终端命令"
 }

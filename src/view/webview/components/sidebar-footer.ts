@@ -3,7 +3,7 @@
  */
 
 import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import type { VsCodeApi, WindowWithVsCode } from '../types.js';
 
 /** GitHub repository URLs */
@@ -12,6 +12,9 @@ const GITHUB_HOME_URL = 'https://github.com/n2ns/antigravity-panel';
 
 @customElement('sidebar-footer')
 export class SidebarFooter extends LitElement {
+  @property({ type: Boolean })
+  autoAcceptEnabled = false;
+
   // Light DOM mode
   createRenderRoot() { return this; }
 
@@ -27,13 +30,29 @@ export class SidebarFooter extends LitElement {
     this._vscode?.postMessage({ type });
   }
 
+  private _toggleAutoAccept(): void {
+    this._vscode?.postMessage({ type: 'toggleAutoAccept' });
+  }
+
   private _openUrl(url: string): void {
     this._vscode?.postMessage({ type: 'openUrl', path: url });
   }
 
   protected render() {
     return html`
-      <div class="recovery-actions">
+      <div class="auto-accept-row" 
+           data-tooltip="${this._t.autoAcceptTooltip || 'Hands-free Mode: Automatically accept agent suggested edits and terminal commands'}">
+        <span class="auto-accept-label">
+          <i class="codicon codicon-rocket"></i>
+          ${this._t.autoAcceptLabel || 'Auto-Accept'}
+        </span>
+        <label class="toggle-switch" @click=${() => this._toggleAutoAccept()}>
+          <input type="checkbox" ?checked=${this.autoAcceptEnabled} @click=${(e: Event) => e.stopPropagation()}>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="recovery-actions" style="margin-top: 4px;">
         <button class="recovery-btn primary" 
                 @click=${() => this._postMessage('restartLanguageServer')} 
                 data-tooltip="${this._t.restartServiceTooltip || 'Restart the background Agent language server (use when code analysis is stuck)'}">
@@ -45,6 +64,12 @@ export class SidebarFooter extends LitElement {
                 data-tooltip="${this._t.resetStatusTooltip || 'Reset user subscription and quota refresh status (use when quota display is not updating)'}">
           <i class="codicon codicon-refresh"></i>
           <span>${this._t.resetStatus || 'Reset Status'}</span>
+        </button>
+        <button class="recovery-btn" 
+                @click=${() => this._postMessage('reloadWindow')} 
+                data-tooltip="${this._t.reloadWindowTooltip || 'Reload the entire window (use when Agent panel is blank or unresponsive)'}">
+          <i class="codicon codicon-window"></i>
+          <span>${this._t.reloadWindow || 'Reload Window'}</span>
         </button>
       </div>
 

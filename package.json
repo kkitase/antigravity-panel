@@ -90,6 +90,12 @@
         "title": "%command.runDiagnostics.title%",
         "category": "%extension.category%",
         "icon": "$(pulse)"
+      },
+      {
+        "command": "tfa.toggleAutoAccept",
+        "title": "%command.toggleAutoAccept.title%",
+        "category": "%extension.category%",
+        "icon": "$(check-all)"
       }
     ],
     "menus": {
@@ -289,6 +295,12 @@
             "default": false,
             "order": 99,
             "description": "%config.system.debugMode.description%"
+          },
+          "tfa.system.autoAccept": {
+            "type": "boolean",
+            "default": false,
+            "order": 30,
+            "description": "%config.system.autoAccept.description%"
           }
         }
       }

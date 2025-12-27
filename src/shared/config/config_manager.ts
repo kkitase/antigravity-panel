@@ -29,6 +29,7 @@ export const DEFAULT_SERVER_HOST = "127.0.0.1";
  */
 export interface IConfigReader {
   get<T>(key: string, defaultValue: T): T;
+  update?<T>(key: string, value: T): Promise<void>;
 }
 
 /**
@@ -78,11 +79,18 @@ export class ConfigManager {
       "system.serverHost": this.reader.get<string>("system.serverHost", DEFAULT_SERVER_HOST),
       "system.apiPath": this.reader.get<string>("system.apiPath", DEFAULT_QUOTA_API_PATH),
       "system.debugMode": this.reader.get<boolean>("system.debugMode", false),
+      "system.autoAccept": this.reader.get<boolean>("system.autoAccept", false),
     };
   }
 
   get<T>(key: string, defaultValue: T): T {
     return this.reader.get<T>(key, defaultValue);
+  }
+
+  async update<T>(key: string, value: T): Promise<void> {
+    if (this.reader.update) {
+      await this.reader.update(key, value);
+    }
   }
 }
 

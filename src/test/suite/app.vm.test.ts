@@ -3,8 +3,16 @@ import * as vscode from 'vscode';
 import { AppViewModel } from '../../view-model/app.vm';
 import { QuotaStrategyManager } from '../../model/strategy';
 import { ConfigManager, IConfigReader } from '../../shared/config/config_manager';
-import type { IQuotaService, ICacheService, IStorageService } from '../../model/services/interfaces';
+import type { IQuotaService, ICacheService, IStorageService, IAutomationService } from '../../model/services/interfaces';
 import type { QuotaSnapshot, CacheInfo } from '../../model/types/entities';
+
+// Mock Automation Service
+const defaultMockAutomationService: IAutomationService = {
+    start: () => { },
+    stop: () => { },
+    isRunning: () => false,
+    toggle: () => false
+};
 
 // Mock Config Reader (reused)
 class MockConfigReader implements IConfigReader {
@@ -86,7 +94,7 @@ suite('AppViewModel Test Suite', () => {
         mockCache = { ...defaultMockCacheService };
         mockStorage = { ...defaultMockStorageService };
 
-        vm = new AppViewModel(mockQuota, mockCache, mockStorage, configManager, strategyManager);
+        vm = new AppViewModel(mockQuota, mockCache, mockStorage, configManager, strategyManager, defaultMockAutomationService);
     });
 
     teardown(() => {

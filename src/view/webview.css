@@ -795,6 +795,89 @@ sidebar-footer {
   letter-spacing: 0.5px;
 }
 
+/* Auto-Accept Toggle Row */
+.auto-accept-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin: 0 0 4px 0;
+  background: var(--vscode-sideBar-background);
+  border-bottom: 1px solid var(--vscode-widget-border);
+}
+
+.auto-accept-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88em;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+.auto-accept-label .codicon {
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+/* Android-style Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--vscode-input-background, #3c3c3c);
+  border: 1px solid var(--vscode-widget-border, #454545);
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--vscode-foreground, #cccccc);
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch input:checked+.toggle-slider {
+  background-color: var(--vscode-charts-green, #388e3c);
+  border-color: var(--vscode-charts-green, #388e3c);
+}
+
+.toggle-switch input:checked+.toggle-slider::before {
+  transform: translateX(20px);
+  background-color: #ffffff;
+}
+
+.toggle-switch:hover .toggle-slider {
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+.toggle-switch input:checked+.toggle-slider {
+  box-shadow: 0 0 8px rgba(56, 142, 60, 0.4);
+}
+
 
 /* Recovery Actions */
 .recovery-actions {
@@ -843,6 +926,18 @@ sidebar-footer {
 
 .recovery-btn.primary:hover {
   background: var(--vscode-button-hoverBackground);
+}
+
+.recovery-btn.primary.active {
+  background: var(--vscode-charts-green, #388e3c);
+  color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 8px rgba(56, 142, 60, 0.3);
+}
+
+.recovery-btn.primary.active:hover {
+  background: var(--vscode-charts-green, #43a047);
+  filter: brightness(1.1);
 }
 
 .recovery-btn .codicon {
