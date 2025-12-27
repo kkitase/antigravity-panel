@@ -5,6 +5,7 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 ## [2.4.1] - 2025-12-27
 ### Added
 - **Auto-Accept Interval Configuration**: Added `tfa.system.autoAcceptInterval` setting to customize the polling frequency of the Auto-Accept feature (default: 800ms).
+- **Full Localization Support**: Added professional translations for all 13 supported languages for the Auto-Accept feature, commands, and tooltips.
 
 ## [2.4.0] - 2025-12-27
 

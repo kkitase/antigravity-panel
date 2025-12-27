@@ -91,7 +91,20 @@ export class ConfigManager {
   }
 
   get<T>(key: string, defaultValue: T): T {
-    return this.reader.get<T>(key, defaultValue);
+    const value = this.reader.get<T>(key, defaultValue);
+
+    // Enforce safety constraints
+    if (key === "system.autoAcceptInterval" && typeof value === "number") {
+      return Math.max(value, MIN_AUTO_ACCEPT_INTERVAL) as unknown as T;
+    }
+    if (key === "dashboard.refreshRate" && typeof value === "number") {
+      return Math.max(value, MIN_POLLING_INTERVAL) as unknown as T;
+    }
+    if (key === "cache.scanInterval" && typeof value === "number") {
+      return Math.max(value, MIN_CACHE_CHECK_INTERVAL) as unknown as T;
+    }
+
+    return value;
   }
 
   async update<T>(key: string, value: T): Promise<void> {
