@@ -2,6 +2,15 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Changelog
 
+## [2.4.0] - 2025-12-27
+
+### Changed
+- **Tooltip System Refactor**: Completely rewritten tooltip system using a global manager. Tooltips now use `position: fixed` relative to the viewport, ensuring full-width display without clipping or overflow issues in narrow sidebars.
+- **Footer UI Update**: Updated "Feedback" and "Star" buttons in the sidebar footer to use VS Code's native secondary button styling for a more consistent and professional look.
+
+### Fixed
+- **Tooltip Positioning**: Resolved issues where tooltips would be cut off by the panel boundaries or overlap incorrectly with other elements.
+
 ## [2.3.0] - 2025-12-25
 
 ### Added
