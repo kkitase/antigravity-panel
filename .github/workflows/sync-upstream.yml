@@ -1,0 +1,165 @@
+# Fork 元（upstream）との自動同期ワークフロー
+# n2ns/antigravity-panel の main ブランチと自動的に同期を取ります
+name: Sync Upstream
+
+on:
+  # 毎日 UTC 0:00（日本時間 9:00）に実行
+  schedule:
+    - cron: "0 0 * * *"
+
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "同期するブランチ名"
+        required: false
+        default: "main"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync with Upstream
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリをチェックアウト
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # upstream リモートを追加
+      - name: Add Upstream Remote
+        run: |
+          git remote add upstream https://github.com/n2ns/antigravity-panel.git || true
+          git fetch upstream
+
+      # 同期するブランチを決定
+      - name: Determine Branch
+        id: branch
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch=${{ github.event.inputs.branch }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=main" >> $GITHUB_OUTPUT
+          fi
+
+      # upstream の変更をマージ
+      - name: Sync with Upstream
+        id: sync
+        run: |
+          BRANCH="${{ steps.branch.outputs.branch }}"
+
+          # 現在のブランチを設定
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 対象ブランチに切り替え
+          git checkout "$BRANCH"
+
+          # upstream からの変更を確認
+          UPSTREAM_COMMITS=$(git rev-list HEAD..upstream/"$BRANCH" --count 2>/dev/null || echo "0")
+
+          if [ "$UPSTREAM_COMMITS" -eq 0 ]; then
+            echo "✅ Already up to date with upstream/$BRANCH"
+            echo "synced=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "📦 Found $UPSTREAM_COMMITS new commit(s) from upstream/$BRANCH"
+
+          # マージを試行（fast-forward のみ、コンフリクト時は失敗）
+          if git merge upstream/"$BRANCH" --ff-only; then
+            echo "✅ Fast-forward merge successful"
+            echo "synced=true" >> $GITHUB_OUTPUT
+            echo "merge_type=fast-forward" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Fast-forward merge not possible, attempting regular merge..."
+            
+            # 通常のマージを試行
+            if git merge upstream/"$BRANCH" --no-edit; then
+              echo "✅ Merge successful"
+              echo "synced=true" >> $GITHUB_OUTPUT
+              echo "merge_type=merge" >> $GITHUB_OUTPUT
+            else
+              echo "❌ Merge conflict detected. Manual intervention required."
+              git merge --abort
+              echo "synced=false" >> $GITHUB_OUTPUT
+              echo "conflict=true" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          fi
+
+      # 変更をプッシュ
+      - name: Push Changes
+        if: steps.sync.outputs.synced == 'true'
+        run: |
+          BRANCH="${{ steps.branch.outputs.branch }}"
+          git push origin "$BRANCH"
+          echo "🚀 Pushed changes to origin/$BRANCH"
+
+      # 同期結果のサマリーを出力
+      - name: Summary
+        run: |
+          echo "## 🔄 Upstream Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Upstream | \`n2ns/antigravity-panel\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ steps.branch.outputs.branch }}\` |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.sync.outputs.synced }}" == "true" ]; then
+            echo "| Status | ✅ Synced (${{ steps.sync.outputs.merge_type }}) |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.sync.outputs.conflict }}" == "true" ]; then
+            echo "| Status | ❌ Conflict (manual intervention needed) |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Status | ✅ Already up to date |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # コンフリクト発生時は Issue を作成
+      - name: Create Issue on Conflict
+        if: failure() && steps.sync.outputs.conflict == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🔀 Upstream sync conflict detected';
+            const body = `## Upstream 同期でコンフリクトが発生しました
+
+            **Branch**: \`${{ steps.branch.outputs.branch }}\`
+            **Upstream**: \`n2ns/antigravity-panel\`
+            **Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            ### 解決方法
+
+            ローカルで以下のコマンドを実行してコンフリクトを解決してください：
+
+            \`\`\`bash
+            git remote add upstream https://github.com/n2ns/antigravity-panel.git || true
+            git fetch upstream
+            git merge upstream/${{ steps.branch.outputs.branch }}
+            # コンフリクトを手動で解決
+            git commit
+            git push origin ${{ steps.branch.outputs.branch }}
+            \`\`\`
+            `;
+
+            // 既存の同様の Issue をチェック
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'upstream-sync'
+            });
+
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['upstream-sync']
+              });
+            }
