@@ -14,6 +14,7 @@ import {
 import { retry } from "../utils/retry";
 import { testPort as httpTestPort } from "../utils/http_client";
 import { debugLog } from "../utils/logger";
+import { isWsl, getWslHostIp } from "../utils/wsl";
 import { LanguageServerInfo, DetectOptions, CommunicationAttempt } from "../utils/types";
 
 const execAsync = promisify(exec);
@@ -68,7 +69,7 @@ export class ProcessFinder {
    */
   async detect(options: DetectOptions = {}): Promise<LanguageServerInfo | null> {
     const {
-      attempts = 3,
+      attempts = 5,
       baseDelay = 1500,
       verbose = false,
     } = options;
@@ -105,9 +106,19 @@ export class ProcessFinder {
       let infos = this.strategy.parseProcessInfo(stdout);
 
       if (!infos) {
-        // Silent fail (Case 1)
-        this.failureReason = 'no_process';
-        return null;
+        // Case 1: Primary scan failed, try Keyword Scan (Fallback)
+        if (this.strategy.getProcessListByKeywordCommand) {
+          debugLog("ProcessFinder: Process name scan failed, trying keyword scan (csrf_token)...");
+          const keywordCmd = this.strategy.getProcessListByKeywordCommand("csrf_token");
+          const { stdout: keywordStdout } = await this.execute(keywordCmd);
+          infos = this.strategy.parseProcessInfo(keywordStdout);
+        }
+
+        if (!infos) {
+          // Both scans failed
+          this.failureReason = 'no_process';
+          return null;
+        }
       }
 
       // If single item returned by legacy strategy or only one found (normalize to array)
@@ -235,10 +246,11 @@ export class ProcessFinder {
     cmdlinePort?: number
   ): Promise<number | null> {
     for (const port of ports) {
-      const result = await this.testPort(port, csrfToken);
+      // 1. Try localhost first (standard for Windows, macOS, and WSL Mirrored)
+      let result = await this.testPort("127.0.0.1", port, csrfToken);
       const portSource = (cmdlinePort && port === cmdlinePort) ? 'cmdline' : 'netstat';
 
-      // Record attempt for diagnostics with enhanced info
+      // Record first attempt
       this.attemptDetails.push({
         pid,
         port,
@@ -251,6 +263,30 @@ export class ProcessFinder {
       if (result.success) {
         this.protocolUsed = result.protocol;
         return port;
+      }
+
+      // 2. If localhost failed and we are in WSL, try the Host IP (for NAT mode)
+      if (isWsl()) {
+        const hostIp = getWslHostIp();
+        if (hostIp && hostIp !== "127.0.0.1") {
+          debugLog(`ProcessFinder: WSL detected, trying Host IP: ${hostIp}:${port}`);
+          result = await this.testPort(hostIp, port, csrfToken);
+
+          // Record WSL specific attempt
+          this.attemptDetails.push({
+            pid,
+            port,
+            statusCode: result.statusCode,
+            error: result.error + " (WSL Host IP)",
+            protocol: result.protocol,
+            portSource
+          });
+
+          if (result.success) {
+            this.protocolUsed = result.protocol;
+            return port;
+          }
+        }
       }
     }
     return null;
@@ -268,11 +304,11 @@ export class ProcessFinder {
   /**
    * Test if port is accessible (supports HTTPS → HTTP automatic fallback)
    */
-  protected async testPort(port: number, csrfToken: string): Promise<{ success: boolean; statusCode: number; protocol: 'https' | 'http'; error?: string }> {
+  protected async testPort(hostname: string, port: number, csrfToken: string): Promise<{ success: boolean; statusCode: number; protocol: 'https' | 'http'; error?: string }> {
     return httpTestPort(
-      "127.0.0.1",
+      hostname,
       port,
-      "/exa.language_server_pb.LanguageServerService/GetUnleashData",
+      "/exa.language_server_pb.LanguageServerService/GetUserStatus",
       {
         "X-Codeium-Csrf-Token": csrfToken,
         "Connect-Protocol-Version": "1",

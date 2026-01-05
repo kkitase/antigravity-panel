@@ -107,6 +107,7 @@ function doRequest<T>(options: HttpRequestOptions, protocol: Protocol): Promise<
         ...headers,
       },
       timeout,
+      agent: false, // Bypass any global agents/proxies to ensure direct connection to localhost/IP
       // SECURITY NOTE: rejectUnauthorized: false is intentional and safe here because:
       // - Communication is strictly localhost (127.0.0.1) only
       // - The Antigravity Language Server is a fully trusted local process

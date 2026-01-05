@@ -30,6 +30,18 @@ export class WindowsStrategy implements PlatformStrategy {
     return `powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
   }
 
+  getProcessListByKeywordCommand(keyword: string): string {
+    // Fallback strategy: Search all processes for the specific keyword in CommandLine
+    const script = `
+      [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
+      $k = '${keyword}';
+      $p = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match $k } -ErrorAction SilentlyContinue;
+      if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
+    `.replace(/\n\s+/g, ' ').trim();
+
+    return `powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
+  }
+
   parseProcessInfo(stdout: string): ProcessInfo[] | null {
     try {
       const data = JSON.parse(stdout.trim());
@@ -109,6 +121,11 @@ export class UnixStrategy implements PlatformStrategy {
     // -ww: (macOS) Unlimited width output to prevent command truncation
     const grepPattern = processName.length > 0 ? `[${processName[0]}]${processName.slice(1)}` : processName;
     return `ps -A -ww -o pid,ppid,command | grep "${grepPattern}"`;
+  }
+
+  getProcessListByKeywordCommand(keyword: string): string {
+    // Fallback strategy: Search for keyword in full command line
+    return `ps -A -ww -o pid,ppid,command | grep "${keyword}" | grep -v grep`;
   }
 
   parseProcessInfo(stdout: string): ProcessInfo[] | null {

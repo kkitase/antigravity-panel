@@ -182,7 +182,10 @@ export interface PlatformStrategy {
   /** Get port list command */
   getPortListCommand(pid: number): string;
   /** Parse listening ports for a specific process */
+  /** Parse listening ports for a specific process */
   parseListeningPorts(stdout: string, pid: number): number[];
+  /** Get process list by keyword (fallback detection strategy) */
+  getProcessListByKeywordCommand?(keyword: string): string;
 }
 
 // ==================== Cache Related ====================

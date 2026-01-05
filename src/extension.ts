@@ -93,88 +93,91 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // Detect server for QuotaService (Async, non-blocking)
   const processFinder = new ProcessFinder();
 
-  processFinder.detect().then(async serverInfo => {
-    const extVersion = context.extension.packageJSON.version;
-    const ideVersion = vscode.version;
-    const commonMeta = {
-      platform: process.platform,
-      arch: process.arch,
-      version: extVersion,
-      ideVersion,
-      processName: processFinder.getProcessName(),
-      osDetailedVersion: getDetailedOSVersion()
-    };
+  // 3s Initial Delay to allow server to initialize ports (as per User Request)
+  setTimeout(() => {
+    processFinder.detect().then(async serverInfo => {
+      const extVersion = context.extension.packageJSON.version;
+      const ideVersion = vscode.version;
+      const commonMeta = {
+        platform: process.platform,
+        arch: process.arch,
+        version: extVersion,
+        ideVersion,
+        processName: processFinder.getProcessName(),
+        osDetailedVersion: getDetailedOSVersion()
+      };
 
-    if (serverInfo) {
-      quotaService.setServerInfo(serverInfo);
+      if (serverInfo) {
+        quotaService.setServerInfo(serverInfo);
 
-      // Update UI and check for parsing errors
-      await appViewModel.refreshQuota();
-      // Final check for parsing errors if no higher-level notification was shown
-      if (!hasShownNotification && quotaService.parsingError) {
-        let message = vscode.l10n.t("Server data parsing error detected, some features limited");
+        // Update UI and check for parsing errors
+        await appViewModel.refreshQuota();
+        // Final check for parsing errors if no higher-level notification was shown
+        if (!hasShownNotification && quotaService.parsingError) {
+          let message = vscode.l10n.t("Server data parsing error detected, some features limited");
 
-        // If it's an auth failure during quota fetch, show the login message
-        if (quotaService.parsingError.startsWith('AUTH_FAILED')) {
+          // If it's an auth failure during quota fetch, show the login message
+          if (quotaService.parsingError.startsWith('AUTH_FAILED')) {
+            message = vscode.l10n.t("Please ensure you are logged into Antigravity IDE (Authentication failed).");
+          }
+
+          await FeedbackManager.showFeedbackNotification(message, {
+            ...commonMeta,
+            reason: "parsing_error",
+            parsingInfo: quotaService.parsingError
+          });
+          hasShownNotification = true;
+        }
+      } else {
+        if (hasShownNotification) return;
+
+        const reason = processFinder.failureReason || "unknown_failure";
+        const count = processFinder.candidateCount;
+        const attempts = processFinder.attemptDetails;
+
+        const messages: Record<string, string> = {
+          'no_process': vscode.l10n.t("Local server not found"),
+          'ambiguous': vscode.l10n.t("Local server not found, unable to get quota reference"),
+          'no_port': vscode.l10n.t("Server process found but no listening port detected"),
+          'auth_failed': vscode.l10n.t("Handshake with server failed (CSRF check failed)")
+        };
+
+        let message = messages[reason];
+        let parsingInfo: string | undefined;
+
+        // Smart decision: If it's a single server but auth failed, it's likely a login issue
+        if (reason === 'auth_failed' && count === 1) {
           message = vscode.l10n.t("Please ensure you are logged into Antigravity IDE (Authentication failed).");
         }
 
-        await FeedbackManager.showFeedbackNotification(message, {
-          ...commonMeta,
-          reason: "parsing_error",
-          parsingInfo: quotaService.parsingError
-        });
-        hasShownNotification = true;
+        // Collect useful diagnostic info only
+        let attemptDetailsStr: string | undefined;
+        if (attempts.length > 0) {
+          parsingInfo = attempts
+            .map(a => `PID:${a.pid} Port:${a.port} Status:${a.statusCode || 'Failed'}${a.error ? ` (${a.error})` : ''}`)
+            .join('; ');
+          attemptDetailsStr = JSON.stringify(attempts.slice(0, 3)); // Limit to first 3 attempts
+        }
+
+        if (message) {
+          await FeedbackManager.showFeedbackNotification(message, {
+            ...commonMeta,
+            reason,
+            candidateCount: count,
+            parsingInfo,
+            attemptDetails: attemptDetailsStr,
+            // Enhanced diagnostics v2
+            tokenPreview: processFinder.tokenPreview,
+            portsFromCmdline: processFinder.portsFromCmdline,
+            portsFromNetstat: processFinder.portsFromNetstat,
+            protocolUsed: processFinder.protocolUsed,
+            retryCount: processFinder.retryCount
+          });
+          hasShownNotification = true;
+        }
       }
-    } else {
-      if (hasShownNotification) return;
-
-      const reason = processFinder.failureReason || "unknown_failure";
-      const count = processFinder.candidateCount;
-      const attempts = processFinder.attemptDetails;
-
-      const messages: Record<string, string> = {
-        'no_process': vscode.l10n.t("Local server not found"),
-        'ambiguous': vscode.l10n.t("Local server not found, unable to get quota reference"),
-        'no_port': vscode.l10n.t("Server process found but no listening port detected"),
-        'auth_failed': vscode.l10n.t("Handshake with server failed (CSRF check failed)")
-      };
-
-      let message = messages[reason];
-      let parsingInfo: string | undefined;
-
-      // Smart decision: If it's a single server but auth failed, it's likely a login issue
-      if (reason === 'auth_failed' && count === 1) {
-        message = vscode.l10n.t("Please ensure you are logged into Antigravity IDE (Authentication failed).");
-      }
-
-      // Collect useful diagnostic info only
-      let attemptDetailsStr: string | undefined;
-      if (attempts.length > 0) {
-        parsingInfo = attempts
-          .map(a => `PID:${a.pid} Port:${a.port} Status:${a.statusCode || 'Failed'}${a.error ? ` (${a.error})` : ''}`)
-          .join('; ');
-        attemptDetailsStr = JSON.stringify(attempts.slice(0, 3)); // Limit to first 3 attempts
-      }
-
-      if (message) {
-        await FeedbackManager.showFeedbackNotification(message, {
-          ...commonMeta,
-          reason,
-          candidateCount: count,
-          parsingInfo,
-          attemptDetails: attemptDetailsStr,
-          // Enhanced diagnostics v2
-          tokenPreview: processFinder.tokenPreview,
-          portsFromCmdline: processFinder.portsFromCmdline,
-          portsFromNetstat: processFinder.portsFromNetstat,
-          protocolUsed: processFinder.protocolUsed,
-          retryCount: processFinder.retryCount
-        });
-        hasShownNotification = true;
-      }
-    }
-  }).catch(e => errorLog("Server detection failed", e));
+    }).catch(e => errorLog("Server detection failed", e));
+  }, 3000); // 3000ms delay
 
   // 4. Initialize View Components (The Face)
   const sidebarProvider = new SidebarProvider(context.extensionUri, appViewModel);

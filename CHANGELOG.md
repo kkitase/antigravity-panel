@@ -1,6 +1,17 @@
 English | [中文文档](docs/CHANGELOG_zh.md)
 
-# Changelog
+# Change Log
+
+## [2.4.3] - 2026-01-05
+### Fixed
+- **Critical**: Fixed `no_port` / 404 error by updating health check endpoint to `GetUserStatus`.
+- **WSL Connectivity**: Fixed NAT mode issues by probing Windows Host IP.
+- **Network**: Fixed global proxy instability by forcing direct connection (`agent: false`).
+- **Startup Stability**: Added 3s initial warm-up delay and increased retry attempts to 5 (total wait ~20.5s) to solve timeout issues on slower Windows environments.
+- **Process Detection**: Added robust keyword-based detection (`csrf_token`) fallback.
+
+### Added
+- Automated build synchronization to Windows artifact directory.
 
 ## [2.4.2] - 2026-01-01
 
