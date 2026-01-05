@@ -19,6 +19,14 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].csrfToken, 'abc123xyz');
         });
 
+        test('should generate correct keyword search command', () => {
+            const command = strategy.getProcessListByKeywordCommand!('csrf_token');
+            assert.ok(command.includes('Get-CimInstance Win32_Process'));
+            assert.ok(command.includes("Where-Object { $_.CommandLine -match $k }"));
+            assert.ok(command.includes('Select-Object ProcessId,ParentProcessId,CommandLine'));
+            assert.ok(command.includes('ConvertTo-Json -Compress'));
+        });
+
         test('should parse array of processes and filter Antigravity', () => {
             const jsonOutput = JSON.stringify([
                 {
@@ -151,6 +159,13 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].ppid, 11111);
             assert.strictEqual(result![0].extensionPort, 42100);
             assert.strictEqual(result![0].csrfToken, 'abc123xyz');
+        });
+
+        test('should generate correct keyword search command', () => {
+            const command = strategy.getProcessListByKeywordCommand!('csrf_token');
+            assert.ok(command.startsWith('ps -A -ww -o pid,ppid,command'));
+            assert.ok(command.includes('grep "csrf_token"'));
+            assert.ok(command.includes('grep -v grep'));
         });
 
         test('should handle multiple processes and find the right one', () => {

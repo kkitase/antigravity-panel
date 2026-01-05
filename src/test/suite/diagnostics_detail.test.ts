@@ -140,4 +140,37 @@ suite('Diagnostics Detail Test Suite', () => {
         assert.ok(successAttempt);
         assert.strictEqual(successAttempt!.port, 58002);
     });
+
+    test('should fallback to keyword search when process name detection fails', async () => {
+        // 1. Initial process name scan returns empty
+        finder.mockStdout = '';
+
+        // 2. Mock execute to handle the keyword scan command
+        const originalExecute = (finder as any).execute;
+        (finder as any).execute = async (command: string) => {
+            if (command === 'mock_ps') {
+                return { stdout: '', stderr: '' }; // Primary scan fails
+            }
+            if (command === 'mock_keyword_scan') {
+                const proc = { pid: 999, ppid: process.ppid, extensionPort: 0, csrfToken: 'keyword-token' };
+                return { stdout: JSON.stringify([proc]), stderr: '' }; // Keyword scan succeeds
+            }
+            return originalExecute.call(finder, command);
+        };
+
+        // Mock getProcessListByKeywordCommand on strategy
+        (strategy as any).getProcessListByKeywordCommand = (_k: string) => 'mock_keyword_scan';
+
+        // 3. Setup port listening
+        finder.mockPortStdout = JSON.stringify([59000]);
+        finder.mockTestResults = {
+            59000: { success: true, statusCode: 200, protocol: 'http' }
+        };
+
+        const result = await finder.runTryDetect();
+
+        assert.ok(result, 'Should find process via keyword fallback');
+        assert.strictEqual(result!.port, 59000);
+        assert.strictEqual(result!.csrfToken, 'keyword-token');
+    });
 });
