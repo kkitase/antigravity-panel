@@ -4,6 +4,7 @@
  * Supports automatic HTTPS → HTTP fallback
  */
 
+import * as vscode from "vscode";
 import { exec } from "child_process";
 import { promisify } from "util";
 import {
@@ -13,9 +14,9 @@ import {
 } from "./platform_strategies";
 import { retry } from "../utils/retry";
 import { testPort as httpTestPort } from "../utils/http_client";
-import { debugLog } from "../utils/logger";
+import { debugLog, infoLog, warnLog, errorLog } from "../utils/logger";
 import { isWsl, getWslHostIp } from "../utils/wsl";
-import { LanguageServerInfo, DetectOptions, CommunicationAttempt } from "../utils/types";
+import { LanguageServerInfo, DetectOptions, CommunicationAttempt, ProcessInfo } from "../utils/types";
 
 const execAsync = promisify(exec);
 
@@ -79,11 +80,42 @@ export class ProcessFinder {
       baseDelay,
       backoff: "exponential",
       maxDelay: 10000,
-      onRetry: verbose
-        ? (attempt, delay) => {
+      onRetry: (attempt, delay) => {
+        // Log to output channel so users can see progress in case of slow startup
+        warnLog(`ProcessFinder: Attempt ${attempt} failed, retrying in ${delay}ms...`);
+        if (verbose) {
           debugLog(`ProcessFinder: Attempt ${attempt} failed, retrying in ${delay}ms...`);
         }
-        : undefined,
+      },
+    }).then(result => {
+      if (!result) {
+        errorLog(`ProcessFinder: Detection failed after ${attempts} attempts. Reason: ${this.failureReason || 'unknown'}`);
+      } else {
+        infoLog(`ProcessFinder: Language Server detected successfully on port ${result.port}`);
+      }
+      return result;
+    });
+  }
+
+  /**
+   * Calculate the expected Workspace IDs for all current VS Code workspace folders
+   */
+  private getExpectedWorkspaceIds(): string[] {
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) return [];
+
+    return folders.map(folder => {
+      const rootPath = folder.uri.fsPath;
+
+      // Normalize path: lowercase, strip leading/trailing non-alphanumeric, replace separator with underscore
+      // This matches the LS internal naming convention
+      const normalizedPath = rootPath
+        .toLowerCase()
+        .replace(/^[^a-z0-9]+/, "")    // Strip leading non-alphanumeric
+        .replace(/[^a-z0-9]+$/, "")    // Strip trailing non-alphanumeric
+        .replace(/[^a-z0-9]/g, "_");   // Replace everything else with underscore
+
+      return `file_${normalizedPath}`;
     });
   }
 
@@ -98,15 +130,17 @@ export class ProcessFinder {
     this.portsFromCmdline = 0; // Reset port counts
     this.portsFromNetstat = 0;
     this.protocolUsed = 'none';
+
     try {
+      const expectedIds = this.getExpectedWorkspaceIds();
+      debugLog(`ProcessFinder: Expected Workspace IDs: ${expectedIds.join(", ") || "none"}`);
+
       const cmd = this.strategy.getProcessListCommand(this.processName);
       const { stdout } = await this.execute(cmd);
 
-      // Now returns an array or null
-      let infos = this.strategy.parseProcessInfo(stdout);
+      let infos: ProcessInfo[] | null = this.strategy.parseProcessInfo(stdout);
 
       if (!infos) {
-        // Case 1: Primary scan failed, try Keyword Scan (Fallback)
         if (this.strategy.getProcessListByKeywordCommand) {
           debugLog("ProcessFinder: Process name scan failed, trying keyword scan (csrf_token)...");
           const keywordCmd = this.strategy.getProcessListByKeywordCommand("csrf_token");
@@ -115,98 +149,139 @@ export class ProcessFinder {
         }
 
         if (!infos) {
-          // Both scans failed
           this.failureReason = 'no_process';
           return null;
         }
       }
 
-      // If single item returned by legacy strategy or only one found (normalize to array)
-      if (!Array.isArray(infos)) {
-        infos = [infos];
-      }
-
       this.candidateCount = infos.length;
 
       if (infos.length === 0) {
-        // Silent fail (Case 1)
         this.failureReason = 'no_process';
         return null;
       }
 
-      let bestInfo: typeof infos[0] | null = null;
+      const myPid = process.pid;
+      const myPpid = process.ppid;
 
-      if (infos.length === 1) {
-        // Case 2: Only one server found, use it directly
-        debugLog(`ProcessFinder: Single server found (PID: ${infos[0].pid}), using it.`);
-        bestInfo = infos[0];
-      } else {
-        // Case 3: Multiple candidates, filter by process ancestry
-        const myPpid = process.ppid;
+      // Log detected candidates for debugging
+      infos.forEach(info => {
+        debugLog(`ProcessFinder: Candidate detected - PID: ${info.pid}, PPID: ${info.ppid}, WorkspaceID: ${info.workspaceId || 'N/A'}`);
+      });
 
-        // Try to match sibling (same PPID) first
-        const sibling = infos.find((i) => i.ppid === myPpid);
-        if (sibling) {
-          debugLog(`ProcessFinder: Found sibling process (PID: ${sibling.pid})`);
-          bestInfo = sibling;
+      // Priority 1: Exact Workspace ID match (Strongest guarantee)
+      if (expectedIds.length > 0) {
+        const wsMatch = infos.find(i => i.workspaceId && expectedIds.includes(i.workspaceId));
+        if (wsMatch) {
+          debugLog(`ProcessFinder: Strong Match! Workspace ID matches: ${wsMatch.workspaceId} (PID: ${wsMatch.pid})`);
+          const result = await this.verifyAndConnect(wsMatch);
+          if (result) return result;
+        }
+      }
+
+      // Priority 2: Direct Child process of current Extension Host
+      const child = infos.find((i) => i.ppid === myPid);
+      if (child) {
+        if (expectedIds.length > 0 && child.workspaceId && !expectedIds.includes(child.workspaceId)) {
+          debugLog(`ProcessFinder: Child PID ${child.pid} has mismatching workspace ID ${child.workspaceId}, skipping.`);
         } else {
-          // Try to match grandparent (Server's GrandParent === My Parent)
-          try {
-            const myMainProcessId = myPpid;
+          debugLog(`ProcessFinder: Inheritance Match! Found child process of EH (PID: ${child.pid}).`);
+          const result = await this.verifyAndConnect(child);
+          if (result) return result;
+        }
+      }
 
-            for (const info of infos) {
-              if (info.ppid) {
-                const candidateGrandparent = await this.getParentPid(info.ppid);
-                if (candidateGrandparent === myMainProcessId) {
-                  debugLog(
-                    `ProcessFinder: Found nephew process (PID: ${info.pid}) - Server's GrandParent matches My Parent (${myMainProcessId})`
-                  );
-                  bestInfo = info;
-                  break;
-                }
-              }
-            }
-          } catch (e) {
-            debugLog("ProcessFinder: Error tracing ancestry", e);
+      // Priority 3: Sibling process (Same parent as EH)
+      const sibling = infos.find((i) => i.ppid === myPpid);
+      if (sibling) {
+        if (expectedIds.length > 0 && sibling.workspaceId && !expectedIds.includes(sibling.workspaceId)) {
+          debugLog(`ProcessFinder: Sibling PID ${sibling.pid} has mismatching workspace ID ${sibling.workspaceId}, skipping.`);
+        } else {
+          debugLog(`ProcessFinder: Sibling Match! Found sibling process of EH (PID: ${sibling.pid}).`);
+          const result = await this.verifyAndConnect(sibling);
+          if (result) return result;
+        }
+      }
+
+      // Priority 4: Ancestry Trace (Recursive search for grandparent/great-grandparent)
+      debugLog("ProcessFinder: Direct relationships failed, tracing ancestry...");
+      for (const info of infos) {
+        if (!info.ppid) continue;
+
+        // STRICT ISOLATION: Check workspace ID even in ancestry trace
+        if (expectedIds.length > 0 && info.workspaceId && !expectedIds.includes(info.workspaceId)) {
+          continue;
+        }
+
+        // Trace up to 3 levels: LS -> SH -> EH
+        let parent = info.ppid;
+        for (let level = 0; level < 3; level++) {
+          if (parent === myPid) {
+            debugLog(`ProcessFinder: Ancestry Match at level ${level + 1}! PID ${info.pid} belongs to EH subtree.`);
+            const result = await this.verifyAndConnect(info);
+            if (result) return result;
+            break;
           }
-        }
-
-        if (!bestInfo) {
-          // Case 3b: Multiple servers but NO MATCH found
-          debugLog("ProcessFinder: Multiple servers found but none matched ancestry.");
-          this.failureReason = 'ambiguous';
-          return null;
+          const nextParent = await this.getParentPid(parent);
+          if (!nextParent || nextParent === parent || nextParent <= 1) break;
+          parent = nextParent;
         }
       }
 
-      // Get all candidate ports
-      let ports = await this.getListeningPorts(bestInfo.pid);
-      this.portsFromNetstat = ports.length;
+      // Priority 5: Loop-and-Verify (Last Resort with Strict Filtering)
+      debugLog(`ProcessFinder: Selective heuristics failed. Verifying all remaining ${infos.length} candidates...`);
+      for (const info of infos) {
+        // STRICT ISOLATION: If we have expected IDs, don't connect to a process that has a DIFFERENT ID
+        if (expectedIds.length > 0 && info.workspaceId && !expectedIds.includes(info.workspaceId)) {
+          debugLog(`ProcessFinder: Skipping PID ${info.pid} - belongs to a different workspace (${info.workspaceId})`);
+          continue;
+        }
 
-      // Store token preview for diagnostics (first 8 chars)
-      this.tokenPreview = bestInfo.csrfToken.substring(0, 8);
-
-      // If we have a fixed port from cmdline, ensure it's tried even if not found by OS tools
-      if (bestInfo.extensionPort > 0 && !ports.includes(bestInfo.extensionPort)) {
-        ports = [bestInfo.extensionPort, ...ports];
-        this.portsFromCmdline = 1;
+        const result = await this.verifyAndConnect(info);
+        if (result) {
+          debugLog(`ProcessFinder: Connection successful for generic PID ${info.pid} after verification.`);
+          return result;
+        }
       }
 
-      const workingPort = await this.findWorkingPort(bestInfo.pid, ports, bestInfo.csrfToken, bestInfo.extensionPort);
-      if (!workingPort) {
-        // If we found a server but couldn't talk to it, check why
-        const hasAuthFailure = this.attemptDetails.some(a => a.statusCode === 401 || a.statusCode === 403);
-        this.failureReason = hasAuthFailure ? 'auth_failed' : 'no_port';
-        return null;
+      if (infos && infos.length > 1) {
+        this.failureReason = "ambiguous";
       }
-
-      return {
-        port: workingPort,
-        csrfToken: bestInfo.csrfToken,
-      };
-    } catch {
+      return null;
+    } catch (e: unknown) {
+      errorLog("ProcessFinder: tryDetect unexpected error", e instanceof Error ? e : String(e));
       return null;
     }
+  }
+
+  /**
+   * Helper: Verify connectivity and return server info
+   */
+  private async verifyAndConnect(info: ProcessInfo): Promise<LanguageServerInfo | null> {
+    // Get all candidate ports
+    let ports = await this.getListeningPorts(info.pid);
+    this.portsFromNetstat = ports.length;
+
+    // Store token preview for diagnostics (first 8 chars)
+    this.tokenPreview = info.csrfToken.substring(0, 8);
+
+    // If we have a fixed port from cmdline, ensure it's tried even if not found by OS tools
+    if (info.extensionPort > 0 && !ports.includes(info.extensionPort)) {
+      ports = [info.extensionPort, ...ports];
+      this.portsFromCmdline = 1;
+    }
+
+    const workingPort = await this.findWorkingPort(info.pid, ports, info.csrfToken, info.extensionPort);
+    if (!workingPort) {
+      const hasAuthFailure = this.attemptDetails.some(a => a.pid === info.pid && (a.statusCode === 401 || a.statusCode === 403));
+      this.failureReason = hasAuthFailure ? 'auth_failed' : 'no_port';
+      return null;
+    }
+
+    return {
+      port: workingPort,
+      csrfToken: info.csrfToken,
+    };
   }
 
   private async getParentPid(pid: number): Promise<number | null> {

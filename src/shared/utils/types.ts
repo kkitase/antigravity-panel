@@ -169,6 +169,8 @@ export interface ProcessInfo {
   extensionPort: number;
   /** CSRF authentication token */
   csrfToken: string;
+  /** Workspace ID from command line */
+  workspaceId?: string;
 }
 
 /**

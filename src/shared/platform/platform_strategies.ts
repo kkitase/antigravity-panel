@@ -70,7 +70,9 @@ export class WindowsStrategy implements PlatformStrategy {
         }
 
         const portMatch = commandLine.match(/--extension_server_port[=\s]+(\d+)/);
-        const tokenMatch = commandLine.match(/--csrf_token[=\s]+([a-zA-Z0-9\-_.]+)/);
+        // Match workspace_id and csrf_token (handles optional quotes)
+        const tokenMatch = commandLine.match(/--csrf_token[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
+        const wsMatch = commandLine.match(/--workspace_id[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
 
         if (tokenMatch?.[1]) {
           results.push({
@@ -78,6 +80,7 @@ export class WindowsStrategy implements PlatformStrategy {
             ppid,
             extensionPort: portMatch?.[1] ? parseInt(portMatch[1], 10) : 0,
             csrfToken: tokenMatch[1],
+            workspaceId: wsMatch?.[1],
           });
         }
       }
@@ -114,18 +117,19 @@ export class UnixStrategy implements PlatformStrategy {
   constructor(private platform: "darwin" | "linux") { }
 
   getProcessListCommand(processName: string): string {
-    // Use 'ps' to get PID, PPID, and Command Line.
+    // Use 'ps' to get PID, PPID, and full Arguments.
     // -A: Select all processes
     // -o: Specify output format
+    // args: Full command line (more reliable than 'command' on some systems)
     // grep: Filter for our process name (brackets [n] trick prevents grep from matching itself)
-    // -ww: (macOS) Unlimited width output to prevent command truncation
+    // -ww: Unlimited width output to prevent command truncation
     const grepPattern = processName.length > 0 ? `[${processName[0]}]${processName.slice(1)}` : processName;
-    return `ps -A -ww -o pid,ppid,command | grep "${grepPattern}"`;
+    return `ps -A -ww -o pid,ppid,args | grep "${grepPattern}"`;
   }
 
   getProcessListByKeywordCommand(keyword: string): string {
     // Fallback strategy: Search for keyword in full command line
-    return `ps -A -ww -o pid,ppid,command | grep "${keyword}" | grep -v grep`;
+    return `ps -A -ww -o pid,ppid,args | grep "${keyword}" | grep -v grep`;
   }
 
   parseProcessInfo(stdout: string): ProcessInfo[] | null {
@@ -135,8 +139,7 @@ export class UnixStrategy implements PlatformStrategy {
     for (const line of lines) {
       if (!line.trim()) continue;
 
-      // Parse columns: PID PPID COMMAND...
-      // Regex handles leading spaces and splits by whitespace
+      // Parse columns: PID PPID ARGS...
       const match = line.trim().match(/^(\d+)\s+(\d+)\s+(.+)$/);
 
       if (match) {
@@ -146,7 +149,9 @@ export class UnixStrategy implements PlatformStrategy {
 
         if (cmd.includes("--extension_server_port")) {
           const portMatch = cmd.match(/--extension_server_port[=\s]+(\d+)/);
-          const tokenMatch = cmd.match(/--csrf_token[=\s]+([a-zA-Z0-9\-_.]+)/);
+          // Match workspace_id and csrf_token (handles optional quotes)
+          const tokenMatch = cmd.match(/--csrf_token[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
+          const wsMatch = cmd.match(/--workspace_id[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
 
           if (tokenMatch?.[1]) {
             results.push({
@@ -154,6 +159,7 @@ export class UnixStrategy implements PlatformStrategy {
               ppid,
               extensionPort: portMatch ? parseInt(portMatch[1], 10) : 0,
               csrfToken: tokenMatch[1],
+              workspaceId: wsMatch?.[1],
             });
           }
         }

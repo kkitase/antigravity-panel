@@ -2,6 +2,13 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
 
+## [2.4.4] - 2026-01-05
+### Fixed
+- **WSL Multi-Profile Support**: Fixed an issue where inaccurate quota data was displayed in WSL environments when using multiple VS Code profiles.
+
+### Added
+- **Enhanced Diagnostics**: Improved connection troubleshooting by outputting retry attempts and detailed failure reasons (auth, network, process) to the "Toolkit for Antigravity" Output Channel.
+
 ## [2.4.3] - 2026-01-05
 ### Fixed
 - **Critical**: Fixed `no_port` / 404 error by updating health check endpoint to `GetUserStatus`.
