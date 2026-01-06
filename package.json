@@ -1,8 +1,8 @@
 {
   "name": "antigravity-panel",
-  "displayName": "Toolkit for Antigravity",
-  "description": "%extension.description%",
-  "version": "2.4.2",
+  "displayName": "Antigravity Panel",
+  "description": "Antigravity Panel Extension",
+  "version": "2.4.4",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -322,6 +322,8 @@
     "test": "tsc -p tsconfig.test.json && node ./out/test/runUnitTests.js",
     "test:server": "tsc -p tsconfig.test.json && node ./out/test/runServerTests.js",
     "package": "vsce package",
+    "postpackage": "node ./scripts/sync-build.js",
+    "package:sync": "npm run package",
     "prepare": "husky"
   },
   "devDependencies": {

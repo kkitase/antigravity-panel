@@ -169,6 +169,8 @@ export interface ProcessInfo {
   extensionPort: number;
   /** CSRF authentication token */
   csrfToken: string;
+  /** Workspace ID from command line */
+  workspaceId?: string;
 }
 
 /**
@@ -182,7 +184,10 @@ export interface PlatformStrategy {
   /** Get port list command */
   getPortListCommand(pid: number): string;
   /** Parse listening ports for a specific process */
+  /** Parse listening ports for a specific process */
   parseListeningPorts(stdout: string, pid: number): number[];
+  /** Get process list by keyword (fallback detection strategy) */
+  getProcessListByKeywordCommand?(keyword: string): string;
 }
 
 // ==================== Cache Related ====================

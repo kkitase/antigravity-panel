@@ -5,10 +5,10 @@ suite('Platform Strategies Test Suite', () => {
     suite('WindowsStrategy', () => {
         const strategy = new WindowsStrategy();
 
-        test('should parse single process JSON output', () => {
+        test('should parse single process JSON output with workspace ID', () => {
             const jsonOutput = JSON.stringify({
                 ProcessId: 12345,
-                CommandLine: 'C:\\Program Files\\Antigravity\\language_server_windows_x64.exe --extension_server_port=42100 --csrf_token=abc123xyz --app_data_dir antigravity'
+                CommandLine: 'C:\\Program Files\\Antigravity\\language_server_windows_x64.exe --extension_server_port=42100 --csrf_token=abc123xyz --workspace_id=file_home_deploy_projects_antigravity --app_data_dir antigravity'
             });
 
             const result = strategy.parseProcessInfo(jsonOutput);
@@ -17,6 +17,27 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].pid, 12345);
             assert.strictEqual(result![0].extensionPort, 42100);
             assert.strictEqual(result![0].csrfToken, 'abc123xyz');
+            assert.strictEqual(result![0].workspaceId, 'file_home_deploy_projects_antigravity');
+        });
+
+        test('should handle quoted paths and tokens', () => {
+            const jsonOutput = JSON.stringify({
+                ProcessId: 12345,
+                CommandLine: 'language_server.exe --csrf_token "quoted-token" --workspace_id \'quoted-workspace\''
+            });
+
+            const result = strategy.parseProcessInfo(jsonOutput);
+            assert.ok(result);
+            assert.strictEqual(result![0].csrfToken, 'quoted-token');
+            assert.strictEqual(result![0].workspaceId, 'quoted-workspace');
+        });
+
+        test('should generate correct keyword search command', () => {
+            const command = strategy.getProcessListByKeywordCommand!('csrf_token');
+            assert.ok(command.includes('Get-CimInstance Win32_Process'));
+            assert.ok(command.includes("Where-Object { $_.CommandLine -match $k }"));
+            assert.ok(command.includes('Select-Object ProcessId,ParentProcessId,CommandLine'));
+            assert.ok(command.includes('ConvertTo-Json -Compress'));
         });
 
         test('should parse array of processes and filter Antigravity', () => {
@@ -139,10 +160,10 @@ suite('Platform Strategies Test Suite', () => {
     suite('UnixStrategy - macOS', () => {
         const strategy = new UnixStrategy('darwin');
 
-        test('should parse ps output', () => {
-            // Mock output of: ps -A -ww -o pid,ppid,command | grep ...
+        test('should parse ps output with workspace ID', () => {
+            // Mock output of: ps -A -ww -o pid,ppid,args | grep ...
             // PID PPID COMMAND
-            const psOutput = `12345 11111 /Applications/Antigravity.app/Contents/MacOS/language_server_macos --extension_server_port=42100 --csrf_token=abc123xyz`;
+            const psOutput = `12345 11111 /Applications/Antigravity.app/Contents/MacOS/language_server_macos --extension_server_port=42100 --csrf_token=abc123xyz --workspace_id=my-workspace`;
 
             const result = strategy.parseProcessInfo(psOutput);
 
@@ -151,6 +172,22 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].ppid, 11111);
             assert.strictEqual(result![0].extensionPort, 42100);
             assert.strictEqual(result![0].csrfToken, 'abc123xyz');
+            assert.strictEqual(result![0].workspaceId, 'my-workspace');
+        });
+
+        test('should handle quoted args in Unix', () => {
+            const psOutput = `12345 11111 LS --csrf_token "unix-token" --workspace_id 'unix-ws' --extension_server_port 42100`;
+            const result = strategy.parseProcessInfo(psOutput);
+            assert.ok(result);
+            assert.strictEqual(result![0].csrfToken, 'unix-token');
+            assert.strictEqual(result![0].workspaceId, 'unix-ws');
+        });
+
+        test('should generate correct keyword search command', () => {
+            const command = strategy.getProcessListByKeywordCommand!('csrf_token');
+            assert.ok(command.startsWith('ps -A -ww -o pid,ppid,args'));
+            assert.ok(command.includes('grep "csrf_token"'));
+            assert.ok(command.includes('grep -v grep'));
         });
 
         test('should handle multiple processes and find the right one', () => {
