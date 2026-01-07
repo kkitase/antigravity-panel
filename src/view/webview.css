@@ -314,6 +314,39 @@ quota-pie {
   border-bottom: 1px solid var(--vscode-widget-border);
 }
 
+/* Connection Hint Banner */
+.connection-hint {
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  padding: 8px 12px;
+  margin: 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  border: 1px solid var(--vscode-button-border, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.connection-hint .codicon-warning {
+  color: var(--vscode-notificationsWarningIcon-foreground, #cca700);
+  font-size: 16px;
+  margin-top: 1px;
+}
+
+.connection-hint a {
+  color: var(--vscode-textLink-foreground);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.connection-hint a:hover {
+  text-decoration: underline;
+}
+
 /* 柱状图样式 - 卡片包裹 */
 .usage-chart {
   padding: 10px 12px;

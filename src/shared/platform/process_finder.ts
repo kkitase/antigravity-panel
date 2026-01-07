@@ -157,11 +157,6 @@ export class ProcessFinder {
 
       this.candidateCount = infos.length;
 
-      if (infos.length === 0) {
-        this.failureReason = 'no_process';
-        return null;
-      }
-
       const myPid = process.pid;
       const myPpid = process.ppid;
 
@@ -245,9 +240,6 @@ export class ProcessFinder {
         }
       }
 
-      if (infos && infos.length > 1) {
-        this.failureReason = "ambiguous";
-      }
       return null;
     } catch (e: unknown) {
       errorLog("ProcessFinder: tryDetect unexpected error", e instanceof Error ? e : String(e));

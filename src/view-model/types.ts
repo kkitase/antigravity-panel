@@ -190,11 +190,15 @@ export interface SidebarData {
     tokenUsage?: TokenUsageViewState;
     tasks: TreeSectionState;
     contexts: TreeSectionState;
+    connectionStatus: ConnectionStatus;
     gaugeStyle?: string;
     showUserInfoCard?: boolean;
     showCreditsCard?: boolean;
     autoAcceptEnabled?: boolean;
 }
+
+/** Connection status for sidebar feedback */
+export type ConnectionStatus = 'detecting' | 'connected' | 'failed';
 
 // ==================== App State ====================
 
@@ -205,6 +209,7 @@ export interface AppState {
     user?: UserViewState;
     tokenUsage?: TokenUsageViewState;
     tree: TreeViewState;
+    connectionStatus: ConnectionStatus;
     automation: {
         enabled: boolean;
     };

@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Antigravity Panel",
   "description": "Antigravity Panel Extension",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -216,6 +216,20 @@
               "%config.statusBarStyle.remaining%"
             ],
             "description": "%config.status.displayFormat.description%"
+          },
+          "tfa.status.scope": {
+            "type": "string",
+            "default": "all",
+            "order": 35,
+            "enum": [
+              "primary",
+              "all"
+            ],
+            "enumDescriptions": [
+              "%config.status.scope.primary%",
+              "%config.status.scope.all%"
+            ],
+            "description": "%config.status.scope.description%"
           },
           "tfa.status.warningThreshold": {
             "type": "number",

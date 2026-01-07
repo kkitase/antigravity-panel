@@ -70,6 +70,7 @@ export class ConfigManager {
       "status.displayFormat": this.reader.get<"percentage" | "resetTime" | "used" | "remaining">("status.displayFormat", "percentage"),
       "status.warningThreshold": this.reader.get<number>("status.warningThreshold", 30),
       "status.criticalThreshold": this.reader.get<number>("status.criticalThreshold", 10),
+      "status.scope": this.reader.get<"primary" | "all">("status.scope", "all"),
 
       // 3. Cache Settings
       "cache.autoClean": this.reader.get<boolean>("cache.autoClean", false),

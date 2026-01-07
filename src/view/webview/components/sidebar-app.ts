@@ -12,11 +12,23 @@ import type {
   VsCodeApi,
   WindowWithVsCode,
   UserInfoData,
-  TokenUsageData
+  TokenUsageData,
+  ConnectionStatus
 } from '../types.js';
 
 import './quota-dashboard.js';
 import './usage-chart.js';
+
+// Extend Window interface to include __TRANSLATIONS__
+declare global {
+  interface Window {
+    __TRANSLATIONS__?: {
+      restartService?: string;
+      reloadWindow?: string;
+      [key: string]: string | undefined;
+    };
+  }
+}
 import './folder-tree.js';
 import './credits-bar.js';
 import './user-info-card.js';
@@ -71,6 +83,9 @@ export class SidebarApp extends LitElement {
 
   @state()
   private _autoAcceptEnabled: boolean = false;
+
+  @state()
+  private _connectionStatus: ConnectionStatus = 'detecting';
 
   private _vscode = acquireVsCodeApi();
 
@@ -207,6 +222,9 @@ export class SidebarApp extends LitElement {
     if (state.autoAcceptEnabled !== undefined) {
       this._autoAcceptEnabled = state.autoAcceptEnabled;
     }
+    if (state.connectionStatus) {
+      this._connectionStatus = state.connectionStatus;
+    }
   }
 
   // ==================== Event Handlers (Light DOM simplified) ====================
@@ -267,6 +285,16 @@ export class SidebarApp extends LitElement {
   protected render() {
     return html`
       <div class="scrollable-content" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0;">
+        ${this._connectionStatus === 'failed' ? html`
+          <div class="connection-hint">
+            <span class="codicon codicon-warning"></span>
+            <span>Local service not detected. Try 
+              <a @click=${() => this._vscode.postMessage({ type: 'restartLanguageServer' })}>${window.__TRANSLATIONS__?.restartService || 'Restart Service'}</a> 
+              or 
+              <a @click=${() => this._vscode.postMessage({ type: 'reloadWindow' })}>${window.__TRANSLATIONS__?.reloadWindow || 'Reload Window'}</a>.
+            </span>
+          </div>
+        ` : nothing}
         <quota-dashboard 
           .quotas=${this._quotas} 
           .gaugeStyle=${this._gaugeStyle}

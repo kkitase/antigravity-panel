@@ -23,7 +23,7 @@ suite('Platform Strategies Test Suite', () => {
         test('should handle quoted paths and tokens', () => {
             const jsonOutput = JSON.stringify({
                 ProcessId: 12345,
-                CommandLine: 'language_server.exe --csrf_token "quoted-token" --workspace_id \'quoted-workspace\''
+                CommandLine: 'language_server.exe --app_data_dir antigravity --csrf_token "quoted-token" --workspace_id \'quoted-workspace\''
             });
 
             const result = strategy.parseProcessInfo(jsonOutput);
@@ -48,7 +48,7 @@ suite('Platform Strategies Test Suite', () => {
                 },
                 {
                     ProcessId: 12345,
-                    CommandLine: 'C:\\Users\\User\\AppData\\Local\\Antigravity\\language_server_windows_x64.exe --extension_server_port=42100 --csrf_token=abc123xyz'
+                    CommandLine: 'C:\\Users\\User\\AppData\\Local\\Antigravity\\language_server_windows_x64.exe --app_data_dir antigravity --extension_server_port=42100 --csrf_token=abc123xyz'
                 },
                 {
                     ProcessId: 22222,
@@ -88,7 +88,7 @@ suite('Platform Strategies Test Suite', () => {
         test('should return null when CSRF token is missing', () => {
             const jsonOutput = JSON.stringify({
                 ProcessId: 12345,
-                CommandLine: 'C:\\Antigravity\\language_server.exe --extension_server_port=42100'
+                CommandLine: 'C:\\Antigravity\\language_server.exe --app_data_dir antigravity --extension_server_port=42100'
             });
 
             const result = strategy.parseProcessInfo(jsonOutput);
@@ -163,7 +163,7 @@ suite('Platform Strategies Test Suite', () => {
         test('should parse ps output with workspace ID', () => {
             // Mock output of: ps -A -ww -o pid,ppid,args | grep ...
             // PID PPID COMMAND
-            const psOutput = `12345 11111 /Applications/Antigravity.app/Contents/MacOS/language_server_macos --extension_server_port=42100 --csrf_token=abc123xyz --workspace_id=my-workspace`;
+            const psOutput = `12345 11111 /Applications/Antigravity.app/Contents/MacOS/language_server_macos --app_data_dir antigravity --extension_server_port=42100 --csrf_token=abc123xyz --workspace_id=my-workspace`;
 
             const result = strategy.parseProcessInfo(psOutput);
 
@@ -176,7 +176,7 @@ suite('Platform Strategies Test Suite', () => {
         });
 
         test('should handle quoted args in Unix', () => {
-            const psOutput = `12345 11111 LS --csrf_token "unix-token" --workspace_id 'unix-ws' --extension_server_port 42100`;
+            const psOutput = `12345 11111 LS --app_data_dir "antigravity" --csrf_token "unix-token" --workspace_id 'unix-ws' --extension_server_port 42100`;
             const result = strategy.parseProcessInfo(psOutput);
             assert.ok(result);
             assert.strictEqual(result![0].csrfToken, 'unix-token');
@@ -192,7 +192,7 @@ suite('Platform Strategies Test Suite', () => {
 
         test('should handle multiple processes and find the right one', () => {
             const psOutput = `11111 11000 /usr/bin/node server.js
-12345 30372 /Applications/Antigravity.app/language_server_macos --extension_server_port 42100 --csrf_token abc123
+12345 30372 /Applications/Antigravity.app/language_server_macos --app_data_dir antigravity --extension_server_port 42100 --csrf_token abc123
 22222 22000 /usr/bin/python script.py`;
 
             const result = strategy.parseProcessInfo(psOutput);
@@ -259,7 +259,7 @@ language  71666 user   11u  IPv4 0x1234567891      0t0  TCP 127.0.0.1:42101 (LIS
         const strategy = new UnixStrategy('linux');
 
         test('should parse ps output', () => {
-            const psOutput = `12345 30372 /opt/antigravity/language_server_linux_x64 --extension_server_port=42100 --csrf_token=abc123xyz`;
+            const psOutput = `12345 30372 /opt/antigravity/language_server_linux_x64 --app_data_dir antigravity --extension_server_port=42100 --csrf_token=abc123xyz`;
 
             const result = strategy.parseProcessInfo(psOutput);
 

@@ -62,8 +62,10 @@ export class StatusBarManager implements vscode.Disposable {
                 config["status.showQuota"],
                 config["status.showCache"],
                 config["status.displayFormat"],
+                config["status.scope"],
                 config["status.warningThreshold"],
-                config["status.criticalThreshold"]
+                config["status.criticalThreshold"],
+                config["dashboard.includeSecondaryModels"]
             );
         } else {
             this.item.hide();
@@ -76,24 +78,47 @@ export class StatusBarManager implements vscode.Disposable {
         showQuota: boolean,
         showCache: boolean,
         statusBarStyle: TfaConfig['status.displayFormat'],
+        scope: TfaConfig['status.scope'],
         warningThreshold: number,
-        criticalThreshold: number
+        criticalThreshold: number,
+        includeSecondaryModels: boolean
     ): void {
         const parts: string[] = [];
         const tooltipRows: string[] = [];
 
-        if (showQuota) {
-            const primary = statusData.primary;
-            const statusEmoji = this.getStatusEmoji(
-                primary.percentage,
-                warningThreshold,
-                criticalThreshold
-            );
-            const displayText = this.formatQuotaDisplay(primary, statusBarStyle);
-            parts.push(`${statusEmoji} ${displayText}`);
+        // Filter groups based on config
+        const visibleGroups = statusData.allGroups.filter(g =>
+            includeSecondaryModels || g.id !== 'gpt'
+        );
 
-            // Build markdown table rows for each group
-            statusData.allGroups.forEach(g => {
+        if (showQuota) {
+            if (scope === 'all' && visibleGroups.length > 0) {
+                // Display all visible groups
+                visibleGroups.forEach(group => {
+                    const statusEmoji = this.getStatusEmoji(
+                        group.percentage,
+                        warningThreshold,
+                        criticalThreshold
+                    );
+                    const displayText = this.formatQuotaDisplay(group, statusBarStyle);
+                    parts.push(`${statusEmoji} ${displayText}`);
+                });
+            } else {
+                // Default: Display primary only (if it's not hidden)
+                const primary = statusData.primary;
+                if (includeSecondaryModels || primary.id !== 'gpt') {
+                    const statusEmoji = this.getStatusEmoji(
+                        primary.percentage,
+                        warningThreshold,
+                        criticalThreshold
+                    );
+                    const displayText = this.formatQuotaDisplay(primary, statusBarStyle);
+                    parts.push(`${statusEmoji} ${displayText}`);
+                }
+            }
+
+            // Build markdown table rows for each visible group
+            visibleGroups.forEach(g => {
                 const emoji = this.getStatusEmoji(g.percentage, warningThreshold, criticalThreshold);
                 tooltipRows.push(`| ${emoji} ${g.label} | ${g.percentage}% |  | ⏱ ${g.resetTime} |`);
             });
@@ -105,7 +130,7 @@ export class StatusBarManager implements vscode.Disposable {
         }
 
         if (parts.length === 0) {
-            this.item.text = "TFA";
+            this.item.text = "$(check) TFA"; // Use check icon if nothing to show but bar is enabled, or just TFA
         } else {
             this.item.text = parts.join(" | ");
         }

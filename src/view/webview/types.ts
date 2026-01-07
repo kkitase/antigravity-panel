@@ -127,6 +127,9 @@ export interface TokenUsageData {
   };
 }
 
+/** Connection status for sidebar feedback */
+export type ConnectionStatus = 'detecting' | 'connected' | 'failed';
+
 export interface WebviewStateUpdate {
   quotas?: QuotaDisplayItem[];
   chart?: UsageChartData;
@@ -134,6 +137,7 @@ export interface WebviewStateUpdate {
   tokenUsage?: TokenUsageData;
   tasks?: TreeSectionState;
   contexts?: TreeSectionState;
+  connectionStatus?: ConnectionStatus;
   gaugeStyle?: string;
   showUserInfoCard?: boolean;
   showCreditsCard?: boolean;
