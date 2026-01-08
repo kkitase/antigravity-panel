@@ -109,6 +109,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       if (serverInfo) {
         quotaService.setServerInfo(serverInfo);
+        appViewModel.setConnectionStatus('connected');
 
         // Update UI and check for parsing errors
         await appViewModel.refreshQuota();
@@ -129,6 +130,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           hasShownNotification = true;
         }
       } else {
+        appViewModel.setConnectionStatus('failed');
         if (hasShownNotification) return;
 
         const reason = processFinder.failureReason || "unknown_failure";
@@ -176,7 +178,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           hasShownNotification = true;
         }
       }
-    }).catch(e => errorLog("Server detection failed", e));
+    }).catch(e => {
+      errorLog("Server detection failed", e);
+      appViewModel.setConnectionStatus('failed');
+    });
   }, 3000); // 3000ms delay
 
   // 4. Initialize View Components (The Face)

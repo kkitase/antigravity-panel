@@ -77,7 +77,7 @@ suite('Diagnostics Detail Test Suite', () => {
         assert.strictEqual(finder.candidateCount, 0);
     });
 
-    test('should set ambiguous when multiple processes found but none match', async () => {
+    test('should set no_port when multiple processes found but none match (ambiguous scenario resolved to no_port)', async () => {
         const procs = [
             { pid: 101, ppid: 999123, extensionPort: 0, csrfToken: 't1' },
             { pid: 102, ppid: 888123, extensionPort: 0, csrfToken: 't2' }
@@ -85,7 +85,7 @@ suite('Diagnostics Detail Test Suite', () => {
         finder.mockStdout = JSON.stringify(procs);
 
         await finder.runTryDetect();
-        assert.strictEqual(finder.failureReason, 'ambiguous');
+        assert.strictEqual(finder.failureReason, 'no_port');
         assert.strictEqual(finder.candidateCount, 2);
     });
 

@@ -23,6 +23,7 @@ import type {
     UsageChartData,
     UsageBucket,
     TokenUsageViewState,
+    ConnectionStatus,
 } from './types';
 
 export type {
@@ -98,7 +99,15 @@ export class AppViewModel implements vscode.Disposable {
                 })),
                 activeGroupId: groups[0]?.id || 'gemini-pro',
                 chart: { buckets: [], maxUsage: 1, groupColors: {} },
-                displayItems: []
+                displayItems: groups.map(g => ({
+                    id: g.id,
+                    label: g.label,
+                    type: 'group' as const,
+                    remaining: 0,
+                    resetTime: 'N/A',
+                    hasData: false,
+                    themeColor: g.themeColor
+                }))
             },
             cache: {
                 totalSize: 0,
@@ -116,6 +125,7 @@ export class AppViewModel implements vscode.Disposable {
             automation: {
                 enabled: false
             },
+            connectionStatus: 'detecting',
             lastUpdated: 0
         };
     }
@@ -135,9 +145,15 @@ export class AppViewModel implements vscode.Disposable {
         const quota = await this.quotaService.fetchQuota();
         if (quota) {
             await this.updateQuotaState(quota);
+            this._state.connectionStatus = 'connected';
             this._onQuotaChange.fire(this._state.quota);
             this._onStateChange.fire(this._state);
         }
+    }
+
+    setConnectionStatus(status: ConnectionStatus): void {
+        this._state.connectionStatus = status;
+        this._onStateChange.fire(this._state);
     }
 
     async refreshCache(): Promise<void> {
@@ -369,6 +385,7 @@ export class AppViewModel implements vscode.Disposable {
             chart,
             displayItems
         };
+        this._state.connectionStatus = 'connected';
 
         // Update user info if available
         if (snapshot.userInfo) {
@@ -674,6 +691,7 @@ export class AppViewModel implements vscode.Disposable {
             tokenUsage: this._state.tokenUsage,
             tasks: this._state.tree.tasks,
             contexts: this._state.tree.contexts,
+            connectionStatus: this._state.connectionStatus,
             autoAcceptEnabled: this._state.automation.enabled
         };
     }

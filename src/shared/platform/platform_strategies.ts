@@ -27,7 +27,7 @@ export class WindowsStrategy implements PlatformStrategy {
       if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
     `.replace(/\n\s+/g, ' ').trim();
 
-    return `powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
+    return `chcp 65001 >nul && powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
   }
 
   getProcessListByKeywordCommand(keyword: string): string {
@@ -39,7 +39,7 @@ export class WindowsStrategy implements PlatformStrategy {
       if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
     `.replace(/\n\s+/g, ' ').trim();
 
-    return `powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
+    return `chcp 65001 >nul && powershell -ExecutionPolicy Bypass -NoProfile -Command "${script}"`;
   }
 
   parseProcessInfo(stdout: string): ProcessInfo[] | null {
@@ -75,6 +75,11 @@ export class WindowsStrategy implements PlatformStrategy {
         const wsMatch = commandLine.match(/--workspace_id[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
 
         if (tokenMatch?.[1]) {
+          // STRICT CHECK: Ensure process belongs to antigravity (borrowed from competitor analysis)
+          if (!commandLine.includes('--app_data_dir') || !/app_data_dir\s+["']?antigravity/i.test(commandLine)) {
+            continue;
+          }
+
           results.push({
             pid,
             ppid,
@@ -92,7 +97,7 @@ export class WindowsStrategy implements PlatformStrategy {
   }
 
   getPortListCommand(pid: number): string {
-    return `netstat -ano | findstr "${pid}" | findstr "LISTENING"`;
+    return `chcp 65001 >nul && netstat -ano | findstr "${pid}" | findstr "LISTENING"`;
   }
 
   parseListeningPorts(stdout: string, _pid: number): number[] {
@@ -154,6 +159,11 @@ export class UnixStrategy implements PlatformStrategy {
           const wsMatch = cmd.match(/--workspace_id[=\s]+(?:["']?)([a-zA-Z0-9\-_.]+)(?:["']?)/);
 
           if (tokenMatch?.[1]) {
+            // STRICT CHECK: Ensure process belongs to antigravity
+            if (!cmd.includes('--app_data_dir') || !/app_data_dir\s+["']?antigravity/i.test(cmd)) {
+              continue;
+            }
+
             results.push({
               pid,
               ppid,

@@ -270,6 +270,8 @@ export interface TfaConfig {
   "status.warningThreshold": number;
   /** Status bar critical threshold (%) */
   "status.criticalThreshold": number;
+  /** Status bar scope */
+  "status.scope": "primary" | "all";
 
   // ===== 3. Cache Settings =====
   /** Whether to auto-clean cache */
