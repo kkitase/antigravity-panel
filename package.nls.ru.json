@@ -13,6 +13,7 @@
     "command.setAnthropicApiKey.title": "Set Anthropic API Key",
     "command.showCacheSize.title": "Show Cache Size",
     "command.showDisclaimer.title": "About",
+    "command.showLogs.title": "Показать журналы",
     "command.toggleAutoAccept": "Toggle Auto-Accept",
     "command.toggleAutoAccept.title": "Toggle Agent Auto-Accept",
     "config.cache.autoClean.description": "⚠️ Автоматически удалять старые задачи из Brain при превышении порога кеша (Внимание: физические файлы будут удалены)",

@@ -3,6 +3,16 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 # Change Log
 
 
+## [2.5.2] - 2026-01-11
+### Improved
+- **Connection Diagnostics**: Enhanced the "Local service not detected" experience with actionable error messages (e.g., "Wrong workspace", "Auth failed") and a new `Run Diagnostics` tool.
+- **Troubleshooting**: Added `tfa.showLogs` command to quickly access the extension's output channel.
+
+### Fixed
+- **Process Detection**: Fixed workspace ID matching logic to correctly handle case-sensitivity, URL encoding, and UNC paths, solving "Wrong workspace detected" errors.
+- **NLS Missing Keys**: Fixed missing translations for new commands across all supported languages.
+- Special thanks to @simbaTmotsi for the contribution (PR #44).
+
 ## [2.5.1] - 2026-01-11
 
 ### Added

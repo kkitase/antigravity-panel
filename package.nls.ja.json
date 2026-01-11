@@ -13,6 +13,7 @@
     "command.setAnthropicApiKey.title": "Set Anthropic API Key",
     "command.showCacheSize.title": "Show Cache Size",
     "command.showDisclaimer.title": "About",
+    "command.showLogs.title": "ログを表示",
     "command.toggleAutoAccept": "Toggle Auto-Accept",
     "command.toggleAutoAccept.title": "Toggle Agent Auto-Accept",
     "config.cache.autoClean.description": "⚠️ キャッシュサイズが警告閾値を超えた場合、Brainから古いタスクを自動削除（注意：物理ファイルが削除されます）",

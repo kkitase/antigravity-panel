@@ -292,12 +292,30 @@ export class SidebarApp extends LitElement {
   protected render() {
     return html`
       <div class="scrollable-content" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0;">
+        ${this._connectionStatus === 'detecting' ? html`
+          <div class="connection-hint info">
+            <span class="codicon codicon-loading codicon-modifier-spin"></span>
+            <span>Connecting to Antigravity service...</span>
+          </div>
+        ` : nothing}
         ${this._connectionStatus === 'failed' ? html`
           <div class="connection-hint">
             <span class="codicon codicon-warning"></span>
-            <span>Local service not detected. Try 
-              <a @click=${() => this._vscode.postMessage({ type: 'restartLanguageServer' })}>${window.__TRANSLATIONS__?.restartService || 'Restart Service'}</a> 
-              or 
+            <span>
+              ${this._failureReason === 'no_process' ? html`
+                Antigravity IDE language server not running. Ensure Antigravity IDE is active.
+              ` : this._failureReason === 'workspace_mismatch' ? html`
+                Wrong workspace detected. Reopen folder matching the Antigravity instance.
+              ` : this._failureReason === 'auth_failed' ? html`
+                Authentication failed. Ensure you're logged into Antigravity IDE.
+              ` : this._failureReason === 'no_port' ? html`
+                Language server found but port inaccessible.
+              ` : html`
+                Local service not detected.
+              `}
+              Try 
+              <a @click=${() => this._vscode.postMessage({ type: 'runDiagnostics' })}>Run Diagnostics</a>, 
+              <a @click=${() => this._vscode.postMessage({ type: 'restartLanguageServer' })}>${window.__TRANSLATIONS__?.restartService || 'Restart Service'}</a>, or 
               <a @click=${() => this._vscode.postMessage({ type: 'reloadWindow' })}>${window.__TRANSLATIONS__?.reloadWindow || 'Reload Window'}</a>.
             </span>
           </div>

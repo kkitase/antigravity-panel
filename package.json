@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "%extension.displayName%",
   "description": "%extension.description%",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -90,6 +90,12 @@
         "title": "%command.runDiagnostics.title%",
         "category": "%extension.category%",
         "icon": "$(pulse)"
+      },
+      {
+        "command": "tfa.showLogs",
+        "title": "%command.showLogs.title%",
+        "category": "%extension.category%",
+        "icon": "$(output)"
       },
       {
         "command": "tfa.toggleAutoAccept",

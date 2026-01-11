@@ -13,6 +13,7 @@
     "command.setAnthropicApiKey.title": "設置 Anthropic API 密鑰",
     "command.showCacheSize.title": "顯示快取大小",
     "command.showDisclaimer.title": "關於",
+    "command.showLogs.title": "顯示日誌",
     "command.toggleAutoAccept": "Toggle Auto-Accept",
     "command.toggleAutoAccept.title": "切換自動接受",
     "config.cache.autoClean.description": "⚠️ 當快取超過警告閾值時，自動從 Brain 清理最舊的任務（注意：這會刪除實體檔案）",
