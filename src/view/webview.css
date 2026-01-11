@@ -54,7 +54,7 @@ sidebar-app {
   color: var(--vscode-editorHoverWidget-foreground, #cccccc);
   border: 1px solid var(--vscode-editorHoverWidget-border, #454545);
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 0.78em;
   line-height: 1.4;
   white-space: normal;
   word-wrap: break-word;
@@ -257,7 +257,7 @@ quota-pie {
 .gauge-reset-inner {
   font-size: 0.78em;
   font-weight: 500;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   opacity: 0.85;
   margin-top: 0px;
   line-height: 1.1;
@@ -296,7 +296,7 @@ quota-pie {
 
 .gauge-sub-label {
   font-size: 0.62em;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   opacity: 0.4;
   margin-top: 0px;
 }
@@ -317,7 +317,7 @@ quota-pie {
 /* Connection Hint Banner */
 .connection-hint {
   background-color: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   padding: 8px 12px;
   margin: 8px;
   border-radius: 6px;
@@ -359,7 +359,7 @@ quota-pie {
 
 .usage-chart-title {
   font-size: 0.85em;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
@@ -381,8 +381,8 @@ quota-pie {
 }
 
 .usage-legend {
-  color: var(--vscode-descriptionForeground);
-  font-size: 11px;
+  color: var(--vscode-foreground);
+  font-size: 0.78em;
   margin-top: 4px;
   display: flex;
   justify-content: space-between;
@@ -435,7 +435,7 @@ quota-pie {
   padding: 6px 4px;
   font-size: 0.85em;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: 1px solid var(--vscode-button-border, transparent);
   border-radius: 3px;
   cursor: pointer;
@@ -455,7 +455,7 @@ quota-pie {
 
 .toolbar-btn.primary {
   background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  color: var(--vscode-foreground);
 }
 
 .toolbar-btn.primary:hover {
@@ -486,7 +486,7 @@ quota-pie {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   background: var(--vscode-button-secondaryBackground);
   border-bottom: 1px solid var(--vscode-button-border, rgba(0, 0, 0, 0.2));
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -505,7 +505,7 @@ quota-pie {
 }
 
 .section-stats {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-size: 0.9em;
   font-weight: 400;
   text-transform: none;
@@ -525,12 +525,12 @@ quota-pie {
   padding: 12px;
   display: flex;
   justify-content: center;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 .empty-state {
   padding: 12px;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-style: italic;
   text-align: center;
 }
@@ -561,7 +561,7 @@ quota-pie {
 }
 
 .folder-size {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-size: 0.85em;
   margin-right: 4px;
   margin-left: 24px;
@@ -644,7 +644,7 @@ quota-pie {
   display: flex;
 }
 
-.action-btn {
+.file-action-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -655,7 +655,7 @@ quota-pie {
   opacity: 0.7;
 }
 
-.action-btn:hover {
+.file-action-btn:hover {
   opacity: 1;
   background: var(--vscode-toolbar-hoverBackground);
   border-radius: 3px;
@@ -690,7 +690,7 @@ sidebar-footer {
   gap: 6px;
   padding: 6px 4px;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: 1px solid var(--vscode-button-border, transparent);
   border-radius: 3px;
   cursor: pointer;
@@ -719,7 +719,7 @@ sidebar-footer {
   text-align: center;
   font-size: 0.72em;
   font-style: italic;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   padding: 4px 16px 12px;
   opacity: 0.5;
   width: 100%;
@@ -802,7 +802,7 @@ sidebar-footer {
   gap: 6px;
   padding: 6px 8px;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -815,7 +815,7 @@ sidebar-footer {
 
 .action-btn.primary {
   background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #ffffff);
+  color: var(--vscode-foreground);
 }
 
 .action-btn:hover {
@@ -918,7 +918,7 @@ sidebar-footer {
   gap: 6px;
   padding: 6px 12px;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: none;
   border-radius: 2px;
   cursor: pointer;
@@ -930,7 +930,7 @@ sidebar-footer {
 
 .link-btn:hover {
   background: var(--vscode-button-secondaryHoverBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
 }
 
 .link-btn .codicon {
@@ -957,7 +957,7 @@ sidebar-footer {
   gap: 6px;
   padding: 6px 4px;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: 1px solid var(--vscode-button-border, transparent);
   border-radius: 4px;
   cursor: pointer;
@@ -980,7 +980,7 @@ sidebar-footer {
 
 .recovery-btn.primary {
   background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  color: var(--vscode-foreground);
 }
 
 .recovery-btn.primary:hover {
@@ -989,7 +989,7 @@ sidebar-footer {
 
 .recovery-btn.primary.active {
   background: var(--vscode-charts-green, #388e3c);
-  color: #ffffff;
+  color: var(--vscode-foreground);
   border-color: rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 8px rgba(56, 142, 60, 0.3);
 }
@@ -1019,7 +1019,7 @@ sidebar-footer {
 .credits-title {
   width: 100%;
   font-size: 0.85em;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   margin-bottom: 4px;
 }
 
@@ -1034,7 +1034,7 @@ sidebar-footer {
 }
 
 .credits-bar .credit-label {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-weight: 500;
 }
 
@@ -1132,7 +1132,7 @@ sidebar-footer {
 }
 
 .user-info-card .user-label {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   min-width: 40px;
 }
 
@@ -1155,7 +1155,7 @@ sidebar-footer {
 }
 
 .user-info-card .token-label {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 .user-info-card .token-value {
@@ -1184,7 +1184,7 @@ sidebar-footer {
 }
 
 .user-info-card .usage-label {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 .user-info-card .usage-value {

@@ -2,6 +2,20 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
 
+
+## [2.5.0] - Unreleased
+
+### Added
+- **AI Commit Message Generator**: Added a flexible Commit Message Generator supporting both **Local LLM (Ollama)** and **Anthropic Claude**.
+  - **Dual Mode**: Works out-of-the-box with local Ollama (privacy-first) or connects to Claude API for cloud-based generation.
+  - **Workaround**: Serves as a robust alternative when the IDE's built-in generator is unavailable.
+  - **Features**: Supports conventional commits, custom prompts, and intelligent diff truncation.
+  - Special thanks to @simbaTmotsi for the contribution (PR #42).
+
+### Improved
+- **Process Detection**: Enhanced service detection logic (v2.4.7) is fully integrated.
+- **UI Contrast**: Improved text visibility in the panel by standardizing foreground colors.
+
 ## [2.4.7] - 2026-01-10
 ### Fixed
 - **Windows Workspace ID Mismatch**: Fixed Language Server detection failing on Windows due to path normalization differences. Extension now correctly encodes drive letter colon as `_3A_` and preserves directory case to match Language Server format.

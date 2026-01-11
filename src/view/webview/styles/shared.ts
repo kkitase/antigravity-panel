@@ -34,7 +34,7 @@ export const globalStyles = `
   font-size: 0.9em;
   font-weight: bold;
   margin-bottom: 4px;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 .pie {
@@ -53,7 +53,7 @@ export const globalStyles = `
 
 .pie-reset {
   font-size: 0.85em;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 /* ==================== Dashboard Styles ==================== */
@@ -76,7 +76,7 @@ export const globalStyles = `
 
 .usage-chart-title {
   font-size: 0.85em;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
@@ -97,8 +97,8 @@ export const globalStyles = `
 }
 
 .usage-legend {
-  color: var(--vscode-descriptionForeground);
-  font-size: 11px;
+  color: var(--vscode-foreground);
+  font-size: 0.78em;
   margin-top: 4px;
   display: flex;
   justify-content: space-between;
@@ -124,7 +124,7 @@ export const globalStyles = `
   padding: 4px 8px;
   font-size: 0.9em;
   background: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
+  color: var(--vscode-foreground);
   border: 1px solid var(--vscode-button-border, transparent);
   border-radius: 3px;
   cursor: pointer;
@@ -150,7 +150,7 @@ export const globalStyles = `
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--vscode-sideBarSectionHeader-foreground);
+  color: var(--vscode-foreground);
   background: linear-gradient(180deg, var(--vscode-sideBarSectionHeader-background) 0%, rgba(0,0,0,0.15) 100%);
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(0,0,0,0.3);
@@ -170,7 +170,7 @@ export const globalStyles = `
 }
 
 .section-stats {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-size: 0.9em;
   font-weight: 400;
   text-transform: none;
@@ -190,12 +190,12 @@ export const globalStyles = `
   padding: 12px;
   display: flex;
   justify-content: center;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
 }
 
 .empty-state {
   padding: 12px;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-style: italic;
   text-align: center;
 }
@@ -227,7 +227,7 @@ export const globalStyles = `
 }
 
 .folder-size {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-foreground);
   font-size: 0.85em;
   margin-right: 4px;
 }
@@ -305,7 +305,7 @@ export const globalStyles = `
   display: flex;
 }
 
-.action-btn {
+.file-action-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -316,7 +316,7 @@ export const globalStyles = `
   opacity: 0.7;
 }
 
-.action-btn:hover {
+.file-action-btn:hover {
   opacity: 1;
   background: var(--vscode-toolbar-hoverBackground);
   border-radius: 3px;
