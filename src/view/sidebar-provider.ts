@@ -145,6 +145,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider, vscode.Dispo
         data.gaugeStyle = config.get('dashboard.gaugeStyle', 'semi-arc');
         data.showUserInfoCard = config.get('dashboard.showUserInfoCard', true);
         data.showCreditsCard = config.get('dashboard.showCreditsCard', true);
+        data.fontScale = config.get('dashboard.fontScale', 1.0);
 
         this._view.webview.postMessage({ type: 'update', payload: data });
     }

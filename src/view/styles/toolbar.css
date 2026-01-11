@@ -26,7 +26,7 @@
     justify-content: center;
     gap: 4px;
     padding: 6px 4px;
-    font-size: 0.9em;
+    font-size:  0.9rem;
     background: var(--vscode-button-secondaryBackground);
     color: var(--vscode-foreground);
     border: 1px solid var(--vscode-button-border, transparent);
@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.8em;
+    font-size:  0.9rem;
     font-weight: 600;
     color: var(--vscode-foreground);
 }
@@ -126,7 +126,7 @@
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9em;
+    font-size:  0.9rem;
     font-weight: 500;
     transition: all 0.15s ease;
     white-space: nowrap;
@@ -243,7 +243,7 @@
     border-radius: 2px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9em;
+    font-size:  0.9rem;
     font-weight: 500;
     transition: all 0.2s ease;
 }
@@ -266,7 +266,7 @@
     padding: 12px 12px 4px 12px;
     /* Tighter bottom padding */
     background: var(--vscode-sideBar-background);
-    /* Border removed as it is now on the container */
+    /* Borderremoved as it is now on the container */
 }
 
 .recovery-btn {
@@ -282,7 +282,7 @@
     border-radius: 4px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9em;
+    font-size:  0.9rem;
     font-weight: 500;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;

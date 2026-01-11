@@ -195,6 +195,7 @@ export interface SidebarData {
     showUserInfoCard?: boolean;
     showCreditsCard?: boolean;
     autoAcceptEnabled?: boolean;
+    fontScale?: number;
 }
 
 /** Connection status for sidebar feedback */

@@ -24,7 +24,7 @@
     box-sizing: border-box;
     cursor: pointer;
     user-select: none;
-    font-size: 0.85em;
+    font-size: 0.85rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -48,7 +48,7 @@
 
 .section-stats {
     color: var(--vscode-foreground);
-    font-size: 0.8em;
+    font-size: 0.8rem;
     font-weight: 400;
     text-transform: none;
     letter-spacing: normal;
@@ -90,7 +90,7 @@
 
 .folder-size {
     color: var(--vscode-foreground);
-    font-size: 0.8em;
+    font-size: 0.8rem;
     margin-right: 4px;
     margin-left: 24px;
 }

@@ -68,5 +68,9 @@
     "Auto-Accept: OFF - Manual approval required.": "自動承認: オフ - 手動での承認が必要です。",
     "Reload Window": "Reload Window",
     "Reload the entire window (use when Agent panel is blank or unresponsive)": "ウィンドウ全体を再読み込みします（エージェントパネルが空白になったり反応しなくなったりした場合に使用）",
-    "Restart Agent Service": "Restart Agent Service"
+    "Restart Agent Service": "Restart Agent Service",
+    "config.dashboard.gaugeStyle.description": "Choose between a semi-arc or a classic donut gauge for quota visualization.",
+    "config.dashboard.fontScale.description": "Proportional scaling of the sidebar panel text and UI elements. (Root EM scale)",
+    "config.dashboard.showUserInfoCard.description": "Show or hide the user profile information card.",
+    "config.dashboard.showCreditsCard.description": "Show or hide the credit usage information card."
 }

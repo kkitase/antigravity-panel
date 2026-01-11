@@ -151,6 +151,7 @@ export interface WebviewStateUpdate {
     formattedConversations: string;
   };
   autoAcceptEnabled?: boolean;
+  fontScale?: number;
 }
 
 // ==================== VS Code API ====================

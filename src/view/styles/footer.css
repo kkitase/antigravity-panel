@@ -38,7 +38,7 @@ sidebar-footer {
     border-radius: 3px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9em;
+    font-size:  0.9rem;
     font-weight: 500;
     transition: background 0.2s ease;
     white-space: nowrap;
@@ -60,7 +60,7 @@ sidebar-footer {
 /* Sidebar Tagline - Engraved Nameplate Effect */
 .sidebar-tagline {
     text-align: center;
-    font-size: 0.75em;
+    font-size:  0.75rem;
     font-style: italic;
     color: var(--vscode-foreground);
     padding: 4px 16px 12px;
@@ -92,7 +92,7 @@ sidebar-footer {
 
 .credits-title {
     width: 100%;
-    font-size: 0.85em;
+    font-size:  0.85rem;
     color: var(--vscode-foreground);
     margin-bottom: 4px;
 }
@@ -104,19 +104,19 @@ sidebar-footer {
     flex-wrap: wrap;
     align-items: center;
     gap: 4px;
-    font-size: 0.8em;
 }
 
 .credits-bar .credit-label {
     color: var(--vscode-foreground);
     font-weight: 500;
+    font-size:  0.8rem;
 }
 
 .credits-bar .credit-value {
     color: var(--vscode-foreground);
     font-weight: 600;
     font-family: var(--vscode-editor-font-family, monospace);
-    font-size: 0.9em;
+    font-size:  0.9rem;
 }
 
 .credits-bar .credit-progress {
@@ -173,7 +173,7 @@ sidebar-footer {
 }
 
 .user-info-card .user-email {
-    font-size: 0.85em;
+    font-size:  0.85rem;
     font-weight: 500;
     color: var(--vscode-foreground);
     overflow: hidden;
@@ -189,7 +189,7 @@ sidebar-footer {
     border-radius: 3px;
     background: var(--vscode-badge-background);
     color: var(--vscode-badge-foreground);
-    font-size: 0.75em;
+    font-size:  0.75rem;
     font-weight: 600;
     flex-shrink: 0;
     white-space: nowrap;
@@ -202,7 +202,7 @@ sidebar-footer {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.85em;
+    font-size:  0.85rem;
 }
 
 .user-info-card .user-label {
@@ -225,7 +225,7 @@ sidebar-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8em;
+    font-size:  0.8rem;
 }
 
 .user-info-card .token-label {
@@ -253,7 +253,7 @@ sidebar-footer {
 }
 
 .user-info-card .usage-info {
-    font-size: 0.8em;
+    font-size:  0.8rem;
     opacity: 0.8;
 }
 

@@ -147,6 +147,14 @@
             ],
             "description": "%config.dashboard.gaugeStyle.description%"
           },
+          "tfa.dashboard.fontScale": {
+            "type": "number",
+            "default": 1.0,
+            "minimum": 0.8,
+            "maximum": 1.5,
+            "order": 15,
+            "description": "%config.dashboard.fontScale.description%"
+          },
           "tfa.dashboard.showUserInfoCard": {
             "type": "boolean",
             "default": true,

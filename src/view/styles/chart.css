@@ -15,7 +15,7 @@
 }
 
 .usage-chart-title {
-    font-size: 0.85em;
+    font-size:  0.85rem;
     color: var(--vscode-foreground);
     margin-bottom: 6px;
     display: flex;
@@ -39,7 +39,7 @@
 
 .usage-legend {
     color: var(--vscode-foreground);
-    font-size: 0.8em;
+    font-size:  0.8rem;
     margin-top: 4px;
     display: flex;
     justify-content: space-between;
