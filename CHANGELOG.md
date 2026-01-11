@@ -7,6 +7,7 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 ### Changed
 - **Code Cleanup**: Removed ~320 lines of unused legacy CSS styles from `shared.ts`. The obsolete `globalStyles` export was a remnant from an earlier Shadow DOM implementation and had been superseded by the external `webview.css` file.
+- **CSS Modularization**: Split the 1191-line monolithic `webview.css` into 6 component-based modules (`base.css`, `gauge.css`, `chart.css`, `toolbar.css`, `tree.css`, `footer.css`). Updated `esbuild.js` to bundle CSS with `@import` support for a "develop split, build merged" workflow.
 
 ## [2.5.0] - 2026-01-11
 

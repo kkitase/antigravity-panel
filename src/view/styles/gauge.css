@@ -115,7 +115,7 @@ quota-pie {
 
 .gauge-separator {
     fill: none;
-    stroke: #000000;
+    stroke: var(--vscode-widget-border);
     /* True black for separation */
     stroke-width: 1.5;
     /* Equal to fg tracks */

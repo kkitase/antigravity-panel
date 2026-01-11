@@ -7,6 +7,7 @@
 
 ### 更改
 - **代码清理**: 从 `shared.ts` 中移除了约 320 行废弃的 CSS 样式代码。这些 `globalStyles` 导出是早期 Shadow DOM 实现的遗留产物，已被外部 `webview.css` 文件完全取代。
+- **CSS 模块化**: 将 1191 行的单体 `webview.css` 拆分为 6 个组件化模块（`base.css`、`gauge.css`、`chart.css`、`toolbar.css`、`tree.css`、`footer.css`）。更新 `esbuild.js` 支持 `@import` 语法，实现"开发时拆分、构建时合并"的工作流。
 
 ## [2.5.0] - 2026-01-11
 
