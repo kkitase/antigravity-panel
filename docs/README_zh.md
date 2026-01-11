@@ -15,6 +15,8 @@
 [![VS 市场安装量](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&label=VS%20%E5%B8%82%E5%9C%BA&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
 [![最后更新](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&label=%E6%9C%80%E5%90%8E%E6%9B%B4%E6%96%B0&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/commits/main)
 
+> 🚀 **获 Google AI 官方博客推荐:** [Where we're going, we don't need chatbots: introducing the Antigravity IDE](https://dev.to/googleai/where-were-going-we-dont-need-chatbots-introducing-the-antigravity-ide-2c3k)
+
 
 **Toolkit for Antigravity**（原名 *Antigravity Panel*）帮助你掌控 **Google Antigravity IDE** 中的 AI 模型使用情况。实时配额监控、用量趋势分析、缓存管理——一切均可在一个集成的侧边栏面板中完成。
 
