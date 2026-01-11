@@ -9,6 +9,16 @@
     "type": "git",
     "url": "https://github.com/n2ns/antigravity-panel.git"
   },
+  "homepage": "https://datafrog.io",
+  "keywords": [
+    "Antigravity",
+    "Gemini",
+    "DeepMind",
+    "Quota Monitor",
+    "AI Agent",
+    "Google AI",
+    "Toolkit"
+  ],
   "icon": "assets/icon.png",
   "engines": {
     "vscode": "^1.104.0"
