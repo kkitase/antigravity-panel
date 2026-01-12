@@ -13,7 +13,10 @@ import * as vscode from "vscode";
  * @returns Array of workspace IDs matching Language Server format
  */
 export function getExpectedWorkspaceIds(): string[] {
-    const folders = vscode.workspace.workspaceFolders;
+    return getWorkspaceIdsFromFolders(vscode.workspace.workspaceFolders || []);
+}
+
+export function getWorkspaceIdsFromFolders(folders: readonly vscode.WorkspaceFolder[]): string[] {
     if (!folders || folders.length === 0) return [];
 
     return folders.map(folder => {
@@ -65,18 +68,40 @@ export function normalizeWindowsPath(path: string): string {
 /**
  * Normalize Unix/WSL/macOS path to match Language Server workspace_id format
  * 
- * Simple lowercase + underscore replacement
+ * The Language Server URL-encodes special characters:
+ * - Spaces become %20 which is then represented as _20 in the workspace ID
+ * - Other special chars are replaced with underscores
  * 
  * @example
+ * normalizeUnixPath("/Users/bob/open source/project")
+ * // → "file_Users_bob_open_20source_project"
+ * 
  * normalizeUnixPath("/home/deploy/projects")
  * // → "file_home_deploy_projects"
  */
 export function normalizeUnixPath(path: string): string {
-    const normalizedPath = path
-        .toLowerCase()
-        .replace(/^[^a-z0-9]+/, "")    // Strip leading non-alphanumeric
-        .replace(/[^a-z0-9]+$/, "")    // Strip trailing non-alphanumeric
-        .replace(/[^a-z0-9]/g, "_");   // Replace everything else with underscore
+    // First, normalize backslashes to forward slashes (for UNC/Windows paths)
+    // This prevents backslashes from being URL-encoded as %5C → _5C
+    const normalizedSlashes = path.replace(/\\/g, '/');
+
+    // URL-encode the path to match what the language server does
+    // This handles spaces as %20 and other special characters
+    const urlEncoded = normalizedSlashes
+        .split('/')
+        .map(segment => {
+            // Encode each path segment, which converts spaces to %20
+            return encodeURIComponent(segment);
+        })
+        .join('/');
+
+    // Now convert the URL-encoded string to the workspace ID format
+    // Replace all non-alphanumeric characters with underscores
+    // This converts %20 to _20, / to _, etc.
+    // IMPORTANT: Do NOT lowercase - preserve case like the server does
+    const normalizedPath = urlEncoded
+        .replace(/^[^a-zA-Z0-9]+/, "")    // Strip leading non-alphanumeric (preserve case)
+        .replace(/[^a-zA-Z0-9]+$/, "")    // Strip trailing non-alphanumeric (preserve case)
+        .replace(/[^a-zA-Z0-9]/g, "_");   // Replace everything else with underscore (preserves case)
 
     return `file_${normalizedPath}`;
 }

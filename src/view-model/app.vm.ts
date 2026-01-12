@@ -151,10 +151,7 @@ export class AppViewModel implements vscode.Disposable {
         }
     }
 
-    setConnectionStatus(status: ConnectionStatus): void {
-        this._state.connectionStatus = status;
-        this._onStateChange.fire(this._state);
-    }
+
 
     async refreshCache(): Promise<void> {
         const cache = await this.cacheService.getCacheInfo();
@@ -682,7 +679,14 @@ export class AppViewModel implements vscode.Disposable {
         return { primary, allGroups };
     }
 
+    setConnectionStatus(status: ConnectionStatus, reason?: 'no_process' | 'ambiguous' | 'no_port' | 'auth_failed' | 'workspace_mismatch' | null): void {
+        this._state.connectionStatus = status;
+        this._state.failureReason = status === 'failed' ? reason : null;
+        this._onStateChange.fire(this._state);
+    }
+
     getSidebarData(): SidebarData {
+        const config = this.configManager.getConfig();
         return {
             quotas: this._state.quota.displayItems,
             chart: this._state.quota.chart,
@@ -692,7 +696,12 @@ export class AppViewModel implements vscode.Disposable {
             tasks: this._state.tree.tasks,
             contexts: this._state.tree.contexts,
             connectionStatus: this._state.connectionStatus,
-            autoAcceptEnabled: this._state.automation.enabled
+            failureReason: this._state.failureReason,
+            autoAcceptEnabled: this._state.automation.enabled,
+            gaugeStyle: config["dashboard.gaugeStyle"],
+            showUserInfoCard: this.configManager.get('dashboard.showUserInfoCard', true),
+            showCreditsCard: config["dashboard.showCreditsCard"],
+            uiScale: config["dashboard.uiScale"]
         };
     }
 

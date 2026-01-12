@@ -15,19 +15,23 @@ English | [中文文档](docs/README_zh.md)
 [![VS Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&label=vs%20marketplace&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
 [![Last Commit](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/commits/main)
 
+> 🚀 **Featured in Google AI Blog:** [Where we're going, we don't need chatbots: introducing the Antigravity IDE](https://dev.to/googleai/where-were-going-we-dont-need-chatbots-introducing-the-antigravity-ide-2c3k)
+
 
 **Toolkit for Antigravity** (formerly *Antigravity Panel*) helps you stay on top of your AI model usage in **Google Antigravity IDE**. Get real-time quota monitoring, usage trends, and cache management—all within an integrated sidebar panel.
 
-> **📢 Notice:** We have renamed from "Antigravity Panel" to "**Toolkit for Antigravity**" to better reflect our vision of building a comprehensive utility suite for the ecosystem. Same great features, just a more accurate name!
+## ✨ Features at a Glance
 
-## ✨ Why Toolkit for Antigravity?
-
-- 🎯 **Track your quota** - Real-time monitoring with visual warnings
-- 📊 **Understand your usage** - Interactive charts showing usage trends
-- 🧹 **Keep things clean** - Manage AI conversation caches with one click
-- 🎨 **Elegant Interface** - Native theme integration with refined UI components
-- 🌍 **Full Localization** - Support for 13 languages with runtime i18n notifications
-- 🛠️ **Intelligent Diagnostics** - Built-in feedback system with automatic error reporting
+- 🎯 **Quota Monitoring** - Real-time status with visual thresholds
+- 📊 **Usage Analytics** - Interactive charts and history tracking
+- 🧹 **Cache Management** - Manage AI conversation history and files
+- 🎨 **Native Integration** - UI components adapted to IDE themes
+- 🌍 **Localization** - Support for 13 languages including runtime notifications
+- 🛠️ **Diagnostics** - Built-in connection check and error reporting
+- 🤖 **Hands-free Mode** - Auto-accept agent commands for heavy workflows
+- ✍️ **AI Commit** - Generate commit messages via Local LLM or Claude
+- ⚙️ **Quick Config Access** - One-click editing for Rules, MCP, and Allowlist
+- 🔄 **Service Recovery** - Restart, Reset, and Reload tools for Antigravity IDE stability
 
 ## 📸 Screenshots
 
@@ -79,6 +83,29 @@ English | [中文文档](docs/README_zh.md)
 - Automatically accepts Agent-suggested terminal commands and file edits
 - Toggle on/off via the sidebar "Rocket" switch or command
 - Ideal for rapid prototyping when you trust the Agent's output
+
+### ✨ Commit Message Generator (Claude)
+
+**Generate conventional commit messages using Claude AI**
+
+A workaround for when the built-in "Generate commit message" feature is unavailable.
+
+**Setup:**
+1. Get an API key from [Anthropic Console](https://console.anthropic.com/)
+2. Run `Antigravity Toolkit: Set Anthropic API Key`
+3. Enter your API key (stored securely, never in plaintext)
+
+**Usage:**
+1. Stage your changes with `git add`
+2. Run `Antigravity Toolkit: Generate Commit Message (Claude)`
+3. The commit message auto-populates in the SCM input box
+
+**Configuration:**
+- **Model**: Choose between Claude Sonnet 4, 3.5 Sonnet, or Opus
+- **Max Diff Size**: Limit characters sent (default: 80,000)
+- **Format**: Conventional commits or simple style
+
+> ⚠️ **Privacy**: Your staged diff is sent to Anthropic's API to generate the message.
 
 ### 🔄 Service Recovery Tools
 
@@ -165,7 +192,10 @@ Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for:
 | `Antigravity Toolkit: Restart Language Server` | Restart Antigravity Agent Service |
 | `Antigravity Toolkit: Reset User Status` | Reset the status updater |
 | `Antigravity Toolkit: Run Diagnostics` | Run connectivity diagnostics |
+| `Antigravity Toolkit: Reload Window` | Refresh the webview to resolve UI glitches |
 | `Antigravity Toolkit: Toggle Auto-Accept` | Enable/Disable automatic command acceptance |
+| `Antigravity Toolkit: Generate Commit Message` | Generate commit message using Local LLM or Claude |
+| `Antigravity Toolkit: Set Anthropic API Key` | Configure Anthropic API Key |
 
 ## ⚙️ Configuration
 
@@ -180,6 +210,7 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `tfa` to cu
 | **Status Bar Style** | `percentage` | Display mode: percentage, resetTime, used, or remaining |
 | **Quota Style** | `semi-arc` | Visualization style: `semi-arc` or `classic-donut` |
 | **Visualization Mode** | `groups` | Show dashboard by `groups` or `models` |
+| **UI Scale** | `1.0` | Global scale factor for panel elements (0.8 to 2.0) |
 | **Show GPT Quota** | `✗` | Whether to display GPT family models in the panel |
 | **History Range** | `90 min` | Time range for usage chart (10-120 minutes) |
 | **Warning Threshold** | `30%` | Status bar turns warning color at this level |
@@ -203,6 +234,17 @@ Open Settings (`Ctrl+,` / `Cmd+,`) in Antigravity IDE and search for `tfa` to cu
 | **Server Host** | `127.0.0.1` | Address of Antigravity Language Server |
 | **API Path** | `/exa...` | gRPC-Web path for User Status |
 | **Debug Mode** | `✗` | Enable verbose logging in Output panel |
+
+
+
+### 🤖 Commit Message Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| **Endpoint** | `http://localhost...` | API URL (Ollama, Anthropic, OpenAI compatible) |
+| **Model** | `llama3.2` | Model name (e.g. `llama3.2`, `claude-3-haiku`) |
+| **Max Diff Size** | `80000` | Max characters of diff to send to LLM |
+| **Format** | `conventional` | Message format (`conventional` or `simple`) |
 
 ## 🔒 Privacy & Safety Disclaimer
 
@@ -244,7 +286,7 @@ Licensed under the [Apache License, Version 2.0](LICENSE).
 
 **Developed by [datafrog.io](https://datafrog.io)**
 
-[Website](https://datafrog.io) · [Feedback & Support](https://github.com/n2ns/antigravity-panel/issues) · [Commercial Inquiry](mailto:support@datafrog.io)
+
 
 *For Antigravity. By Antigravity.*
 

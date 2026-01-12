@@ -2,6 +2,48 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
 
+
+## [2.5.2] - 2026-01-11
+### Improved
+- **Connection Diagnostics**: Enhanced the "Local service not detected" experience with actionable error messages (e.g., "Wrong workspace", "Auth failed") and a new `Run Diagnostics` tool.
+- **Troubleshooting**: Added `tfa.showLogs` command to quickly access the extension's output channel.
+
+### Fixed
+- **Process Detection**: Fixed workspace ID matching logic to correctly handle case-sensitivity, URL encoding, and UNC paths, solving "Wrong workspace detected" errors.
+- **NLS Missing Keys**: Fixed missing translations for new commands across all supported languages.
+- Special thanks to @simbaTmotsi for the contribution (PR #44).
+
+## [2.5.1] - 2026-01-11
+
+### Added
+- **UI Scaling**: Introduced `tfa.dashboard.uiScale` setting allowing users to adjust the panel's scale factor from `0.8` to `2.0`.
+- **Proportional Scaling**: Re-engineered gauges (circular and semi-arc) using `rem` units to ensure they scale proportionally with the global UI font size.
+- **Automated Quality Guard**: 
+  - Added NLS alignment tests to ensure perfect 1:1 mapping across all 13 supported languages.
+  - Added automated placeholder verification between `package.json` and NLS bundles.
+  - Added unit tests for UI Scale clamping and data distribution logic.
+
+### Improved
+- **Localization Audit**: Conducted a full audit of all 13 language packs, synchronizing `package.nls.json` and `bundle.l10n.json` to ensure 100% completion.
+- **Service Recovery UI**: Updated documentation and refined the Restart, Reset, and Reload tools for better stability.
+- **Service Stability**: Integrated UI configuration management into the ViewModel for consistent state distribution.
+
+### Changed
+- **Code Cleanup**: Removed ~320 lines of unused legacy CSS styles and modularized `webview.css` into separate component files (`gauge.css`, `chart.css`, etc.) for better maintainability.
+
+## [2.5.0] - 2026-01-11
+
+### Added
+- **AI Commit Message Generator**: Added a flexible Commit Message Generator supporting both **Local LLM (Ollama)** and **Anthropic Claude**.
+  - **Dual Mode**: Works out-of-the-box with local Ollama (privacy-first) or connects to Claude API for cloud-based generation.
+  - **Workaround**: Serves as a robust alternative when the IDE's built-in generator is unavailable.
+  - **Features**: Supports conventional commits, custom prompts, and intelligent diff truncation.
+  - Special thanks to @simbaTmotsi for the contribution (PR #42).
+
+### Improved
+- **Process Detection**: Enhanced service detection logic (v2.4.7) is fully integrated.
+- **UI Contrast**: Improved text visibility in the panel by standardizing foreground colors.
+
 ## [2.4.7] - 2026-01-10
 ### Fixed
 - **Windows Workspace ID Mismatch**: Fixed Language Server detection failing on Windows due to path normalization differences. Extension now correctly encodes drive letter colon as `_3A_` and preserves directory case to match Language Server format.

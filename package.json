@@ -1,14 +1,24 @@
 {
   "name": "antigravity-panel",
-  "displayName": "Antigravity Panel",
-  "description": "Antigravity Panel Extension",
-  "version": "2.4.7",
+  "displayName": "%extension.displayName%",
+  "description": "%extension.description%",
+  "version": "2.5.2",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/n2ns/antigravity-panel.git"
   },
+  "homepage": "https://datafrog.io",
+  "keywords": [
+    "Antigravity",
+    "Gemini",
+    "DeepMind",
+    "Quota Monitor",
+    "AI Agent",
+    "Google AI",
+    "Toolkit"
+  ],
   "icon": "assets/icon.png",
   "engines": {
     "vscode": "^1.104.0"
@@ -92,10 +102,28 @@
         "icon": "$(pulse)"
       },
       {
+        "command": "tfa.showLogs",
+        "title": "%command.showLogs.title%",
+        "category": "%extension.category%",
+        "icon": "$(output)"
+      },
+      {
         "command": "tfa.toggleAutoAccept",
         "title": "%command.toggleAutoAccept.title%",
         "category": "%extension.category%",
         "icon": "$(check-all)"
+      },
+      {
+        "command": "tfa.generateCommitMessageClaude",
+        "title": "%command.generateCommitMessageClaude.title%",
+        "category": "%extension.category%",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "tfa.setAnthropicApiKey",
+        "title": "%command.setAnthropicApiKey.title%",
+        "category": "%extension.category%",
+        "icon": "$(key)"
       }
     ],
     "menus": {
@@ -119,7 +147,7 @@
     },
     "configuration": [
       {
-        "title": "TFA: Dashboard",
+        "title": "%config.title.dashboard%",
         "properties": {
           "tfa.dashboard.gaugeStyle": {
             "type": "string",
@@ -134,6 +162,14 @@
               "%config.quotaDisplayStyle.classic-donut%"
             ],
             "description": "%config.dashboard.gaugeStyle.description%"
+          },
+          "tfa.dashboard.uiScale": {
+            "type": "number",
+            "default": 1.0,
+            "minimum": 0.8,
+            "maximum": 2.0,
+            "order": 15,
+            "description": "%config.dashboard.uiScale.description%"
           },
           "tfa.dashboard.showUserInfoCard": {
             "type": "boolean",
@@ -185,7 +221,7 @@
         }
       },
       {
-        "title": "TFA: Status Bar",
+        "title": "%config.title.status%",
         "properties": {
           "tfa.status.showQuota": {
             "type": "boolean",
@@ -250,7 +286,7 @@
         }
       },
       {
-        "title": "TFA: Cache",
+        "title": "%config.title.cache%",
         "properties": {
           "tfa.cache.autoClean": {
             "type": "boolean",
@@ -290,7 +326,7 @@
         }
       },
       {
-        "title": "TFA: System & Maintenance",
+        "title": "%config.title.system%",
         "properties": {
           "tfa.system.serverHost": {
             "type": "string",
@@ -325,6 +361,45 @@
             "description": "%config.system.autoAcceptInterval.description%"
           }
         }
+      },
+      {
+        "title": "%config.title.commitMessage%",
+        "properties": {
+          "tfa.commitMessageClaude.endpoint": {
+            "type": "string",
+            "default": "http://localhost:11434/api/generate",
+            "order": 5,
+            "description": "%config.commitMessageClaude.endpoint.description%"
+          },
+          "tfa.commitMessageClaude.model": {
+            "type": "string",
+            "default": "llama3.2",
+            "order": 10,
+            "description": "%config.commitMessageClaude.model.description%"
+          },
+          "tfa.commitMessageClaude.maxDiffChars": {
+            "type": "number",
+            "default": 80000,
+            "minimum": 1000,
+            "maximum": 200000,
+            "order": 20,
+            "description": "%config.commitMessageClaude.maxDiffChars.description%"
+          },
+          "tfa.commitMessageClaude.format": {
+            "type": "string",
+            "default": "conventional",
+            "order": 30,
+            "enum": [
+              "conventional",
+              "simple"
+            ],
+            "enumDescriptions": [
+              "%config.commitMessageClaude.format.conventional%",
+              "%config.commitMessageClaude.format.simple%"
+            ],
+            "description": "%config.commitMessageClaude.format.description%"
+          }
+        }
       }
     ]
   },
@@ -343,6 +418,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.10.1",
+    "@types/sinon": "^21.0.0",
     "@types/vscode": "^1.104.0",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
@@ -354,6 +430,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "mocha": "^11.7.5",
+    "sinon": "^21.0.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.50.1"
   },

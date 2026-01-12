@@ -19,6 +19,7 @@ export interface DiagnosticMetadata {
     portsFromNetstat?: number;  // Ports from netstat
     protocolUsed?: string;  // Protocol used (https/http/none)
     retryCount?: number;  // Number of retry attempts
+    bootRetryCount?: number; // External boot retry attempts
 }
 
 /**

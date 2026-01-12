@@ -128,7 +128,7 @@ export interface TokenUsageData {
 }
 
 /** Connection status for sidebar feedback */
-export type ConnectionStatus = 'detecting' | 'connected' | 'failed';
+export type ConnectionStatus = 'connecting' | 'connected' | 'failed' | 'detecting';
 
 export interface WebviewStateUpdate {
   quotas?: QuotaDisplayItem[];
@@ -151,6 +151,7 @@ export interface WebviewStateUpdate {
     formattedConversations: string;
   };
   autoAcceptEnabled?: boolean;
+  uiScale?: number;
 }
 
 // ==================== VS Code API ====================
