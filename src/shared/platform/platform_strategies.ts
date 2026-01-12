@@ -19,10 +19,11 @@ export class WindowsStrategy implements PlatformStrategy {
     // 2. @( ... ): Forces result into an array structure
     // 3. if ($p): Ensures we return '[]' instead of empty string if no process is found
     // Note: Only using Get-CimInstance (no Get-WmiObject fallback) for pwsh 7 compatibility
+    // Note: Using string concatenation for $f to avoid nested quote issues with cmd.exe (fixes #40, #45)
     const script = `
       [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
       $n = '${processName}';
-      $f = "name='$n'";
+      $f = 'name=''' + $n + '''';
       $p = Get-CimInstance Win32_Process -Filter $f -ErrorAction SilentlyContinue;
       if ($p) { @($p) | Select-Object ProcessId,ParentProcessId,CommandLine | ConvertTo-Json -Compress } else { '[]' }
     `.replace(/\n\s+/g, ' ').trim();
