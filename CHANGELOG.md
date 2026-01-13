@@ -3,6 +3,21 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 # Change Log
 
 
+## [2.5.5] - 2026-01-12
+### Fixed
+- **Light Theme Support**: Fixed sidebar panel CSS issues where text was invisible or had poor contrast in VS Code light themes. Replaced hardcoded colors with native VS Code theme variables (`--vscode-button-*`, `--vscode-button-secondary*`).
+- **Code Cleanup**: Removed unused `.discussions-btn` CSS class (~36 lines of dead code).
+
+## [2.5.4] - 2026-01-12
+### Fixed
+- **Windows Process Detection**: Fixed PowerShell quote escaping issue (Issue #46) by implementing a robust hybrid strategy (Interpolated Strings + Format Operator fallback) to solve "ParserError" on certain Windows environments.
+
+## [2.5.3] - 2026-01-12
+### Fixed
+- **Windows Process Detection**: Added `wmic` as a robust fallback for environments where PowerShell CIM is restricted or failing. Improved parser security with strict `--app_data_dir` verification.
+- **Workspace ID Mismatch**: Fixed "Wrong workspace detected" errors by correctly preserving dots (`.`) and hyphens (`-`) during path normalization on Windows. Added loose matching logic for better resilience.
+- **Documentation**: Updated `normalizeWindowsPath` documentation and added regression tests to ensure long-term stability for complex paths.
+
 ## [2.5.2] - 2026-01-11
 ### Improved
 - **Connection Diagnostics**: Enhanced the "Local service not detected" experience with actionable error messages (e.g., "Wrong workspace", "Auth failed") and a new `Run Diagnostics` tool.
