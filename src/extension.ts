@@ -15,7 +15,7 @@ import { FeedbackManager } from './shared/utils/feedback_manager';
 import { AppViewModel } from "./view-model/app.vm";
 import { StatusBarManager } from "./view/status-bar";
 import { SidebarProvider } from "./view/sidebar-provider";
-import { initLogger, setDebugMode, infoLog, errorLog, warnLog, debugLog, getLogger } from "./shared/utils/logger";
+import { initLogger, setDebugMode, infoLog, errorLog, warnLog, debugLog, getLogger, logQuotaSnapshot } from "./shared/utils/logger";
 import { formatBytes } from "./shared/utils/format";
 import { CommunicationAttempt } from "./shared/utils/types";
 import { getDetailedOSVersion } from "./shared/utils/platform";
@@ -77,6 +77,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const quotaService = new QuotaService(configManager);
   const automationService = new AutomationService();
   context.subscriptions.push(automationService);
+
+  // Register debug quota logging
+  quotaService.onUpdate((snapshot) => {
+    logQuotaSnapshot(snapshot);
+  });
 
   // 3. Initialize ViewModel (The Brain)
   const appViewModel = new AppViewModel(

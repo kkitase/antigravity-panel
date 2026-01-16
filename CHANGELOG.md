@@ -2,6 +2,17 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
 
+## [2.5.7] - 2026-01-16
+
+### Added
+
+- **Debug Quota Logging**: When `tfa.system.debugMode` is enabled, quota data is now output to the Output Channel on every refresh. Includes user info, credits, and model quota status with raw model IDs for debugging.
+- **Quota Parse Error Logging**: When JSON parsing fails or response structure is invalid, the raw response data is logged to help diagnose API changes.
+
+### Changed
+
+- **Refresh Rate Minimum**: Reduced minimum `tfa.dashboard.refreshRate` from 60 seconds to 30 seconds, allowing more responsive quota updates.
+
 ## [2.5.6] - 2026-01-12
 
 ### Fixed

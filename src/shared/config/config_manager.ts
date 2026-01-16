@@ -13,7 +13,7 @@ import { TfaConfig } from "../utils/types";
 export type { TfaConfig };
 
 /** Minimum polling interval in seconds */
-export const MIN_POLLING_INTERVAL = 60;
+export const MIN_POLLING_INTERVAL = 30;
 
 /** Minimum cache check interval in seconds */
 export const MIN_CACHE_CHECK_INTERVAL = 30;

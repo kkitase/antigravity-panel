@@ -5,14 +5,11 @@
 > 轻松监控 AI 配额使用和管理缓存
 
 [![Antigravity IDE](https://img.shields.io/badge/Antigravity-IDE-4285F4?style=flat)](https://antigravity.google)
-[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.104.0-007ACC?logo=visual-studio-code&style=flat&cacheSeconds=10800)](https://code.visualstudio.com/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
 [![Stars](https://img.shields.io/github/stars/n2ns/antigravity-panel?style=flat&logo=github&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/stargazers)
 
 [![GitHub 版本](https://img.shields.io/github/v/release/n2ns/antigravity-panel?style=flat&label=%E7%89%88%E6%9C%AC&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/releases)
-[![Open VSX 版本](https://img.shields.io/open-vsx/v/n2ns/antigravity-panel?style=flat&label=Open%20VSX&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
 [![Open VSX 下载量](https://img.shields.io/open-vsx/dt/n2ns/antigravity-panel?style=flat&label=%E4%B8%8B%E8%BD%BD%E9%87%8F&cacheSeconds=10800)](https://open-vsx.org/extension/n2ns/antigravity-panel)
-[![VS 市场安装量](https://img.shields.io/visual-studio-marketplace/i/n2ns.antigravity-panel?style=flat&label=VS%20%E5%B8%82%E5%9C%BA&cacheSeconds=10800)](https://marketplace.visualstudio.com/items?itemName=n2ns.antigravity-panel)
 [![最后更新](https://img.shields.io/github/last-commit/n2ns/antigravity-panel?style=flat&label=%E6%9C%80%E5%90%8E%E6%9B%B4%E6%96%B0&cacheSeconds=10800)](https://github.com/n2ns/antigravity-panel/commits/main)
 
 > 🚀 **获 Google AI 官方博客推荐:** [Where we're going, we don't need chatbots: introducing the Antigravity IDE](https://dev.to/googleai/where-were-going-we-dont-need-chatbots-introducing-the-antigravity-ide-2c3k)
