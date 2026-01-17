@@ -22,6 +22,9 @@ export class UsageChart extends LitElement {
     const { buckets, maxUsage, interval, prediction } = this.data;
     const t = (window as unknown as WindowWithVsCode).__TRANSLATIONS__;
 
+    // Cap effective max at 25% for better low-usage visibility
+    const effectiveMaxUsage = Math.min(maxUsage, 25);
+
     const timelineText = `Last ${this.data.displayMinutes} min · ${interval}s/bar`;
 
     return html`
@@ -32,14 +35,14 @@ export class UsageChart extends LitElement {
         </div>
         <div class="usage-chart-bars">
           ${buckets.map(bucket => {
-      const maxHeight = 36;
+      const maxHeight = 30;  // Reserve 6px headroom (36 - 6 = 30)
       let currentHeight = 0;
       const gradientStops: string[] = [];
       const tooltipParts: string[] = [];
 
       if (bucket.items && bucket.items.length > 0) {
         for (const item of bucket.items) {
-          const height = (item.usage / maxUsage) * maxHeight;
+          const height = (item.usage / effectiveMaxUsage) * maxHeight;
           const start = currentHeight;
           const end = currentHeight + height;
           gradientStops.push(`${item.color} ${start}px ${end}px`);
