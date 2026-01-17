@@ -7,6 +7,7 @@
 
 import { retry } from '../../shared/utils/retry';
 import { httpRequest } from '../../shared/utils/http_client';
+import { logQuotaParseError } from '../../shared/utils/logger';
 import type { IQuotaService } from './interfaces';
 import type { ConfigManager } from '../../shared/config/config_manager';
 import type {
@@ -116,6 +117,7 @@ export class QuotaService implements IQuotaService {
             this.parsingError = response.statusCode !== 200
                 ? `HTTP_ERROR_${response.statusCode}`
                 : 'Invalid Response Structure';
+            logQuotaParseError(this.parsingError, data);
             return null;
         }
 
@@ -123,6 +125,7 @@ export class QuotaService implements IQuotaService {
             return this.parseResponse(data);
         } catch (e) {
             this.parsingError = 'Response Parsing Failed';
+            logQuotaParseError(this.parsingError, data);
             throw e;
         }
     }

@@ -487,9 +487,15 @@ export class AppViewModel implements vscode.Disposable {
     }
 
     private detectActiveGroup(prevState: QuotaViewState, newGroups: QuotaGroupState[]): string {
+        const config = this.configManager.getConfig();
+        const hiddenGroupId = config["dashboard.includeSecondaryModels"] ? null : 'gpt';
+
         let maxDrop = 0;
         let activeId = prevState.activeGroupId;
         for (const group of newGroups) {
+            // Skip hidden groups (e.g., GPT when secondary models disabled)
+            if (hiddenGroupId && group.id === hiddenGroupId) continue;
+
             if (!group.hasData) continue;
             const prev = prevState.groups.find(g => g.id === group.id);
             if (prev && prev.hasData) {
@@ -505,6 +511,8 @@ export class AppViewModel implements vscode.Disposable {
 
     private buildChartData(activeGroupId: string, currentRemaining: number): UsageChartData {
         const config = this.configManager.getConfig();
+        const hiddenGroupId = config["dashboard.includeSecondaryModels"] ? null : 'gpt';
+
         const buckets = this.storageService.calculateUsageBuckets(
             config["dashboard.historyRange"],
             config["dashboard.refreshRate"] / 60
@@ -513,24 +521,39 @@ export class AppViewModel implements vscode.Disposable {
         const groupColors: Record<string, string> = {};
         this.strategyManager.getGroups().forEach(g => { groupColors[g.id] = g.themeColor; });
 
-        const coloredBuckets = buckets.map(b => ({
+        // Filter out hidden groups and apply colors
+        const filteredBuckets = buckets.map(b => ({
             ...b,
-            items: b.items.map(item => ({
-                ...item,
-                color: groupColors[item.groupId] || '#888'
-            }))
+            items: b.items
+                .filter(item => !hiddenGroupId || item.groupId !== hiddenGroupId)
+                .map(item => ({
+                    ...item,
+                    color: groupColors[item.groupId] || '#888'
+                }))
         }));
 
-        const prediction = this.calculatePrediction(buckets, activeGroupId, currentRemaining, config);
+        const prediction = this.calculatePrediction(filteredBuckets, activeGroupId, currentRemaining, config);
 
         return {
-            buckets: coloredBuckets,
-            maxUsage: this.storageService.getMaxUsage(buckets),
+            buckets: filteredBuckets,
+            maxUsage: this.getFilteredMaxUsage(filteredBuckets),
             groupColors,
             displayMinutes: config["dashboard.historyRange"],
             interval: config["dashboard.refreshRate"],
             prediction
         };
+    }
+
+    /**
+     * Calculate max usage from filtered buckets for proper Y-axis scaling
+     */
+    private getFilteredMaxUsage(buckets: UsageBucket[]): number {
+        let max = 0;
+        for (const bucket of buckets) {
+            const totalUsage = bucket.items.reduce((sum, item) => sum + item.usage, 0);
+            max = Math.max(max, totalUsage);
+        }
+        return max || 1;
     }
 
     private calculatePrediction(

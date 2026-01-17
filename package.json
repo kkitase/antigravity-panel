@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Toolkit for Antigravity",
   "description": "%extension.description%",
-  "version": "2.5.6",
+  "version": "2.5.8",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -212,7 +212,7 @@
           "tfa.dashboard.refreshRate": {
             "type": "number",
             "default": 90,
-            "minimum": 60,
+            "minimum": 30,
             "order": 40,
             "description": "%config.dashboard.refreshRate.description%"
           },

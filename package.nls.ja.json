@@ -30,7 +30,7 @@
     "config.dashboard.gaugeStyle.description": "サイドバーのクォータ表示のビジュアルスタイルを選択",
     "config.dashboard.historyRange.description": "使用量タイムラインチャートの時間範囲（分）（デフォルト: 90分）",
     "config.dashboard.includeSecondaryModels.description": "サイドバーにGPTクォータを表示（GPTはClaudeとクォータプールを共有）",
-    "config.dashboard.refreshRate.description": "自動更新間隔（秒）（最小: 60秒、推奨: 120秒）",
+    "config.dashboard.refreshRate.description": "自動更新間隔（秒）（最小: 30秒、推奨: 120秒）",
     "config.dashboard.showCreditsCard.description": "サイドバーに AI クレジット使用状況カード (Tokens, Flow) を表示する",
     "config.dashboard.showUserInfoCard.description": "サイドバーにユーザープロファイルカード（アバター、ティア、プラン）を表示する",
     "config.dashboard.uiScale.description": "サイドバーパネルのテキストとUI要素を比例的にスケーリングします。（ルートEMスケール）",

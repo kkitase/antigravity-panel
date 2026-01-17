@@ -2,6 +2,25 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
 
+## [2.5.8] - 2026-01-16
+
+### Fixed
+
+- **Usage Chart Data Leakage**: Fixed an issue where the Usage History chart would incorrectly include data from disabled secondary models (e.g., GPT), causing red bars to appear even when `tfa.dashboard.includeSecondaryModels` was set to false.
+- **Chart Scaling Optimization**: Improved the scaling logic for the usage chart. The Y-axis scaling is now capped at 25% to ensure that low-usage bars (5-15%) remain visible and are not compressed by historical high-usage peaks. Additionally, a 6px visual headroom is now reserved to prevent bars from hitting the container ceiling.
+- **Active Model Detection**: Fixed a logic flaw where disabled models (like GPT) could be incorrectly identified as the "Active" model if their quota consumption rate was higher than the currently used model.
+
+## [2.5.7] - 2026-01-16
+
+### Added
+
+- **Debug Quota Logging**: When `tfa.system.debugMode` is enabled, quota data is now output to the Output Channel on every refresh. Includes user info, credits, and model quota status with raw model IDs for debugging.
+- **Quota Parse Error Logging**: When JSON parsing fails or response structure is invalid, the raw response data is logged to help diagnose API changes.
+
+### Changed
+
+- **Refresh Rate Minimum**: Reduced minimum `tfa.dashboard.refreshRate` from 60 seconds to 30 seconds, allowing more responsive quota updates.
+
 ## [2.5.6] - 2026-01-12
 
 ### Fixed
