@@ -7,13 +7,21 @@
 
 import * as vscode from "vscode";
 
-/**
- * Calculate expected Workspace IDs for all current VS Code workspace folders
- *
- * @returns Array of workspace IDs matching Language Server format
- */
 export function getExpectedWorkspaceIds(): string[] {
-  return getWorkspaceIdsFromFolders(vscode.workspace.workspaceFolders || []);
+  const ids = getWorkspaceIdsFromFolders(vscode.workspace.workspaceFolders || []);
+
+  // If we are in a multi-root workspace (.code-workspace file), also include the workspace file ID
+  // Reference: Issue #55 - Multi-root workspace ID mismatch
+  const workspaceFile = vscode.workspace.workspaceFile;
+  if (workspaceFile && workspaceFile.scheme === 'file') {
+    const fsPath = workspaceFile.fsPath;
+    const id = process.platform === "win32" ? normalizeWindowsPath(fsPath) : normalizeUnixPath(fsPath);
+    if (!ids.includes(id)) {
+      ids.push(id);
+    }
+  }
+
+  return ids;
 }
 
 export function getWorkspaceIdsFromFolders(

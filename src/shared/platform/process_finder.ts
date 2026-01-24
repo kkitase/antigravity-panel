@@ -12,9 +12,12 @@ import {
   UnixStrategy,
 } from "./platform_strategies";
 import { retry } from "../utils/retry";
-import { testPort as httpTestPort } from "../utils/http_client";
 import { debugLog, infoLog, warnLog, errorLog } from "../utils/logger";
 import { isWsl, getWslHostIp } from "../utils/wsl";
+import { AmbientDiscovery } from "./ambient_discovery";
+import {
+  verifyServerGateway,
+} from "./detection_utils";
 import { getExpectedWorkspaceIds } from "../utils/workspace_id";
 import {
   LanguageServerInfo,
@@ -52,7 +55,6 @@ export class ProcessFinder {
   public portsFromNetstat: number = 0; // Count of ports from netstat
   public retryCount: number = 0; // Number of retry attempts
   public protocolUsed: "https" | "http" | "none" = "none"; // Final protocol used
-  // PowerShell warm-up state (learned from competitor: vscode-antigravity-cockpit)
   private powershellTimeoutRetried: boolean = false;
 
   constructor() {
@@ -110,6 +112,15 @@ export class ProcessFinder {
       },
     }).then(async (result) => {
       if (!result) {
+        // Final effort: Try AmbientDiscovery (standalone fallback) after all retries exhausted (Issue #55)
+        warnLog("ProcessFinder: Retries exhausted. Attempting final deep rescue discovery...");
+        const rescue = new AmbientDiscovery();
+        const fallbackResult = await rescue.executeDiscovery();
+        if (fallbackResult) {
+          infoLog("ProcessFinder: AmbientDiscovery successfully identified a background connection.");
+          return fallbackResult;
+        }
+
         errorLog(
           `ProcessFinder: Detection failed after ${attempts} attempts. Reason: ${this.failureReason || "unknown"}`,
         );
@@ -501,6 +512,7 @@ export class ProcessFinder {
       this.attemptDetails.push({
         pid,
         port,
+        hostname: "127.0.0.1",
         statusCode: result.statusCode,
         error: result.error,
         protocol: result.protocol,
@@ -525,6 +537,7 @@ export class ProcessFinder {
           this.attemptDetails.push({
             pid,
             port,
+            hostname: hostIp,
             statusCode: result.statusCode,
             error: result.error + " (WSL Host IP)",
             protocol: result.protocol,
@@ -558,7 +571,6 @@ export class ProcessFinder {
   /**
    * Execute command with PowerShell warm-up handling (Windows only)
    * First timeout gets a free retry after 3s warm-up period
-   * Reference: vscode-antigravity-cockpit hunter.ts
    */
   private async executeWithPowershellWarmup(
     command: string,
@@ -609,15 +621,6 @@ export class ProcessFinder {
     protocol: "https" | "http";
     error?: string;
   }> {
-    return httpTestPort(
-      hostname,
-      port,
-      "/exa.language_server_pb.LanguageServerService/GetUserStatus",
-      {
-        "X-Codeium-Csrf-Token": csrfToken,
-        "Connect-Protocol-Version": "1",
-      },
-      JSON.stringify({ wrapper_data: {} }),
-    );
+    return verifyServerGateway(hostname, port, csrfToken);
   }
 }

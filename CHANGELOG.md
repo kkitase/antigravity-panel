@@ -4,6 +4,10 @@ English | [中文文档](docs/CHANGELOG_zh.md)
  
 ## [2.5.10] - 2026-01-24
  
+### Improved
+ 
+- **Detection Logic**: Enhanced language server discovery with multi-layered detection and shared utilities for higher reliability.
+
 ### Fixed
  
 - **Multi-root LS Detection**: Resolved an issue where Language Server detection failed in unsaved multi-root workspaces by trusting the Parent Process ID (PPID) relationship for direct child and sibling processes.

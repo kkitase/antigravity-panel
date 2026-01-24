@@ -3,6 +3,7 @@
  */
 
 import { ProcessInfo, PlatformStrategy } from "../utils/types";
+import { getPortListCommand } from "./detection_utils";
 
 // Re-export types for backward compatibility
 export type { ProcessInfo, PlatformStrategy };
@@ -179,7 +180,7 @@ export class WindowsStrategy implements PlatformStrategy {
   }
 
   getPortListCommand(pid: number): string {
-    return `chcp 65001 >nul && netstat -ano | findstr "${pid}" | findstr "LISTENING"`;
+    return getPortListCommand(pid, "win32");
   }
 
   parseListeningPorts(stdout: string, _pid: number): number[] {
@@ -225,11 +226,10 @@ export class WindowsStrategy implements PlatformStrategy {
  * Unix (macOS / Linux) platform strategy using ps and lsof
  */
 export class UnixStrategy implements PlatformStrategy {
-  // Dynamic port command detection (learned from competitor: vscode-antigravity-cockpit)
   private availablePortCommand: "lsof" | "ss" | "netstat" | null = null;
   private portCommandChecked: boolean = false;
 
-  constructor(private platform: "darwin" | "linux") {}
+  constructor(private platform: "darwin" | "linux") { }
 
   getProcessListCommand(processName: string): string {
     // Use 'ps' to get PID, PPID, and full Arguments.
@@ -300,25 +300,7 @@ export class UnixStrategy implements PlatformStrategy {
   }
 
   getPortListCommand(pid: number): string {
-    // macOS: Use -a (AND all conditions) and grep to filter by PID at command level
-    // This ensures we only get ports from the target process, not other processes
-    // Reference: Learned from competitor analysis (vscode-antigravity-cockpit)
-    if (this.platform === "darwin") {
-      return `lsof -nP -a -iTCP -sTCP:LISTEN -p ${pid} 2>/dev/null | grep -E "^\\S+\\s+${pid}\\s"`;
-    }
-
-    // Linux: Use detected command, fallback to chain if not yet detected
-    switch (this.availablePortCommand) {
-      case "lsof":
-        return `lsof -nP -a -iTCP -sTCP:LISTEN -p ${pid} 2>/dev/null | grep -E "^\\S+\\s+${pid}\\s"`;
-      case "ss":
-        return `ss -tlnp 2>/dev/null | grep "pid=${pid},"`;
-      case "netstat":
-        return `netstat -tulpn 2>/dev/null | grep ${pid}`;
-      default:
-        // Fallback: try multiple commands in order
-        return `ss -tlnp 2>/dev/null | grep "pid=${pid}" || lsof -nP -a -iTCP -sTCP:LISTEN -p ${pid} 2>/dev/null | grep -E "^\\S+\\s+${pid}\\s"`;
-    }
+    return getPortListCommand(pid, this.platform, this.availablePortCommand || undefined);
   }
 
   /**
@@ -342,7 +324,6 @@ export class UnixStrategy implements PlatformStrategy {
       try {
         await execAsync(`which ${cmd}`, { timeout: 3000 });
         this.availablePortCommand = cmd;
-        // debugLog would be nice here but we don't have access to it in this file
         return;
       } catch {
         // Command not available, try next
