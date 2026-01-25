@@ -176,7 +176,7 @@ export async function testPort(
       method: "POST",
       headers,
       body,
-      timeout: 2000,
+      timeout: 5000,
       allowFallback: true,
     });
     return {

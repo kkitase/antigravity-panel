@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Toolkit for Antigravity",
   "description": "%extension.description%",
-  "version": "2.5.9",
+  "version": "2.5.10",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -273,7 +273,7 @@
           },
           "tfa.status.warningThreshold": {
             "type": "number",
-            "default": 30,
+            "default": 40,
             "minimum": 5,
             "maximum": 100,
             "order": 40,
@@ -281,7 +281,7 @@
           },
           "tfa.status.criticalThreshold": {
             "type": "number",
-            "default": 10,
+            "default": 20,
             "minimum": 1,
             "maximum": 50,
             "order": 50,

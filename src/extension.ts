@@ -97,7 +97,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // State for one-time notification
   let hasShownNotification = false;
 
-  // External retry configuration (learned from competitor: vscode-antigravity-cockpit)
   const MAX_BOOT_RETRY = 3;
   const BOOT_RETRY_DELAY_MS = 5000;
   let bootRetryCount = 0;
@@ -285,8 +284,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     statusBar.showLoading();
   }
 
-  // Initial Async Refresh
-  appViewModel.refresh().catch(e => errorLog("Initial refresh failed", e));
+  // Note: Initial quota refresh is handled by bootServerConnection() after connection is established
+  // Cache refresh can run independently since it doesn't require server connection
+  appViewModel.refreshCache().catch(e => errorLog("Initial cache refresh failed", e));
 
   // 6. Register Scheduler & Polling
   scheduler = new Scheduler({
@@ -520,8 +520,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
               outputChannel.appendLine(`[PID ${pid}]`);
               groupedAttempts[pid].forEach((a: CommunicationAttempt) => {
                 const status = a.statusCode ? `${a.statusCode}` : "FAILED";
+                const proto = a.protocol ? `[${a.protocol.toUpperCase()}] ` : "";
                 const errorLabel = a.error ? ` | Error: ${a.error}` : "";
-                outputChannel.appendLine(`  --> Port ${a.port.toString().padEnd(5)} | Status: ${status.padEnd(3)}${errorLabel}`);
+                outputChannel.appendLine(`  --> ${a.hostname}:${a.port.toString().padEnd(5)} | ${proto}Status: ${status.padEnd(3)}${errorLabel}`);
               });
             });
 

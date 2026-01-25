@@ -132,11 +132,18 @@ export interface LanguageServerInfo {
 }
 
 /**
+ * Supported communication protocols
+ */
+export type Protocol = "https" | "http";
+
+
+/**
  * Detailed information about a single communication attempt (for diagnostics)
  */
 export interface CommunicationAttempt {
   pid: number;
   port: number;
+  hostname: string;
   statusCode: number;
   error?: string;
   /** Protocol used: 'https' or 'http' */
