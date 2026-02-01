@@ -2,6 +2,22 @@ English | [中文文档](docs/CHANGELOG_zh.md)
 
 # Change Log
  
+## [2.5.11] - 2026-02-01
+
+### Added
+
+- **Absolute Reset Timestamp**: Added a new display format option `resetTimestamp` for the status bar and dashboard, allowing users to see the exact clock time when their quota will reset (e.g., `02/14 14:30`).
+- **Collapsible Action Panel**: Added ability to toggle the sidebar footer button panel. Users can now click the "Auto-Accept" row to collapse/expand the toolbar to save vertical space.
+- **Full Localization**: Added comprehensive translations for all new features across all 13 supported languages.
+
+### Fixed
+
+- **Windows Process Detection**: Fixed robust parsing for local server discovery on Windows systems. Improved "no_process" error diagnostics by modernizing port detection logic to use `Get-NetTCPConnection`.
+- **UI Layout Adaptation**: Fixed an issue where "Feedback" and "Star" buttons would overflow in narrow sidebar views; they now wrap correctly.
+- **TypeScript Strictness**: Refactored core UI components (`SidebarApp`, `QuotaPie`, `SidebarFooter`) to ensure 100% type safety.
+- **Quick Links Fix**: Resolved a path error that prevented the "Disclaimer" (Info) command from opening correctly.
+
+
 ## [2.5.10] - 2026-01-24
  
 ### Improved

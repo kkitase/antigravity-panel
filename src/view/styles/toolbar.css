@@ -65,6 +65,13 @@
     border: 1px solid var(--vscode-widget-border, rgba(255, 255, 255, 0.15));
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.action-card.collapsed {
+    box-shadow: none;
+    background: transparent;
+    border-color: transparent;
 }
 
 /* Action Row Base */
@@ -85,6 +92,27 @@
     background: var(--vscode-input-background);
     border: 1px solid var(--vscode-widget-border);
     border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.action-row.auto-accept-row.clickable {
+    cursor: pointer;
+}
+
+.action-row.auto-accept-row.clickable:hover {
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.05));
+}
+
+.action-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.collapse-icon {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    transition: transform 0.3s ease;
 }
 
 .action-label {

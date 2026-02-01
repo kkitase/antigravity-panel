@@ -72,8 +72,21 @@ export class WindowsStrategy implements PlatformStrategy {
   parseProcessInfo(stdout: string): ProcessInfo[] | null {
     try {
       // 1. Try parsing JSON (PowerShell output)
-      if (stdout.trim().startsWith("[") || stdout.trim().startsWith("{")) {
-        const data = JSON.parse(stdout.trim());
+      // 1. Try parsing JSON (PowerShell output)
+      // Robustness: PowerShell profiles might output text before our JSON. Find the start array/object.
+      const trimmed = stdout.trim();
+      const firstBracket = trimmed.indexOf("[");
+      const firstBrace = trimmed.indexOf("{");
+
+      let jsonCandidate = trimmed;
+      if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+        jsonCandidate = trimmed.substring(firstBracket);
+      } else if (firstBrace !== -1) {
+        jsonCandidate = trimmed.substring(firstBrace);
+      }
+
+      if (jsonCandidate.startsWith("[") || jsonCandidate.startsWith("{")) {
+        const data = JSON.parse(jsonCandidate);
         const processList: WinProcessItem[] = Array.isArray(data)
           ? data
           : [data];
@@ -180,22 +193,28 @@ export class WindowsStrategy implements PlatformStrategy {
   }
 
   getPortListCommand(pid: number): string {
-    return getPortListCommand(pid, "win32");
+    const utf8Header =
+      "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ";
+    // Use Get-NetTCPConnection (Win8+) for faster and cleaner port detection
+    return `chcp 65001 >nul && powershell -NoProfile -Command "${utf8Header}$p = Get-NetTCPConnection -State Listen -OwningProcess ${pid} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LocalPort; if ($p) { $p | Sort-Object -Unique }"`;
   }
 
   parseListeningPorts(stdout: string, _pid: number): number[] {
-    // Windows netstat + findstr already filters by PID, so we just parse all matches
-    const portRegex =
-      /(?:127\.0\.0\.1|0\.0\.0\.0|\[::1?\]):(\d+)\s+\S+\s+LISTENING/gi;
     const ports: number[] = [];
-    let match;
-    while ((match = portRegex.exec(stdout)) !== null) {
-      const port = parseInt(match[1], 10);
-      if (!ports.includes(port)) {
-        ports.push(port);
+    const lines = stdout.trim().split(/\r?\n/);
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Only accept pure numbers (ports)
+      if (/^\d+$/.test(trimmed)) {
+        const port = parseInt(trimmed, 10);
+        if (port > 0 && port <= 65535) {
+          ports.push(port);
+        }
       }
     }
-    return ports.sort((a, b) => a - b);
+    // Deduplicate and sort
+    return [...new Set(ports)].sort((a, b) => a - b);
   }
 
   /**

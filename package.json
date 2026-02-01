@@ -2,7 +2,7 @@
   "name": "antigravity-panel",
   "displayName": "Toolkit for Antigravity",
   "description": "%extension.description%",
-  "version": "2.5.10",
+  "version": "2.5.11",
   "publisher": "n2ns",
   "license": "Apache-2.0",
   "repository": {
@@ -246,12 +246,14 @@
             "enum": [
               "percentage",
               "resetTime",
+              "resetTimestamp",
               "used",
               "remaining"
             ],
             "enumDescriptions": [
               "%config.statusBarStyle.percentage%",
               "%config.statusBarStyle.resetTime%",
+              "%config.statusBarStyle.resetTimestamp%",
               "%config.statusBarStyle.used%",
               "%config.statusBarStyle.remaining%"
             ],

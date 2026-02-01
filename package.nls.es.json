@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Mostrar cuota restante como porcentaje (ej: 75%)",
     "config.statusBarStyle.remaining": "Mostrar cantidad de cuota restante (ej: 75/100)",
     "config.statusBarStyle.resetTime": "Mostrar tiempo hasta reinicio de cuota (ej: 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Mostrar fecha y hora absolutas de reinicio (ej. 02/14 14:30)",
     "config.statusBarStyle.used": "Mostrar cantidad de cuota usada (ej: 25/100)",
     "config.system.apiPath.description": "⚠️ Avanzado: Punto de acceso API personalizado para métricas de cuota",
     "config.system.autoAccept.description": "Aceptar automáticamente los comandos del agente de IA y las ediciones de archivos. (Modo manos libres)",

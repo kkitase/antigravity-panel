@@ -734,12 +734,28 @@ export class AppViewModel implements vscode.Disposable {
             .filter(g => g.hasData)
             .map(g => {
                 const config = groupsConfig.find(cfg => cfg.id === g.id);
+                // Find the original model info to get absolute date
+                let resetDate: Date | undefined;
+                if (this._lastSnapshot && this._lastSnapshot.models) {
+                    const groupModels = this._lastSnapshot.models.filter(m =>
+                        this.strategyManager.getGroupForModel(m.modelId, m.label).id === g.id
+                    );
+                    if (groupModels.length > 0) {
+                        // Use the earliest reset time (min model) similar to aggregateGroups logic
+                        const minModel = groupModels.reduce((min, m) =>
+                            m.remainingPercentage < min.remainingPercentage ? m : min
+                        );
+                        resetDate = minModel.resetTime;
+                    }
+                }
+
                 return {
                     id: g.id,
                     label: g.label,
                     shortLabel: config?.shortLabel || g.label.substring(0, 3),
                     percentage: Math.round(g.remaining),
                     resetTime: g.resetTime,
+                    resetDate: resetDate,
                     color: g.themeColor,
                     usageRate: 0,
                     runway: 'Stable'

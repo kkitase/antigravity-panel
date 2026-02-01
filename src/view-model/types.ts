@@ -109,6 +109,7 @@ export interface StatusBarGroupItem {
     shortLabel: string;
     percentage: number;
     resetTime: string;
+    resetDate?: Date; // Absolute reset time for accurate timestamp display
     color: string;
     usageRate: number;
     runway: string;

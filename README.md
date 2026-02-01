@@ -264,6 +264,14 @@ Here's how you can help:
 
 For major changes, please open an issue first to discuss your ideas.
 
+## 🤝 Contributors
+
+Special thanks to our community contributors:
+
+*   [**@iskisraell**](https://github.com/iskisraell) - Windows platform stability fixes (v2.5.6).
+*   [**@simbaTmotsi**](https://github.com/simbaTmotsi) - Local LLM Commit Message Generator.
+*   [**@A-vrice**](https://github.com/A-vrice) - Japanese localization.
+
 ## 🌐 Localization Policy
 
 To ensure technical consistency and professional standard across all 13 supported languages:

@@ -16,6 +16,7 @@ scripts/**
 src/scripts/**
 local_bak/**
 docs/**
+!docs/DISCLAIMER*.md
 .husky/**
 .husky/**/*
 **/.husky/**

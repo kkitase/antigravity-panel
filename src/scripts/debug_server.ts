@@ -1,11 +1,10 @@
 import Module from 'module';
 
 // Mock vscode module BEFORE other imports
-// @ts-expect-error: Module require is internal
+// Mock vscode module BEFORE other imports
 const originalRequire = Module.prototype.require;
 
-// @ts-expect-error: Patching module system
-Module.prototype.require = function (id: string, ...args: unknown[]) {
+Module.prototype.require = function (id: string) {
     if (id === 'vscode') {
         return {
             window: {
@@ -25,8 +24,7 @@ Module.prototype.require = function (id: string, ...args: unknown[]) {
             Disposable: class { dispose() { } }
         };
     }
-    // @ts-expect-error: Calling original require
-    return originalRequire.apply(this, [id, ...args]);
+    return originalRequire.apply(this, [id]);
 };
 
 // Imports must be after the mock is set up (or use dynamic import, but requiring module patch works if this file is entry point)
@@ -41,7 +39,8 @@ async function main() {
 
     // Init logger with fake context
     console.log('Initializing logger...');
-    initLogger({ subscriptions: [] } as unknown as vscode.ExtensionContext);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    initLogger({ subscriptions: [] } as any);
     setDebugMode(true);
 
     console.log('🔍 Detecting Language Server process...');

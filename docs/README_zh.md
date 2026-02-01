@@ -263,6 +263,14 @@ Toolkit for Antigravity 不会收集、传输或存储任何用户数据。所�
 
 对于重大更改，请先开启 issue 讨论你的想法。
 
+## 🤝 贡献者
+
+特别感谢我们的社区贡献者：
+
+*   [**@iskisraell**](https://github.com/iskisraell) - Windows 平台稳定性修复 (v2.5.6)。
+*   [**@simbaTmotsi**](https://github.com/simbaTmotsi) - 本地 LLM 提交信息生成器。
+*   [**@A-vrice**](https://github.com/A-vrice) - 日语本地化。
+
 ## 🌐 本地化策略 (Localization Policy)
 
 为了确保技术术语的一致性和跨语言使用的专业度，本项目遵循以下原则：
