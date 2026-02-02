@@ -6,10 +6,11 @@ import { LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { getGaugeRenderer } from './quota/renderers/index';
+import { QuotaData } from './quota/types';
 
 @customElement('quota-pie')
 export class QuotaPie extends LitElement {
-  @property({ type: Object }) data?: Record<string, unknown>;
+  @property({ type: Object }) data?: QuotaData;
 
   @property({ type: String }) color: string = '#007acc';
 

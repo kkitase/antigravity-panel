@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Kalan kotayı yüzde olarak göster (örneğin: %75)",
     "config.statusBarStyle.remaining": "Kalan kota miktarını göster (örneğin: 75/100)",
     "config.statusBarStyle.resetTime": "Kota sıfırlanana kadar kalan süreyi göster (örneğin: 2sa 30dk)",
+    "config.statusBarStyle.resetTimestamp": "Sıfırlama tarihini ve saatini göster (örn. 02/14 14:30)",
     "config.statusBarStyle.used": "Kullanılan kota miktarını göster (örneğin: 25/100)",
     "config.system.apiPath.description": "⚠️ Gelişmiş: Kota metrikleri için özel API uç noktası",
     "config.system.autoAccept.description": "Yapay zeka aracısı komutlarını ve dosya düzenlemelerini otomatik olarak kabul et. (Eller Serbest Modu)",

@@ -88,6 +88,9 @@ export class SidebarApp extends LitElement {
   private _connectionStatus: ConnectionStatus = 'detecting';
 
   @state()
+  private _failureReason: 'no_process' | 'ambiguous' | 'no_port' | 'auth_failed' | 'workspace_mismatch' | null = null;
+
+  @state()
   private _uiScale: number = 1.0;
 
   private _vscode = acquireVsCodeApi();
@@ -227,6 +230,9 @@ export class SidebarApp extends LitElement {
     }
     if (state.connectionStatus) {
       this._connectionStatus = state.connectionStatus;
+    }
+    if (state.failureReason !== undefined) {
+      this._failureReason = state.failureReason;
     }
     if (state.uiScale !== undefined) {
       this._uiScale = state.uiScale;

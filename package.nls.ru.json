@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Показывать остаток квоты в процентах (например, 75%)",
     "config.statusBarStyle.remaining": "Показывать оставшуюся квоту (например, 75/100)",
     "config.statusBarStyle.resetTime": "Показывать время до сброса квоты (например, 2ч 30м)",
+    "config.statusBarStyle.resetTimestamp": "Показать дату и время сброса (напр. 02/14 14:30)",
     "config.statusBarStyle.used": "Показывать использованную квоту (например, 25/100)",
     "config.system.apiPath.description": "⚠️ Расширенные: Пользовательская конечная точка API для метрик квоты",
     "config.system.autoAccept.description": "Автоматически принимать команды ИИ-агента и изменения файлов (режим «Без рук»)",

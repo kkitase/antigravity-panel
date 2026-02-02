@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Mostrar cota restante como porcentagem (ex: 75%)",
     "config.statusBarStyle.remaining": "Mostrar quantidade de cota restante (ex: 75/100)",
     "config.statusBarStyle.resetTime": "Mostrar tempo até o reinício da cota (ex: 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Mostrar data e hora de redefinição (ex: 02/14 14:30)",
     "config.statusBarStyle.used": "Mostrar quantidade de cota usada (ex: 25/100)",
     "config.system.apiPath.description": "⚠️ Avançado: Endpoint de API personalizado para métricas de cota",
     "config.system.autoAccept.description": "Aceitar automaticamente comandos do agente de IA e edições de arquivos. (Modo Mãos Livres)",

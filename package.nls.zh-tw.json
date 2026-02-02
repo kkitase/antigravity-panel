@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "顯示剩餘配額百分比（例如：75%）",
     "config.statusBarStyle.remaining": "顯示剩餘配額（例如：75/100）",
     "config.statusBarStyle.resetTime": "顯示配額重設倒數計時（例如：2小時30分）",
+    "config.statusBarStyle.resetTimestamp": "顯示配額重置的具體日期和時間（例如：02/14 14:30）",
     "config.statusBarStyle.used": "顯示已使用配額（例如：25/100）",
     "config.system.apiPath.description": "⚠️ 進階：配額指標的自訂 API 端點",
     "config.system.autoAccept.description": "自動接受 AI 代理的終端機指令和檔案修改。（無人值守模式）",

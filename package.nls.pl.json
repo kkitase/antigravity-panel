@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Pokaż pozostały limit jako procent (np. 75%)",
     "config.statusBarStyle.remaining": "Pokaż ilość pozostałego limitu (np. 75/100)",
     "config.statusBarStyle.resetTime": "Pokaż czas do resetu limitu (np. 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Pokaż datę i godzinę resetu (np. 02/14 14:30)",
     "config.statusBarStyle.used": "Pokaż ilość zużytego limitu (np. 25/100)",
     "config.system.apiPath.description": "⚠️ Zaawansowane: Niestandardowy punkt końcowy API dla metryk limitów",
     "config.system.autoAccept.description": "Automatycznie akceptuj polecenia agenta AI i edycje plików. (Tryb bez użycia rąk)",

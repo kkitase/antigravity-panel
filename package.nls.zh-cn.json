@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "显示剩余配额百分比（例如：75%）",
     "config.statusBarStyle.remaining": "显示剩余配额（例如：75/100）",
     "config.statusBarStyle.resetTime": "显示配额重置倒计时（例如：2小时30分）",
+    "config.statusBarStyle.resetTimestamp": "显示配额重置的具体日期和时间（例如：02/14 14:30）",
     "config.statusBarStyle.used": "显示已使用配额（例如：25/100）",
     "config.system.apiPath.description": "⚠️ 高级：自定义配额查询 API 路径",
     "config.system.autoAccept.description": "自动接受 AI 智能体的终端命令和文件修改。 (无人值守模式)",
@@ -64,7 +65,7 @@
     "extension.category": "Antigravity Toolkit",
     "extension.description": "Google Antigravity IDE 用户的必备工具箱。提供本地配额监控、缓存管理和系统指标可视化。",
     "extension.displayName": "Antigravity 辅助工具箱",
-    "views.tfa.sidebar.name": "工具箱",
+    "views.tfa.sidebar.name": "Antigravity: Toolkit",
     "viewsContainers.tfa-sidebar.title": "Antigravity",
     "quota.notification.warning": "配额不足提醒：{0} 的配额已低于 {1}%（当前剩余 {2}%）。",
     "quota.notification.critical": "配额严重不足提醒：{0} 的配额已低于 {1}%（当前剩余 {2}%）。请谨慎使用！"

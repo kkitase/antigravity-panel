@@ -138,6 +138,7 @@ export interface WebviewStateUpdate {
   tasks?: TreeSectionState;
   contexts?: TreeSectionState;
   connectionStatus?: ConnectionStatus;
+  failureReason?: 'no_process' | 'ambiguous' | 'no_port' | 'auth_failed' | 'workspace_mismatch' | null;
   gaugeStyle?: string;
   showUserInfoCard?: boolean;
   showCreditsCard?: boolean;
@@ -152,14 +153,15 @@ export interface WebviewStateUpdate {
   };
   autoAcceptEnabled?: boolean;
   uiScale?: number;
+  footerCollapsed?: boolean;
 }
 
 // ==================== VS Code API ====================
 
 export interface VsCodeApi {
   postMessage(message: WebviewMessage): void;
-  getState(): { payload?: WebviewStateUpdate } | undefined;
-  setState(state: { payload: WebviewStateUpdate }): void;
+  getState(): (Record<string, unknown> & { payload?: WebviewStateUpdate }) | undefined;
+  setState(state: Record<string, unknown> & { payload?: WebviewStateUpdate }): void;
 }
 
 export interface WindowWithVsCode {

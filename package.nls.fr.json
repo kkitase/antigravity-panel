@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Afficher le quota restant en pourcentage (ex : 75%)",
     "config.statusBarStyle.remaining": "Afficher la quantité de quota restante (ex : 75/100)",
     "config.statusBarStyle.resetTime": "Afficher le temps avant la réinitialisation du quota (ex : 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Afficher la date et l'heure de réinitialisation (ex. 02/14 14:30)",
     "config.statusBarStyle.used": "Afficher la quantité de quota utilisée (ex : 25/100)",
     "config.system.apiPath.description": "⚠️ Avancé : Point d'accès API personnalisé pour les métriques de quota",
     "config.system.autoAccept.description": "Accepter automatiquement les commandes de l'agent IA et les modifications de fichiers. (Mode mains libres)",

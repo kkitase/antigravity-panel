@@ -115,14 +115,11 @@ suite('Platform Strategies Test Suite', () => {
             assert.strictEqual(result![0].extensionPort, 42100);
         });
 
-        test('should parse listening ports from netstat output', () => {
-            const netstatOutput = `
-  TCP    127.0.0.1:42100        0.0.0.0:0              LISTENING       12345
-  TCP    127.0.0.1:42101        0.0.0.0:0              LISTENING       12345
-  TCP    0.0.0.0:8080           0.0.0.0:0              LISTENING       12345
-  TCP    [::1]:42100            [::]:0                 LISTENING       12345
-`;
-            const ports = strategy.parseListeningPorts(netstatOutput, 12345);
+        test('should parse listening ports from Get-NetTCPConnection output', () => {
+            const output = `42100
+42101
+8080`;
+            const ports = strategy.parseListeningPorts(output, 12345);
 
             assert.strictEqual(ports.length, 3);
             assert.ok(ports.includes(42100));
@@ -131,12 +128,10 @@ suite('Platform Strategies Test Suite', () => {
         });
 
         test('should return sorted ports', () => {
-            const netstatOutput = `
-  TCP    127.0.0.1:8080         0.0.0.0:0              LISTENING       12345
-  TCP    127.0.0.1:42100        0.0.0.0:0              LISTENING       12345
-  TCP    127.0.0.1:3000         0.0.0.0:0              LISTENING       12345
-`;
-            const ports = strategy.parseListeningPorts(netstatOutput, 12345);
+            const output = `8080
+42100
+3000`;
+            const ports = strategy.parseListeningPorts(output, 12345);
 
             assert.deepStrictEqual(ports, [3000, 8080, 42100]);
         });

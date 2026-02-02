@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Verbleibendes Kontingent als Prozentsatz anzeigen (z.B. 75%)",
     "config.statusBarStyle.remaining": "Verbleibendes Kontingent anzeigen (z.B. 75/100)",
     "config.statusBarStyle.resetTime": "Zeit bis zum Zurücksetzen des Kontingents anzeigen (z.B. 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Zeige absolutes Rücksetzdatum und -zeit (z.B. 02/14 14:30)",
     "config.statusBarStyle.used": "Verbrauchtes Kontingent anzeigen (z.B. 25/100)",
     "config.system.apiPath.description": "⚠️ Erweitert: Benutzerdefinierter API-Endpunkt für Kontingentmetriken",
     "config.system.autoAccept.description": "Befehle des KI-Agenten und Dateibearbeitungen automatisch akzeptieren (Freihandmodus)",

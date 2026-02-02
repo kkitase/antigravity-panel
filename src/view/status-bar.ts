@@ -158,6 +158,28 @@ export class StatusBarManager implements vscode.Disposable {
                 // Display time until reset, e.g., "Flash 2h 30m" or "Flash Ready"
                 return `${group.shortLabel} ${group.resetTime}`;
 
+            case 'resetTimestamp':
+                // Display absolute reset time
+                if (group.resetDate) {
+                    const date = group.resetDate;
+                    const now = new Date();
+                    const isToday = now.getDate() === date.getDate() &&
+                        now.getMonth() === date.getMonth() &&
+                        now.getFullYear() === date.getFullYear();
+
+                    const timeFormatter = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+                    const timeStr = timeFormatter.format(date);
+
+                    if (isToday) {
+                        return `${group.shortLabel} ${timeStr}`;
+                    } else {
+                        const dateFormatter = new Intl.DateTimeFormat(undefined, { month: '2-digit', day: '2-digit' });
+                        return `${group.shortLabel} ${dateFormatter.format(date)} ${timeStr}`;
+                    }
+                }
+                // Fallback if Date is missing
+                return `${group.shortLabel} ${group.resetTime}`;
+
             case 'used':
                 // Display used amount formatted as fraction (e.g., "25/100")
                 // Since API provides percentage, we map 1% to 1 unit of 100

@@ -48,6 +48,7 @@
     "config.statusBarStyle.percentage": "Show remaining quota as percentage (e.g., 75%)",
     "config.statusBarStyle.remaining": "Show remaining quota amount (e.g., 75/100)",
     "config.statusBarStyle.resetTime": "Show time until quota reset (e.g., 2h 30m)",
+    "config.statusBarStyle.resetTimestamp": "Show absolute reset date and time (e.g., 02/14 14:30)",
     "config.statusBarStyle.used": "Show used quota amount (e.g., 25/100)",
     "config.system.apiPath.description": "⚠️ Advanced: Custom API endpoint for quota metrics",
     "config.system.autoAccept.description": "Automatically accept AI agent commands and file edits. (Hands-free Mode)",
@@ -64,7 +65,7 @@
     "extension.category": "Antigravity Toolkit",
     "extension.description": "The essential toolkit for Google Antigravity IDE users. Monitor quotas, manage caches, and visualize system metrics.",
     "extension.displayName": "Toolkit for Antigravity",
-    "views.tfa.sidebar.name": "Toolkit",
+    "views.tfa.sidebar.name": "Antigravity: Toolkit",
     "viewsContainers.tfa-sidebar.title": "Antigravity",
     "quota.notification.warning": "Low Quota Warning: {0} quota is below {1}% ({2}% remaining).",
     "quota.notification.critical": "CRITICAL Quota: {0} quota is below {1}% ({2}% remaining). Use with caution!"

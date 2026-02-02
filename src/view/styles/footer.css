@@ -13,6 +13,25 @@ sidebar-footer {
     /* Ensure it sits above scrollable content */
 }
 
+/* Collapsible Wrapper for smooth height transition */
+.collapsible-wrapper {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease-out, opacity 0.2s ease-out, margin 0.3s ease-out;
+    overflow: hidden;
+}
+
+.collapsible-wrapper.collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.collapsible-content {
+    min-height: 0;
+}
+
 .sidebar-footer {
     padding: 4px 8px 8px 8px;
     /* Tighter top padding */
@@ -144,6 +163,34 @@ sidebar-footer {
     display: inline-flex;
     align-items: center;
     line-height: normal;
+}
+
+/* Footer Links */
+.footer-links {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping on narrow panels */
+    gap: 8px;
+    padding: 8px;
+    margin: 0 8px;
+}
+
+.link-btn {
+    flex: 1 1 100px; /* Base width before wrapping, flexibly grows */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .user-info-card .tier-badge {
